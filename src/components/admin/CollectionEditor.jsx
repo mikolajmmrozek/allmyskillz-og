@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MediaPicker from './MediaPicker';
+import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
 
 // Determine the display type of a schema property using custom hints (format / relation)
@@ -79,7 +80,8 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
     (async () => {
       setLoading(true);
       try {
-        const sch = await base44.entities[entityName].schema();
+        const sch = getEntitySchema(entityName);
+        if (!sch) throw new Error(`No schema found for entity "${entityName}"`);
         setSchema(sch);
         if (!isNew) {
           const rec = await base44.entities[entityName].get(id);
