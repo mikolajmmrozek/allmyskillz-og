@@ -126,3 +126,8 @@
   .rich-content blockquote { border-left: 3px solid #e5e5e5; padding-left: 1em; margin: 1em 0; color: #6b6b6b; font-style: italic; }
   .rich-content img { border-radius: 1rem; margin: 1em 0; }
 }
+
+@layer utilities {
+  .mesh-bg { background-image: radial-gradient(60% 50% at 15% 10%, rgba(203,255,0,0.10), transparent 60%), radial-gradient(50% 50% at 85% 0%, rgba(99,102,241,0.07), transparent 60%), radial-gradient(50% 50% at 50% 100%, rgba(236,72,153,0.05), transparent 60%); }
+  .mesh-bg-dark { background-image: radial-gradient(60% 50% at 15% 10%, rgba(203,255,0,0.16), transparent 60%), radial-gradient(50% 50% at 85% 20%, rgba(99,102,241,0.14), transparent 60%), radial-gradient(50% 50% at 50% 100%, rgba(236,72,153,0.12), transparent 60%); }
+}

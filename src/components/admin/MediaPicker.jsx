@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Image as ImageIcon, Upload, Link2, Loader2, Check } from 'lucide-react';
+import GenerateMedia from '@/components/admin/GenerateMedia';
+import { Image as ImageIcon, Upload, Link2, Loader2, Check, Sparkles } from 'lucide-react';
 
 // Reusable media picker: browse MediaItem library or upload a new file.
 // onPick(url, mediaItem?) => called when user selects.
@@ -14,6 +15,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
   const [uploading, setUploading] = useState(false);
   const [selected, setSelected] = useState(allowMultiple ? [] : null);
   const [externalUrl, setExternalUrl] = useState('');
+  const [tab, setTab] = useState('library');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -80,18 +82,53 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
           <DialogTitle>Media Library</DialogTitle>
         </DialogHeader>
         <div className="flex gap-2 items-center pb-3 border-b">
-          <label className="cursor-pointer">
-            <input type="file" className="hidden" onChange={handleUpload} />
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              Upload
-            </span>
-          </label>
-          <div className="flex gap-2 flex-1">
-            <Input placeholder="Paste external URL…" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} />
-            <Button variant="outline" size="sm" onClick={handleAddExternal}><Link2 className="w-4 h-4" /></Button>
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => setTab('library')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${tab === 'library' ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'}`}
+            >
+              Library
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('generate')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition ${tab === 'generate' ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'}`}
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Generate
+            </button>
           </div>
+          {tab === 'library' && (
+            <label className="cursor-pointer">
+              <input type="file" className="hidden" onChange={handleUpload} />
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                Upload
+              </span>
+            </label>
+          )}
+          {tab === 'library' && (
+            <div className="flex gap-2 flex-1">
+              <Input placeholder="Paste external URL…" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} />
+              <Button variant="outline" size="sm" onClick={handleAddExternal}><Link2 className="w-4 h-4" /></Button>
+            </div>
+          )}
         </div>
+        {tab === 'generate' ? (
+          <div className="flex-1 overflow-auto p-1">
+            <GenerateMedia
+              onSaved={(created) => setItems((prev) => [created, ...prev])}
+              onInsert={(url) => {
+                if (allowMultiple) {
+                  setSelected((s) => (s.includes(url) ? s : [...s, url]));
+                } else {
+                  onPick(url, null);
+                  onClose();
+                }
+              }}
+            />
+          </div>
+        ) : (
         <ScrollArea className="flex-1 -mx-1 px-1">
           {loading ? (
             <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>
@@ -129,6 +166,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
             </div>
           )}
         </ScrollArea>
+        )}
         {allowMultiple && (
           <div className="flex justify-between items-center pt-3 border-t">
             <span className="text-sm text-neutral-500">{selected.length} selected</span>

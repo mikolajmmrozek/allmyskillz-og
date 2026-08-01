@@ -4,13 +4,14 @@ import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
+import { Reveal, ParallaxImage } from '@/components/site/Motion';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
   const { lang, tr, t } = useLang();
   const [project, setProject] = useState(null);
-  const [related, setRelated] = useState({ projects: [], achievements: [], experience: [], partners: [], news: [] });
+  const [related, setRelated] = useState({ achievements: [], experience: [], partners: [], news: [], categories: [], tags: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,14 +19,15 @@ export default function ProjectDetail() {
     fetchBySlug('Project', slug).then(async (p) => {
       setProject(p);
       if (p) {
-        const [projects, achievements, experience, partners, news] = await Promise.all([
-          fetchByIds('Project', p.project_ids || []),
+        const [achievements, experience, partners, news, categories, tags] = await Promise.all([
           fetchByIds('Achievement', p.achievement_ids || []),
           fetchByIds('Experience', p.experience_ids || []),
           fetchByIds('Partner', p.partner_ids || []),
           fetchByIds('Post', p.post_ids || []),
+          fetchByIds('Category', p.category_ids || []),
+          fetchByIds('Tag', p.tag_ids || []),
         ]);
-        setRelated({ projects, achievements, experience, partners, news });
+        setRelated({ achievements, experience, partners, news, categories, tags });
       }
       setLoading(false);
     });
@@ -35,6 +37,8 @@ export default function ProjectDetail() {
   if (!project) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
   const gallery = project.gallery || [];
+  const videos = project.videos || [];
+  const story = tr(project, 'story');
 
   return (
     <div>
@@ -44,103 +48,148 @@ export default function ProjectDetail() {
         </Link>
       </div>
 
-      <header className="px-5 md:px-10 pt-10 pb-12">
-        <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[10vw] md:text-[6vw] lg:text-[5.5rem] max-w-[12ch]">
-          {tr(project, 'title')}
-        </h1>
-        {project.excerpt_en && <p className="mt-6 text-lg text-neutral-600 max-w-2xl">{tr(project, 'excerpt')}</p>}
+      {/* Header */}
+      <header className="px-5 md:px-10 pt-10 pb-10">
+        {related.categories.length > 0 && (
+          <Reveal className="flex flex-wrap gap-2 mb-6">
+            {related.categories.map((c) => (
+              <span key={c.id} className="text-xs uppercase tracking-[0.16em] text-neutral-500">{tr(c, 'name')}</span>
+            ))}
+          </Reveal>
+        )}
+        <Reveal delay={0.05}>
+          <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[11vw] md:text-[6.5vw] lg:text-[6rem] max-w-[14ch]">
+            {tr(project, 'title')}
+          </h1>
+        </Reveal>
+        {project.excerpt_en && (
+          <Reveal delay={0.15}>
+            <p className="mt-6 text-lg md:text-xl text-neutral-600 max-w-2xl leading-relaxed">{tr(project, 'excerpt')}</p>
+          </Reveal>
+        )}
+        {related.tags.length > 0 && (
+          <Reveal delay={0.2} className="mt-6 flex flex-wrap gap-x-4 gap-y-1">
+            {related.tags.map((tg) => (
+              <span key={tg.id} className="text-sm text-neutral-400">#{tr(tg, 'name').replace(/\s+/g, '')}</span>
+            ))}
+          </Reveal>
+        )}
       </header>
 
+      {/* Cover */}
       {project.cover_image && (
         <div className="px-5 md:px-10">
           <div className="rounded-3xl overflow-hidden bg-neutral-100 aspect-[16/9]">
-            <Image src={project.cover_image} fittingType="fill" className="w-full h-full" />
+            <ParallaxImage src={project.cover_image} className="absolute inset-0 h-full w-full" strength={5} />
           </div>
         </div>
       )}
 
-      <div className="px-5 md:px-10 py-16 grid md:grid-cols-[1fr_2fr] gap-8 md:gap-16">
-        <div>
-          {project.date && (
-            <div className="mb-6">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">Year</p>
-              <p className="mt-1">{project.date ? new Date(project.date).getFullYear() : ''}</p>
-            </div>
+      {/* Story + sticky sidebar */}
+      {(story || related.partners.length > 0 || related.experience.length > 0) && (
+        <div className="px-5 md:px-10 py-16 md:py-24 grid md:grid-cols-[1fr_2.2fr] gap-8 md:gap-16">
+          <aside className="md:sticky md:top-24 md:self-start space-y-8">
+            {related.partners.length > 0 && (
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{t('site.partners')}</p>
+                <ul className="space-y-1.5">
+                  {related.partners.map((pa) => (
+                    <li key={pa.id} className="text-sm">
+                      {pa.website ? (
+                        <a href={pa.website} target="_blank" rel="noreferrer" className="hover:underline inline-flex items-center gap-1">{tr(pa, 'name')} <ArrowUpRight className="w-3 h-3" /></a>
+                      ) : tr(pa, 'name')}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {related.experience.length > 0 && (
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Powiązane doświadczenie' : 'Related experience'}</p>
+                <ul className="space-y-1.5">
+                  {related.experience.map((ex) => (
+                    <li key={ex.id} className="text-sm text-neutral-600">
+                      <span className="text-neutral-400 tabular-nums mr-2">{ex.start_year}{ex.end_year ? '–' + ex.end_year : ''}</span>
+                      {tr(ex, 'position')} · {tr(ex, 'company')}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
+          {story && (
+            <Reveal>
+              <RichContent html={story} className="text-lg leading-relaxed text-neutral-700 max-w-[65ch]" />
+            </Reveal>
           )}
-          {related.partners.length > 0 && (
-            <div className="mb-6">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-2">{t('site.partners')}</p>
-              <ul className="space-y-1">
-                {related.partners.map((pa) => (
-                  <li key={pa.id}>{pa.website ? <a href={pa.website} target="_blank" rel="noreferrer" className="hover:underline">{tr(pa, 'name')}</a> : tr(pa, 'name')}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        <div>
-          <RichContent html={tr(project, 'story')} className="text-lg leading-relaxed text-neutral-700" />
-        </div>
-      </div>
-
-      {gallery.length > 0 && (
-        <div className="px-5 md:px-10 pb-16 grid gap-4 md:grid-cols-2">
-          {gallery.map((g, i) => (
-            <div key={i} className="rounded-2xl overflow-hidden bg-neutral-100">
-              <Image src={g} fittingType="fill" className="w-full h-full" />
-            </div>
-          ))}
         </div>
       )}
 
-      {(project.videos || []).length > 0 && (
+      {/* Mixed media gallery */}
+      {gallery.length > 0 && (
+        <div className="pb-16 space-y-4">
+          {gallery[0] && (
+            <div className="px-5 md:px-10">
+              <div className="rounded-3xl overflow-hidden bg-neutral-100 aspect-[16/9]">
+                <Image src={gallery[0]} fittingType="fill" className="w-full h-full" />
+              </div>
+            </div>
+          )}
+          {gallery.length > 1 && (
+            <div className="px-5 md:px-10 grid gap-4 md:grid-cols-2">
+              {gallery.slice(1).map((g, i) => (
+                <div key={i} className={`overflow-hidden rounded-2xl bg-neutral-100 ${i % 3 === 0 ? 'aspect-[4/5]' : i % 3 === 1 ? 'aspect-[4/3]' : 'aspect-[1/1]'}`}>
+                  <Image src={g} fittingType="fill" className="w-full h-full" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Videos */}
+      {videos.length > 0 && (
         <div className="px-5 md:px-10 pb-16 grid gap-4">
-          {project.videos.map((v, i) => (
+          {videos.map((v, i) => (
             <video key={i} src={v} controls className="w-full rounded-2xl bg-black" />
           ))}
         </div>
       )}
 
+      {/* Achievements */}
       {related.achievements.length > 0 && (
-        <section className="px-5 md:px-10 py-12 border-t border-neutral-200">
-          <h2 className="font-display text-2xl tracking-tight mb-6">Achievements</h2>
+        <section className="px-5 md:px-10 py-16 md:py-20 border-t border-neutral-200">
+          <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Osiągnięcia' : 'Achievements'}</h2></Reveal>
           <div className="grid md:grid-cols-2 gap-6">
-            {related.achievements.map((a) => (
-              <div key={a.id} className="p-6 rounded-2xl border border-neutral-200">
-                {a.metric && <p className="font-display text-3xl tracking-tight">{a.metric}</p>}
-                <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
-                <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {related.projects.length > 0 && (
-        <section className="px-5 md:px-10 py-12 border-t border-neutral-200">
-          <h2 className="font-display text-2xl tracking-tight mb-6">{t('site.relatedProjects')}</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {related.projects.map((p) => (
-              <Link key={p.id} to={`/projects/${p.slug}`} className="group">
-                <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
-                  {p.cover_image && <Image src={p.cover_image} fittingType="fill" className="w-full h-full transition-transform duration-700 group-hover:scale-105" />}
+            {related.achievements.map((a, i) => (
+              <Reveal key={a.id} delay={i * 0.08}>
+                <div className="p-6 rounded-2xl border border-neutral-200">
+                  {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
+                  <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
+                  <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />
                 </div>
-                <h3 className="font-display text-lg tracking-tight mt-3">{tr(p, 'title')}</h3>
-              </Link>
+              </Reveal>
             ))}
           </div>
         </section>
       )}
 
+      {/* Related news */}
       {related.news.length > 0 && (
-        <section className="px-5 md:px-10 py-12 border-t border-neutral-200">
-          <h2 className="font-display text-2xl tracking-tight mb-6">{t('site.relatedNews')}</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {related.news.map((p) => (
-              <Link key={p.id} to={`/news/${p.slug}`} className="group">
-                <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{p.published_date ? new Date(p.published_date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB') : ''}</p>
-                <h3 className="font-display text-lg tracking-tight mt-2 group-hover:underline">{tr(p, 'title')}</h3>
-              </Link>
+        <section className="px-5 md:px-10 py-16 md:py-20 border-t border-neutral-200">
+          <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('site.relatedNews')}</h2></Reveal>
+          <div className="grid gap-8 md:grid-cols-3">
+            {related.news.map((p, i) => (
+              <Reveal key={p.id} delay={i * 0.08}>
+                <Link to={`/news/${p.slug}`} className="group">
+                  {p.featured_image && (
+                    <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100 mb-4">
+                      <Image src={p.featured_image} fittingType="fill" className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                  )}
+                  <h3 className="font-display text-lg tracking-tight group-hover:underline">{tr(p, 'title')}</h3>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </section>

@@ -3,13 +3,15 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Upload, Loader2, Image as ImageIcon, Trash2, Search } from 'lucide-react';
+import GenerateMedia from '@/components/admin/GenerateMedia';
+import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles } from 'lucide-react';
 
 export default function MediaLibrary() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState('');
+  const [showGen, setShowGen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -55,13 +57,31 @@ export default function MediaLibrary() {
           <h1 className="text-3xl font-semibold tracking-tight">Media Library</h1>
           <p className="text-sm text-neutral-500 mt-1">{items.length} files · reusable across the site</p>
         </div>
-        <label className="cursor-pointer">
-          <input type="file" multiple className="hidden" onChange={handleUpload} />
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
-            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} Upload
-          </span>
-        </label>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowGen((v) => !v)}
+            className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition ${showGen ? 'bg-black text-white border-black' : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400'}`}
+          >
+            <Sparkles className="w-4 h-4" /> Generate
+          </button>
+          <label className="cursor-pointer">
+            <input type="file" multiple className="hidden" onChange={handleUpload} />
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} Upload
+            </span>
+          </label>
+        </div>
       </div>
+
+      {showGen && (
+        <div className="mb-6 max-w-md border border-neutral-200 rounded-2xl p-4 bg-neutral-50/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-neutral-500" />
+            <h2 className="text-sm font-semibold">AI Media Generation</h2>
+          </div>
+          <GenerateMedia onSaved={(created) => setItems((prev) => [created, ...prev])} />
+        </div>
+      )}
 
       <div className="relative max-w-sm mb-5">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />

@@ -1,36 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useLang } from '@/lib/i18n';
 import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished } from '@/lib/siteData';
+import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
-import { Briefcase, GraduationCap, Wrench, ScrollText, Languages, Award } from 'lucide-react';
-
-function Timeline({ items, title, icon: Icon, render }) {
-  const { t } = useLang();
-  if (!items.length) return null;
-  return (
-    <section className="px-5 md:px-10 py-16">
-      <div className="flex items-center gap-3 mb-8">
-        <Icon className="w-5 h-5 text-neutral-400" />
-        <h2 className="font-display text-2xl md:text-3xl tracking-tight">{title}</h2>
-      </div>
-      <div className="space-y-0">
-        {items.map((it, i) => (
-          <div key={it.id} className="grid md:grid-cols-[160px_1fr] gap-2 md:gap-8 py-6 border-t border-neutral-200 first:border-t-0">
-            <p className="text-sm text-neutral-400 tabular-nums">
-              {render.period ? render.period(it) : ''}
-            </p>
-            <div>
-              <h3 className="font-display text-xl tracking-tight">{render.title(it)}</h3>
-              <p className="text-sm text-neutral-500 mt-1">{render.subtitle(it)}</p>
-              {render.body(it) && <RichContent html={render.body(it)} className="text-sm text-neutral-600 mt-3 max-w-2xl" />}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+import { Reveal } from '@/components/site/Motion';
+import Timeline from '@/components/site/Timeline';
+import { ArrowUpRight } from 'lucide-react';
 
 export default function About() {
   const { lang, tr, t } = useLang();
@@ -53,128 +31,214 @@ export default function About() {
           fetchPublished('Language', 'sort_order', 100),
           fetchPublished('Award', '-date', 100),
         ]);
-        setExperience(exp);
-        setEducation(edu);
-        setSkills(sk);
-        setCertificates(cert);
-        setLanguages(lang2);
-        setAwards(aw);
+        setExperience(exp); setEducation(edu); setSkills(sk);
+        setCertificates(cert); setLanguages(lang2); setAwards(aw);
       } catch (e) { console.error(e); }
     })();
   }, []);
 
+  const period = (it) => `${it.start_year || ''}${it.end_year ? ' — ' + it.end_year : ' — '}`;
+
   return (
     <div>
-      <section className="px-5 md:px-10 pt-16 md:pt-28 pb-16">
-        <p className="text-xs uppercase tracking-[0.2em] text-neutral-500 mb-6">{t('site.about')}</p>
-        <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[10vw] md:text-[6vw] lg:text-[6rem] max-w-[14ch]">
-          {tr(settings, 'tagline') || tr(home, 'headline') || 'About'}
-        </h1>
-        {home && <RichContent html={tr(home, 'intro')} className="mt-10 text-lg text-neutral-600 leading-relaxed max-w-2xl" />}
+      {/* Story hero */}
+      <section className="px-5 md:px-10 pt-20 md:pt-32 pb-16">
+        <div className="grid md:grid-cols-12 gap-8 items-end">
+          <Reveal className="md:col-span-8">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-500 mb-6">{t('site.about')}</p>
+            <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[12vw] md:text-[7vw] lg:text-[7rem] max-w-[14ch]">
+              {tr(settings, 'tagline') || tr(home, 'headline') || 'About'}
+            </h1>
+          </Reveal>
+        </div>
+        {home && (
+          <Reveal delay={0.15} className="mt-10 max-w-2xl">
+            <RichContent html={tr(home, 'intro')} className="text-lg text-neutral-600 leading-relaxed" />
+          </Reveal>
+        )}
+        {tr(home, 'focus') && (
+          <Reveal delay={0.25} className="mt-12 flex items-start gap-4 max-w-2xl">
+            <span className="mt-2 w-10 h-px bg-[var(--accent,#CBFF00)] shrink-0" />
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-2">{lang === 'pl' ? 'Obecnie' : 'Currently'}</p>
+              <p className="font-display text-xl md:text-2xl tracking-tight">{tr(home, 'focus')}</p>
+            </div>
+          </Reveal>
+        )}
       </section>
 
-      <Timeline
-        title={t('site.about') + ' — experience'}
-        icon={Briefcase}
-        items={experience}
-        render={{
-          period: (it) => `${it.start_year || ''}${it.end_year ? ' — ' + it.end_year : ' — '}`,
-          title: (it) => tr(it, 'position'),
-          subtitle: (it) => `${tr(it, 'company')}${it.location_en ? ' · ' + tr(it, 'location') : ''}`,
-          body: (it) => tr(it, 'description'),
-        }}
-      />
-
-      <Timeline
-        title={t('site.about') + ' — education'}
-        icon={GraduationCap}
-        items={education}
-        render={{
-          period: (it) => `${it.start_year || ''}${it.end_year ? ' — ' + it.end_year : ' — '}`,
-          title: (it) => tr(it, 'degree'),
-          subtitle: (it) => `${tr(it, 'school')}${it.location_en ? ' · ' + tr(it, 'location') : ''}`,
-          body: (it) => tr(it, 'description'),
-        }}
-      />
-
-      {skills.length > 0 && (
-        <section className="px-5 md:px-10 py-16">
-          <div className="flex items-center gap-3 mb-8">
-            <Wrench className="w-5 h-5 text-neutral-400" />
-            <h2 className="font-display text-2xl md:text-3xl tracking-tight">Skills</h2>
-          </div>
-          <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
-            {skills.map((s) => (
-              <div key={s.id}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{tr(s, 'name')}</span>
-                  <span className="text-xs text-neutral-400">{tr(s, 'category')}</span>
+      {/* Experience */}
+      {experience.length > 0 && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+          <Reveal className="mb-10">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{lang === 'pl' ? 'Droga' : 'Journey'}</p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Doświadczenie' : 'Experience'}</h2>
+          </Reveal>
+          <Timeline
+            items={experience}
+            render={{
+              period,
+              title: (it) => tr(it, 'position'),
+              subtitle: (it) => `${tr(it, 'company')}${tr(it, 'location') ? ' · ' + tr(it, 'location') : ''}`,
+              body: (it) => tr(it, 'description'),
+              media: (it) => (
+                <div className="mt-5 space-y-4">
+                  {(it.videos || []).map((v, i) => (
+                    <video key={i} src={v} controls className="w-full rounded-xl bg-black" />
+                  ))}
+                  {(it.gallery || []).length > 0 && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {it.gallery.map((g, i) => (
+                        <div key={i} className="rounded-xl overflow-hidden bg-neutral-100">
+                          <Image src={g} fittingType="fill" className="w-full h-full aspect-[4/3]" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden">
-                  <div className="h-full bg-[var(--accent,#CBFF00)]" style={{ width: `${s.level || 0}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
+              ),
+            }}
+          />
         </section>
       )}
 
-      {languages.length > 0 && (
-        <section className="px-5 md:px-10 py-16">
-          <div className="flex items-center gap-3 mb-8">
-            <Languages className="w-5 h-5 text-neutral-400" />
-            <h2 className="font-display text-2xl md:text-3xl tracking-tight">Languages</h2>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {languages.map((l) => (
-              <div key={l.id} className="p-6 rounded-2xl border border-neutral-200">
-                <h3 className="font-display text-xl tracking-tight">{tr(l, 'name')}</h3>
-                <p className="text-sm text-neutral-500 mt-1">{tr(l, 'level')}</p>
-                <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden mt-4">
-                  <div className="h-full bg-black" style={{ width: `${l.proficiency || 0}%` }} />
+      {/* Education */}
+      {education.length > 0 && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+          <Reveal className="mb-10">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{lang === 'pl' ? 'Kształcenie' : 'Foundation'}</p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Edukacja' : 'Education'}</h2>
+          </Reveal>
+          <Timeline
+            items={education}
+            render={{
+              period,
+              title: (it) => tr(it, 'degree'),
+              subtitle: (it) => `${tr(it, 'school')}${tr(it, 'location') ? ' · ' + tr(it, 'location') : ''}`,
+              body: (it) => tr(it, 'description'),
+              media: (it) => (
+                <div className="mt-5 space-y-4">
+                  {it.background_image && (
+                    <div className="rounded-xl overflow-hidden bg-neutral-100">
+                      <Image src={it.background_image} fittingType="fill" className="w-full aspect-[16/9]" />
+                    </div>
+                  )}
+                  {(it.gallery || []).length > 0 && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {it.gallery.map((g, i) => (
+                        <div key={i} className="rounded-xl overflow-hidden bg-neutral-100">
+                          <Image src={g} fittingType="fill" className="w-full h-full aspect-[4/3]" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {(it.attachments || []).length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {it.attachments.map((a, i) => (
+                        <a key={i} href={a} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-full border border-neutral-200 hover:border-black transition">
+                          {lang === 'pl' ? 'Załącznik' : 'Attachment'} {i + 1} ↗
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
+              ),
+            }}
+          />
         </section>
       )}
 
+      {/* Skills + Languages */}
+      {(skills.length > 0 || languages.length > 0) && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20">
+          {skills.length > 0 && (
+            <div>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Umiejętności' : 'Skills'}</h2></Reveal>
+              <div className="space-y-6">
+                {skills.map((s, i) => (
+                  <Reveal key={s.id} delay={i * 0.05}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">{tr(s, 'name')}</span>
+                      <span className="text-xs text-neutral-400">{tr(s, 'category')}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden">
+                      <motion.div className="h-full bg-[var(--accent,#CBFF00)] rounded-full" style={{ width: `${s.level || 0}%` }} />
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          )}
+          {languages.length > 0 && (
+            <div>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Języki' : 'Languages'}</h2></Reveal>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {languages.map((l, i) => (
+                  <Reveal key={l.id} delay={i * 0.05}>
+                    <div className="p-6 rounded-2xl border border-neutral-200">
+                      <h3 className="font-display text-xl tracking-tight">{tr(l, 'name')}</h3>
+                      <p className="text-sm text-neutral-500 mt-1">{tr(l, 'level')}</p>
+                      <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden mt-4">
+                        <div className="h-full bg-black rounded-full" style={{ width: `${l.proficiency || 0}%` }} />
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Awards + Certificates */}
       {(awards.length > 0 || certificates.length > 0) && (
-        <section className="px-5 md:px-10 py-16 grid md:grid-cols-2 gap-12">
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20">
           {awards.length > 0 && (
             <div>
-              <div className="flex items-center gap-3 mb-6">
-                <Award className="w-5 h-5 text-neutral-400" />
-                <h2 className="font-display text-2xl tracking-tight">Awards</h2>
-              </div>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Nagrody' : 'Awards'}</h2></Reveal>
               <ul className="space-y-4">
-                {awards.map((a) => (
-                  <li key={a.id} className="pb-4 border-b border-neutral-100">
-                    <h3 className="font-medium">{tr(a, 'title')}</h3>
-                    <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
-                  </li>
+                {awards.map((a, i) => (
+                  <Reveal key={a.id} delay={i * 0.05}>
+                    <li className="pb-4 border-b border-neutral-100">
+                      <h3 className="font-medium">{tr(a, 'title')}</h3>
+                      <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
+                    </li>
+                  </Reveal>
                 ))}
               </ul>
             </div>
           )}
           {certificates.length > 0 && (
             <div>
-              <div className="flex items-center gap-3 mb-6">
-                <ScrollText className="w-5 h-5 text-neutral-400" />
-                <h2 className="font-display text-2xl tracking-tight">Certificates</h2>
-              </div>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Certyfikaty' : 'Certificates'}</h2></Reveal>
               <ul className="space-y-4">
-                {certificates.map((c) => (
-                  <li key={c.id} className="pb-4 border-b border-neutral-100">
-                    <h3 className="font-medium">{tr(c, 'title')}</h3>
-                    <p className="text-sm text-neutral-500">{c.issuer}{c.date ? ' · ' + new Date(c.date).getFullYear() : ''}</p>
-                  </li>
+                {certificates.map((c, i) => (
+                  <Reveal key={c.id} delay={i * 0.05}>
+                    <li className="pb-4 border-b border-neutral-100 flex items-start gap-4">
+                      {c.image && <Image src={c.image} fittingType="fill" className="w-12 h-12 rounded-lg shrink-0" />}
+                      <div>
+                        <h3 className="font-medium">{tr(c, 'title')}</h3>
+                        <p className="text-sm text-neutral-500">{c.issuer}{c.date ? ' · ' + new Date(c.date).getFullYear() : ''}</p>
+                      </div>
+                    </li>
+                  </Reveal>
                 ))}
               </ul>
             </div>
           )}
         </section>
       )}
+
+      {/* CTA */}
+      <section className="px-5 md:px-10 py-20 md:py-28">
+        <Link to="/projects" className="group block">
+          <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{t('site.projects')}</p>
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-display text-4xl md:text-6xl tracking-tight max-w-[14ch]">{lang === 'pl' ? 'Zobacz wybrane prace' : 'Explore the work'}</h2>
+            <ArrowUpRight className="w-10 h-10 text-neutral-400 group-hover:text-black transition shrink-0" />
+          </div>
+        </Link>
+      </section>
     </div>
   );
 }
