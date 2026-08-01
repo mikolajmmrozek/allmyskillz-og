@@ -62,7 +62,10 @@ export default function SiteFooter() {
       </div>
       <div className="px-5 md:px-10 py-5 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-400">
         <span>© {year} {lang === 'pl' ? settings.site_name_pl : settings.site_name_en}</span>
-        <span>{t('site.rights')}</span>
+        <div className="flex items-center gap-4">
+          <span>{t('site.rights')}</span>
+          <Link to="/admin" className="hover:text-neutral-700 transition opacity-60 hover:opacity-100">Panel</Link>
+        </div>
       </div>
     </footer>
   );
