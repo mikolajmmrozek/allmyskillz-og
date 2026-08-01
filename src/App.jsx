@@ -23,6 +23,12 @@ import Shop from '@/pages/site/Shop';
 import ProductDetail from '@/pages/site/ProductDetail';
 import Contact from '@/pages/site/Contact';
 
+// Auth pages
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+
 // Admin pages
 import AdminLayout from '@/pages/admin/AdminLayout';
 import Dashboard from '@/pages/admin/Dashboard';
@@ -65,6 +71,10 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
