@@ -1,0 +1,129 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "title_pl": {
+      "type": "string",
+      "title": "Title (PL)"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Title (EN)"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "story_pl": {
+      "type": "string",
+      "title": "Story (PL)",
+      "format": "richtext"
+    },
+    "story_en": {
+      "type": "string",
+      "title": "Story (EN)",
+      "format": "richtext"
+    },
+    "excerpt_pl": {
+      "type": "string",
+      "title": "Excerpt (PL)"
+    },
+    "excerpt_en": {
+      "type": "string",
+      "title": "Excerpt (EN)"
+    },
+    "cover_image": {
+      "type": "string",
+      "title": "Cover Image",
+      "format": "media"
+    },
+    "gallery": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Gallery",
+      "format": "media-list"
+    },
+    "videos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Videos",
+      "format": "media-list"
+    },
+    "partner_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Partners",
+      "relation": "Partner"
+    },
+    "achievement_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Achievements",
+      "relation": "Achievement"
+    },
+    "experience_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Related Experience",
+      "relation": "Experience"
+    },
+    "post_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Related News",
+      "relation": "Post"
+    },
+    "category_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Categories",
+      "relation": "Category"
+    },
+    "tag_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "relation": "Tag"
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
+    },
+    "sort_order": {
+      "type": "number",
+      "title": "Sort Order",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "draft",
+      "title": "Status"
+    }
+  },
+  "required": [
+    "title_en",
+    "slug"
+  ]
+}

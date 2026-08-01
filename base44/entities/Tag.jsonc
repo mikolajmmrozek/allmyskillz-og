@@ -1,0 +1,32 @@
+{
+  "name": "Tag",
+  "type": "object",
+  "properties": {
+    "name_pl": {
+      "type": "string",
+      "title": "Name (PL)"
+    },
+    "name_en": {
+      "type": "string",
+      "title": "Name (EN)"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "published",
+      "title": "Status"
+    }
+  },
+  "required": [
+    "name_en",
+    "slug"
+  ]
+}

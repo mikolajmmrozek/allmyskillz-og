@@ -1,0 +1,57 @@
+{
+  "name": "MediaItem",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "pdf",
+        "document",
+        "youtube",
+        "vimeo"
+      ],
+      "title": "Type"
+    },
+    "url": {
+      "type": "string",
+      "title": "URL",
+      "format": "media"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "title": "Thumbnail"
+    },
+    "alt_text_pl": {
+      "type": "string",
+      "title": "Alt Text (PL)"
+    },
+    "alt_text_en": {
+      "type": "string",
+      "title": "Alt Text (EN)"
+    },
+    "file_size": {
+      "type": "number",
+      "title": "File Size (bytes)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "archived"
+      ],
+      "default": "published",
+      "title": "Status"
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "url"
+  ]
+}

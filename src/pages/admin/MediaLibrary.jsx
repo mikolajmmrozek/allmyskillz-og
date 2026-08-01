@@ -1,0 +1,104 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { base44 } from '@/api/base44Client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Upload, Loader2, Image as ImageIcon, Trash2, Search } from 'lucide-react';
+
+export default function MediaLibrary() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await base44.entities.MediaItem.list('-created_date', 200);
+      setItems(data);
+    } catch (e) { console.error(e); } finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    for (const file of files) {
+      try {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        const type = ['jpg','jpeg','png','webp','gif','svg'].includes(ext) ? 'image'
+          : ['mp4','webm','mov'].includes(ext) ? 'video'
+          : ['pdf'].includes(ext) ? 'pdf' : 'document';
+        const created = await base44.entities.MediaItem.create({ title: file.name.replace(/\.[^.]+$/, ''), type, url: file_url });
+        setItems((prev) => [created, ...prev]);
+      } catch (err) { console.error(err); }
+    }
+    setUploading(false);
+    e.target.value = '';
+  };
+
+  const remove = async (id) => {
+    if (!confirm('Remove this media item?')) return;
+    await base44.entities.MediaItem.delete(id);
+    setItems((prev) => prev.filter((i) => i.id !== id));
+  };
+
+  const filtered = items.filter((i) => !search || i.title?.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="p-8 max-w-6xl">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">Media Library</h1>
+          <p className="text-sm text-neutral-500 mt-1">{items.length} files · reusable across the site</p>
+        </div>
+        <label className="cursor-pointer">
+          <input type="file" multiple className="hidden" onChange={handleUpload} />
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} Upload
+          </span>
+        </label>
+      </div>
+
+      <div className="relative max-w-sm mb-5">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+        <Input className="pl-9" placeholder="Search media…" value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>
+      ) : filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-neutral-400 border border-dashed rounded-2xl">
+          <ImageIcon className="w-10 h-10 mb-3" />
+          <p className="text-sm">No media yet.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {filtered.map((it) => (
+            <div key={it.id} className="group relative bg-white border border-neutral-200 rounded-xl overflow-hidden">
+              <div className="aspect-square">
+                {it.type === 'image' ? (
+                  <img src={it.url} alt={it.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-neutral-300 mb-1" />
+                    <span className="text-[10px] text-neutral-400 uppercase">{it.type}</span>
+                  </div>
+                )}
+              </div>
+              <div className="p-2">
+                <p className="text-xs font-medium truncate">{it.title}</p>
+              </div>
+              <button onClick={() => remove(it.id)} className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-white/90 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-red-500 hover:bg-red-50">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

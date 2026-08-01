@@ -86,7 +86,29 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  ::selection {
+    background: #CBFF00;
+    color: #121212;
+  }
+
+  /* Editorial scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+
+  /* Quill editor polish inside admin */
+  .ql-toolbar { border: none !important; border-bottom: 1px solid #e5e5e5 !important; }
+  .ql-container { border: none !important; min-height: 120px; font-family: inherit; }
 }

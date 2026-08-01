@@ -1,0 +1,107 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "title_pl": {
+      "type": "string",
+      "title": "Title (PL)"
+    },
+    "title_en": {
+      "type": "string",
+      "title": "Title (EN)"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "content_pl": {
+      "type": "string",
+      "title": "Content (PL)",
+      "format": "richtext"
+    },
+    "content_en": {
+      "type": "string",
+      "title": "Content (EN)",
+      "format": "richtext"
+    },
+    "excerpt_pl": {
+      "type": "string",
+      "title": "Excerpt (PL)"
+    },
+    "excerpt_en": {
+      "type": "string",
+      "title": "Excerpt (EN)"
+    },
+    "category_id": {
+      "type": "string",
+      "title": "Category",
+      "relation": "Category"
+    },
+    "tag_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "relation": "Tag"
+    },
+    "featured_image": {
+      "type": "string",
+      "title": "Featured Image",
+      "format": "media"
+    },
+    "gallery": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Gallery",
+      "format": "media-list"
+    },
+    "video_url": {
+      "type": "string",
+      "title": "Video URL"
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured Post",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "scheduled",
+        "archived"
+      ],
+      "default": "draft",
+      "title": "Status"
+    },
+    "published_date": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Publish Date"
+    },
+    "seo_title_pl": {
+      "type": "string",
+      "title": "SEO Title (PL)"
+    },
+    "seo_title_en": {
+      "type": "string",
+      "title": "SEO Title (EN)"
+    },
+    "seo_description_pl": {
+      "type": "string",
+      "title": "SEO Description (PL)"
+    },
+    "seo_description_en": {
+      "type": "string",
+      "title": "SEO Description (EN)"
+    }
+  },
+  "required": [
+    "title_en",
+    "slug"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "SiteSetting",
+  "type": "object",
+  "properties": {
+    "site_name_pl": {
+      "type": "string",
+      "title": "Site Name (PL)"
+    },
+    "site_name_en": {
+      "type": "string",
+      "title": "Site Name (EN)"
+    },
+    "tagline_pl": {
+      "type": "string",
+      "title": "Tagline (PL)"
+    },
+    "tagline_en": {
+      "type": "string",
+      "title": "Tagline (EN)"
+    },
+    "logo_url": {
+      "type": "string",
+      "title": "Logo",
+      "format": "media"
+    },
+    "favicon_url": {
+      "type": "string",
+      "title": "Favicon",
+      "format": "media"
+    },
+    "accent_color": {
+      "type": "string",
+      "title": "Accent Color",
+      "default": "#CBFF00"
+    },
+    "default_seo_title_pl": {
+      "type": "string",
+      "title": "Default SEO Title (PL)"
+    },
+    "default_seo_title_en": {
+      "type": "string",
+      "title": "Default SEO Title (EN)"
+    },
+    "default_seo_description_pl": {
+      "type": "string",
+      "title": "Default SEO Description (PL)"
+    },
+    "default_seo_description_en": {
+      "type": "string",
+      "title": "Default SEO Description (EN)"
+    },
+    "default_seo_keywords": {
+      "type": "string",
+      "title": "Default SEO Keywords"
+    },
+    "email": {
+      "type": "string",
+      "title": "Contact Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Contact Phone"
+    },
+    "address_pl": {
+      "type": "string",
+      "title": "Address (PL)"
+    },
+    "address_en": {
+      "type": "string",
+      "title": "Address (EN)"
+    },
+    "maps_embed_url": {
+      "type": "string",
+      "title": "Google Maps Embed URL"
+    },
+    "instagram": {
+      "type": "string",
+      "title": "Instagram"
+    },
+    "linkedin": {
+      "type": "string",
+      "title": "LinkedIn"
+    },
+    "youtube": {
+      "type": "string",
+      "title": "YouTube"
+    },
+    "facebook": {
+      "type": "string",
+      "title": "Facebook"
+    },
+    "tiktok": {
+      "type": "string",
+      "title": "TikTok"
+    }
+  },
+  "required": [
+    "site_name_en"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "name": "HomepageConfig",
+  "type": "object",
+  "properties": {
+    "hero_video_url": {
+      "type": "string",
+      "title": "Hero Video URL",
+      "format": "media"
+    },
+    "hero_poster_url": {
+      "type": "string",
+      "title": "Hero Poster Image",
+      "format": "media"
+    },
+    "headline_pl": {
+      "type": "string",
+      "title": "Headline (PL)"
+    },
+    "headline_en": {
+      "type": "string",
+      "title": "Headline (EN)"
+    },
+    "intro_pl": {
+      "type": "string",
+      "title": "Introduction (PL)",
+      "format": "richtext"
+    },
+    "intro_en": {
+      "type": "string",
+      "title": "Introduction (EN)",
+      "format": "richtext"
+    },
+    "focus_pl": {
+      "type": "string",
+      "title": "Current Focus (PL)"
+    },
+    "focus_en": {
+      "type": "string",
+      "title": "Current Focus (EN)"
+    },
+    "cta_primary_text_pl": {
+      "type": "string",
+      "title": "Primary CTA Text (PL)"
+    },
+    "cta_primary_text_en": {
+      "type": "string",
+      "title": "Primary CTA Text (EN)"
+    },
+    "cta_primary_link": {
+      "type": "string",
+      "title": "Primary CTA Link"
+    },
+    "cta_secondary_text_pl": {
+      "type": "string",
+      "title": "Secondary CTA Text (PL)"
+    },
+    "cta_secondary_text_en": {
+      "type": "string",
+      "title": "Secondary CTA Text (EN)"
+    },
+    "cta_secondary_link": {
+      "type": "string",
+      "title": "Secondary CTA Link"
+    },
+    "featured_project_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Featured Projects",
+      "relation": "Project"
+    },
+    "featured_achievement_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Featured Achievements",
+      "relation": "Achievement"
+    },
+    "latest_news_count": {
+      "type": "number",
+      "title": "Latest News Count",
+      "default": 3
+    },
+    "workshop_offer_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Workshop Announcements",
+      "relation": "Offer"
+    }
+  },
+  "required": [
+    "headline_en"
+  ]
+}
