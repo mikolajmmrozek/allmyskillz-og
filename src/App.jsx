@@ -8,7 +8,22 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { LanguageProvider } from '@/lib/i18n';
+
+// Public pages
 import Home from '@/pages/Home';
+import PublicLayout from '@/components/site/PublicLayout';
+import About from '@/pages/site/About';
+import Projects from '@/pages/site/Projects';
+import ProjectDetail from '@/pages/site/ProjectDetail';
+import Offers from '@/pages/site/Offers';
+import OfferDetail from '@/pages/site/OfferDetail';
+import News from '@/pages/site/News';
+import PostDetail from '@/pages/site/PostDetail';
+import Shop from '@/pages/site/Shop';
+import ProductDetail from '@/pages/site/ProductDetail';
+import Contact from '@/pages/site/Contact';
+
+// Admin pages
 import AdminLayout from '@/pages/admin/AdminLayout';
 import Dashboard from '@/pages/admin/Dashboard';
 import MediaLibrary from '@/pages/admin/MediaLibrary';
@@ -31,7 +46,6 @@ const CollectionEditorPage = () => {
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -40,21 +54,30 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:slug" element={<ProjectDetail />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/offers/:slug" element={<OfferDetail />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/news/:slug" element={<PostDetail />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/:slug" element={<ProductDetail />} />
+        <Route path="/contact" element={<Contact />} />
+      </Route>
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />

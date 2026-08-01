@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,9 +31,9 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --font-heading: ui-sans-serif, system-ui, sans-serif;
-    --font-body: ui-sans-serif, system-ui, sans-serif;
-    --font-display: ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -111,4 +113,16 @@
   /* Quill editor polish inside admin */
   .ql-toolbar { border: none !important; border-bottom: 1px solid #e5e5e5 !important; }
   .ql-container { border: none !important; min-height: 120px; font-family: inherit; }
+
+  /* Rich content rendered on public site */
+  .rich-content h1, .rich-content h2, .rich-content h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin: 1.5em 0 0.5em; }
+  .rich-content h1 { font-size: 2rem; }
+  .rich-content h2 { font-size: 1.6rem; }
+  .rich-content h3 { font-size: 1.3rem; }
+  .rich-content p { margin: 0 0 1em; }
+  .rich-content ul, .rich-content ol { margin: 0 0 1em; padding-left: 1.25em; }
+  .rich-content li { margin: 0.25em 0; }
+  .rich-content a { text-decoration: underline; text-underline-offset: 3px; }
+  .rich-content blockquote { border-left: 3px solid #e5e5e5; padding-left: 1em; margin: 1em 0; color: #6b6b6b; font-style: italic; }
+  .rich-content img { border-radius: 1rem; margin: 1em 0; }
 }
