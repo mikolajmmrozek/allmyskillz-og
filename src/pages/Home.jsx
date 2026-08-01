@@ -7,6 +7,7 @@ import { fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
+import SiteLogo from '@/components/site/SiteLogo';
 import { ArrowUpRight, ArrowRight, MoveDown } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -85,20 +86,30 @@ export default function Home() {
           </div>
 
           <div>
-            <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.9] text-[16vw] md:text-[11vw] lg:text-[9rem] max-w-[14ch]">
-              {lines.map((ln, i) => (
-                <span key={i} className="block overflow-hidden">
-                  <motion.span
-                    className="block"
-                    initial={{ y: '110%' }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.95, delay: 0.15 + i * 0.12, ease: EASE }}
-                  >
-                    {ln}
-                  </motion.span>
-                </span>
-              ))}
-            </h1>
+            <div className="flex items-end gap-6 md:gap-10">
+              <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.9] text-[16vw] md:text-[11vw] lg:text-[9rem] max-w-[14ch]">
+                {lines.map((ln, i) => (
+                  <span key={i} className="block overflow-hidden">
+                    <motion.span
+                      className="block"
+                      initial={{ y: '110%' }}
+                      animate={{ y: 0 }}
+                      transition={{ duration: 0.95, delay: 0.15 + i * 0.12, ease: EASE }}
+                    >
+                      {ln}
+                    </motion.span>
+                  </span>
+                ))}
+              </h1>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
+                className="hidden md:block shrink-0 mb-3 lg:mb-5"
+              >
+                <SiteLogo tone="light" size={150} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]" />
+              </motion.div>
+            </div>
 
             <div className="mt-8 md:mt-12 grid md:grid-cols-2 gap-8 md:gap-16 items-end">
               <motion.div
