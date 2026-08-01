@@ -21,7 +21,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className={`${collapsed ? 'w-16' : 'w-64'} shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] sticky top-0 h-screen`}>
         <div className="p-4 flex items-center gap-2 border-b border-neutral-800/80">
-          <SiteLogo size={32} rounded="rounded-lg" className="shrink-0" />
+          <SiteLogo size={32} tone="light" className="shrink-0" />
           {!collapsed && <span className="font-semibold text-white tracking-tight">Studio</span>}
           <button onClick={() => setCollapsed(!collapsed)} className="ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
             <ChevronRight className={`w-4 h-4 transition ${collapsed ? '' : 'rotate-180'}`} />

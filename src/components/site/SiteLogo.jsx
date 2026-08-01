@@ -48,15 +48,22 @@ export function useBranding() {
   return ctx?.settings || local;
 }
 
-// Pure image badge. Renders nothing until the logo url is known.
-export default function SiteLogo({ size = 36, rounded = 'rounded-xl', className = '' }) {
+// tone: 'natural' = as uploaded, 'dark' = force black silhouette, 'light' = force white silhouette.
+const toneFilter = (tone) =>
+  tone === 'dark' ? 'brightness(0)'
+  : tone === 'light' ? 'brightness(0) invert(1)'
+  : null;
+
+// Pure image badge. Transparent background; recolored via CSS filter when a tone is set.
+export default function SiteLogo({ size = 36, tone = 'natural', className = '' }) {
   const settings = useBranding();
   const url = settings?.logo_url;
+  const filter = toneFilter(tone);
   if (!url) {
     return (
       <span
         style={{ width: size, height: size }}
-        className={`${rounded} bg-black ${className}`}
+        className={`rounded-xl bg-neutral-100 ${className}`}
       />
     );
   }
@@ -64,10 +71,8 @@ export default function SiteLogo({ size = 36, rounded = 'rounded-xl', className 
     <img
       src={url}
       alt={settings?.site_name_en || 'Logo'}
-      width={size}
-      height={size}
-      className={`${rounded} object-cover bg-black ${className}`}
-      style={{ width: size, height: size }}
+      style={{ height: size, width: 'auto', filter: filter || undefined }}
+      className={`object-contain ${className}`}
     />
   );
 }
@@ -75,13 +80,13 @@ export default function SiteLogo({ size = 36, rounded = 'rounded-xl', className 
 export { SiteLogo };
 
 // Logo + wordmark, language-aware. Used across header/footer/auth/admin.
-export function SiteBrand({ to = '/', size = 36, nameClassName = '', logoClassName = '', showName = true }) {
+export function SiteBrand({ to = '/', size = 36, tone = 'dark', nameClassName = '', logoClassName = '', showName = true }) {
   const { lang } = useLang();
   const settings = useBranding();
   const name = settings ? (lang === 'pl' ? settings.site_name_pl : settings.site_name_en) : null;
   return (
     <Link to={to} className="inline-flex items-center gap-2.5">
-      <SiteLogo size={size} className={logoClassName} />
+      <SiteLogo size={size} tone={tone} className={logoClassName} />
       {showName && name && (
         <span className={`font-display font-semibold tracking-tight ${nameClassName}`}>
           {name}
