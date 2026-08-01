@@ -72,6 +72,8 @@ export default function SiteLogo({ size = 36, rounded = 'rounded-xl', className 
   );
 }
 
+export { SiteLogo };
+
 // Logo + wordmark, language-aware. Used across header/footer/auth/admin.
 export function SiteBrand({ to = '/', size = 36, nameClassName = '', logoClassName = '', showName = true }) {
   const { lang } = useLang();

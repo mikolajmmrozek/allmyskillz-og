@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { useLang } from '@/lib/i18n';
 import { collections, collectionGroups, getCollection } from '@/lib/entityRegistry';
 import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight } from 'lucide-react';
+import { SiteLogo } from '@/components/site/SiteLogo';
 
 const ICON_MAP = { LayoutDashboard, Image, Settings, Mail, Menu };
 
@@ -20,9 +21,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className={`${collapsed ? 'w-16' : 'w-64'} shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] sticky top-0 h-screen`}>
         <div className="p-4 flex items-center gap-2 border-b border-neutral-800/80">
-          <div className="w-8 h-8 rounded-lg bg-[#CBFF00] flex items-center justify-center shrink-0">
-            <span className="text-black font-black text-sm">S</span>
-          </div>
+          <SiteLogo size={32} rounded="rounded-lg" className="shrink-0" />
           {!collapsed && <span className="font-semibold text-white tracking-tight">Studio</span>}
           <button onClick={() => setCollapsed(!collapsed)} className="ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
             <ChevronRight className={`w-4 h-4 transition ${collapsed ? '' : 'rotate-180'}`} />

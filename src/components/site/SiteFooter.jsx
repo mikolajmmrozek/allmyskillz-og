@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
+import { SiteBrand } from './SiteLogo';
 import { Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
 
 export default function SiteFooter() {
@@ -21,9 +22,8 @@ export default function SiteFooter() {
     <footer className="border-t border-neutral-200 mt-24">
       <div className="px-5 md:px-10 py-16 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
-          <h3 className="font-display text-3xl tracking-tight">
-            {lang === 'pl' ? settings.site_name_pl : settings.site_name_en}
-          </h3>
+          <SiteBrand size={40} nameClassName="text-3xl" />
+          <div className="h-3" />
           {settings.tagline_en && (
             <p className="mt-3 text-neutral-500 max-w-sm">
               {lang === 'pl' ? settings.tagline_pl : settings.tagline_en}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
+import { SiteBrand } from './SiteLogo';
 import { Menu, X, Globe } from 'lucide-react';
 
 export default function SiteHeader() {
@@ -24,9 +25,7 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 bg-[#FDFDFD]/80 backdrop-blur-xl border-b border-neutral-200/70">
       <div className="px-5 md:px-10 h-16 flex items-center justify-between">
-        <Link to="/" className="font-display text-lg tracking-tight font-semibold">
-          {settings ? (lang === 'pl' ? settings.site_name_pl : settings.site_name_en) : 'Studio'}
-        </Link>
+        <SiteBrand size={34} nameClassName="text-lg" />
 
         <nav className="hidden md:flex items-center gap-7 text-sm">
           {links.map((l) => (

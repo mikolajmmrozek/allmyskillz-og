@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { fetchSite } from '@/lib/siteData';
 
-const SiteContext = createContext(null);
+export const SiteContext = createContext(null);
 
 export const SiteProvider = ({ children }) => {
   const [site, setSite] = useState(null);
