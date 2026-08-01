@@ -26,7 +26,9 @@ function applyFavicon(url) {
     link.rel = 'icon';
     document.head.appendChild(link);
   }
-  if (link.href !== url) link.href = url;
+  // Remove a hardcoded type (e.g. image/png) so a JPG favicon isn't rejected.
+  link.removeAttribute('type');
+  if (link.getAttribute('href') !== url) link.setAttribute('href', url);
 }
 
 // Returns the SiteSetting record regardless of whether a SiteProvider is
