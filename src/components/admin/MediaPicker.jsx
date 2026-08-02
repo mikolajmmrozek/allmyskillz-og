@@ -151,10 +151,10 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
                   <button
                     key={it.id}
                     onClick={() => allowMultiple ? setSelected((s) => { const arr = Array.isArray(s) ? s : []; return isSel ? arr.filter((u) => u !== it.url) : [...arr, it.url]; }) : (onPick(it.url, it), onClose())}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition ${isSel ? 'border-[#CBFF00]' : 'border-transparent hover:border-neutral-300'}`}
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 bg-neutral-100 transition ${isSel ? 'border-[#CBFF00]' : 'border-transparent hover:border-neutral-300'}`}
                   >
                     {it.type === 'image' ? (
-                      <img src={it.url} alt={it.title} className="w-full h-full object-cover" />
+                      <img src={it.url} alt={it.title} className="w-full h-full object-contain" />
                     ) : (
                       <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-2">
                         <ImageIcon className="w-6 h-6 text-neutral-400 mb-1" />
