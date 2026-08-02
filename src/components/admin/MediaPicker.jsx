@@ -17,6 +17,11 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
   const [externalUrl, setExternalUrl] = useState('');
   const [tab, setTab] = useState('library');
 
+  // Reset selection whenever the dialog opens or the multiple/single mode
+  // changes. Without this, opening single first (selected=null) then multiple
+  // leaves selected=null and selected.includes() crashes the page.
+  useEffect(() => { setSelected(allowMultiple ? [] : null); }, [open, allowMultiple]);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
