@@ -125,25 +125,16 @@ export default function ProjectDetail() {
         </div>
       )}
 
-      {/* Mixed media gallery */}
+      {/* Masonry gallery — natural aspect ratios, Pinterest-like flow */}
       {gallery.length > 0 && (
-        <div className="pb-16 space-y-4">
-          {gallery[0] && (
-            <div className="px-5 md:px-10">
-              <div className="rounded-3xl overflow-hidden bg-neutral-100 aspect-[16/9]">
-                <Image src={gallery[0]} fittingType="fill" className="w-full h-full" />
+        <div className="px-5 md:px-10 pb-16">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+            {gallery.map((g, i) => (
+              <div key={i} className="mb-4 break-inside-avoid">
+                <img src={g} alt={tr(project, 'title')} loading="lazy" className="w-full h-auto rounded-2xl bg-neutral-100" />
               </div>
-            </div>
-          )}
-          {gallery.length > 1 && (
-            <div className="px-5 md:px-10 grid gap-4 md:grid-cols-2">
-              {gallery.slice(1).map((g, i) => (
-                <div key={i} className={`overflow-hidden rounded-2xl bg-neutral-100 ${i % 3 === 0 ? 'aspect-[4/5]' : i % 3 === 1 ? 'aspect-[4/3]' : 'aspect-[1/1]'}`}>
-                  <Image src={g} fittingType="fill" className="w-full h-full" />
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
 
