@@ -66,7 +66,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
   const handleAddExternal = () => {
     if (!externalUrl.trim()) return;
     if (allowMultiple) {
-      setSelected((s) => [...s, externalUrl]);
+      setSelected((s) => [...(Array.isArray(s) ? s : []), externalUrl]);
     } else {
       onPick(externalUrl.trim(), null);
       onClose();
@@ -75,7 +75,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
   };
 
   const confirmMultiple = () => {
-    onPick(selected, null);
+    onPick(Array.isArray(selected) ? selected : [], null);
     setSelected([]);
     onClose();
   };
@@ -125,7 +125,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
               onSaved={(created) => setItems((prev) => [created, ...prev])}
               onInsert={(url) => {
                 if (allowMultiple) {
-                  setSelected((s) => (s.includes(url) ? s : [...s, url]));
+                  setSelected((s) => { const arr = Array.isArray(s) ? s : []; return arr.includes(url) ? arr : [...arr, url]; });
                 } else {
                   onPick(url, null);
                   onClose();
@@ -145,11 +145,12 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 py-3">
               {items.map((it) => {
-                const isSel = allowMultiple ? selected.includes(it.url) : selected === it.url;
+                const selArr = Array.isArray(selected) ? selected : [];
+                const isSel = allowMultiple ? selArr.includes(it.url) : selected === it.url;
                 return (
                   <button
                     key={it.id}
-                    onClick={() => allowMultiple ? setSelected((s) => isSel ? s.filter((u) => u !== it.url) : [...s, it.url]) : (onPick(it.url, it), onClose())}
+                    onClick={() => allowMultiple ? setSelected((s) => { const arr = Array.isArray(s) ? s : []; return isSel ? arr.filter((u) => u !== it.url) : [...arr, it.url]; }) : (onPick(it.url, it), onClose())}
                     className={`relative aspect-square rounded-lg overflow-hidden border-2 transition ${isSel ? 'border-[#CBFF00]' : 'border-transparent hover:border-neutral-300'}`}
                   >
                     {it.type === 'image' ? (
@@ -174,10 +175,10 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
         )}
         {allowMultiple && (
           <div className="flex justify-between items-center pt-3 border-t">
-            <span className="text-sm text-neutral-500">{selected.length} selected</span>
+            <span className="text-sm text-neutral-500">{(Array.isArray(selected) ? selected : []).length} selected</span>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
-              <Button size="sm" onClick={confirmMultiple} disabled={selected.length === 0}>Insert</Button>
+              <Button size="sm" onClick={confirmMultiple} disabled={(Array.isArray(selected) ? selected : []).length === 0}>Insert</Button>
             </div>
           </div>
         )}
