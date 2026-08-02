@@ -18,17 +18,38 @@ function loadSettings() {
   return pending;
 }
 
+let lastFaviconUrl = null;
+let lastFaviconHref = null;
+
 function applyFavicon(url) {
   if (!url || typeof document === 'undefined') return;
-  let link = document.querySelector("link[rel='icon']");
-  if (!link) {
-    link = document.createElement('link');
-    link.rel = 'icon';
-    document.head.appendChild(link);
+  // Browsers cache favicons aggressively. When the source URL changes, append
+  // a fresh cache-buster so the browser re-fetches instead of showing a
+  // stale icon. Keep the same href for repeated calls with the same URL so we
+  // don't refetch on every render.
+  let href;
+  if (url !== lastFaviconUrl) {
+    const sep = url.includes('?') ? '&' : '?';
+    href = `${url}${sep}v=${Date.now()}`;
+    lastFaviconUrl = url;
+    lastFaviconHref = href;
+  } else {
+    href = lastFaviconHref;
   }
-  // Remove a hardcoded type (e.g. image/png) so a JPG favicon isn't rejected.
-  link.removeAttribute('type');
-  if (link.getAttribute('href') !== url) link.setAttribute('href', url);
+  const selectors = "link[rel='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon']";
+  const existing = Array.from(document.querySelectorAll(selectors));
+  // Already correct? Nothing to do.
+  if (existing.length && existing.every((l) => l.getAttribute('href') === href)) return;
+  // Otherwise drop stale icon links and add fresh ones.
+  existing.forEach((l) => l.remove());
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.href = href;
+  document.head.appendChild(link);
+  const apple = document.createElement('link');
+  apple.rel = 'apple-touch-icon';
+  apple.href = href;
+  document.head.appendChild(apple);
 }
 
 // Returns the SiteSetting record regardless of whether a SiteProvider is
