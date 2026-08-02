@@ -1,18 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// Dynamic, Pinterest-like gallery: landscape images render bigger, portrait
-// images taller, with a dense auto-flow so the grid stays varied (not boring).
+// Organic masonry: each image's row-span is computed from its natural aspect
+// ratio, so portrait images become tall in varying heights (not lined up),
+// while landscape images span two columns. A dense auto-flow fills gaps.
 // Click any image to open a fullscreen lightbox with prev/next + keyboard nav.
+const ROW_PX = 120;
+const GAP_PX = 12;
+
 export default function GalleryMasonry({ images = [], alt = '', className = '' }) {
   const [ratios, setRatios] = useState({});
+  const [spans, setSpans] = useState({});
+  const [colWidth, setColWidth] = useState(0);
   const [active, setActive] = useState(null);
+  const gridRef = useRef(null);
 
   const onLoad = (i, e) => {
     const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
     if (w && h) setRatios((p) => (p[i] == null ? { ...p, [i]: w / h } : p));
   };
+
+  // Measure one column's pixel width so we can size row-spans to natural ratios.
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const compute = () => {
+      const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+      if (!cols) return;
+      setColWidth((grid.clientWidth - GAP_PX * (cols - 1)) / cols);
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(grid);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!colWidth) return;
+    const next = {};
+    images.forEach((_, i) => {
+      const r = ratios[i];
+      if (r == null) { next[i] = { col: 1, row: 3 }; return; }
+      const col = r >= 1.4 ? 2 : 1;                       // landscape → wider
+      const cellW = colWidth * col + GAP_PX * (col - 1);
+      const naturalH = cellW / r;
+      let row = Math.round((naturalH + GAP_PX) / (ROW_PX + GAP_PX));
+      row = Math.max(2, Math.min(row, 6));
+      next[i] = { col, row };
+    });
+    setSpans(next);
+  }, [ratios, colWidth, images]);
 
   useEffect(() => {
     if (active == null) return;
@@ -25,24 +63,22 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
     return () => window.removeEventListener('keydown', onKey);
   }, [active, images.length]);
 
-  const spanClass = (r) => {
-    if (r == null) return 'col-span-1 row-span-1';
-    if (r >= 1.3) return 'col-span-2 row-span-2';   // landscape -> big 2×2 emphasis
-    if (r <= 0.85) return 'col-span-1 row-span-2';  // portrait -> tall
-    return 'col-span-1 row-span-1';                  // square-ish
-  };
-
   return (
     <>
-      <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 [grid-auto-flow:dense] auto-rows-[6.5rem] sm:auto-rows-[8rem] md:auto-rows-[9rem] ${className}`}>
+      <div
+        ref={gridRef}
+        style={{ gridAutoRows: ROW_PX }}
+        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 [grid-auto-flow:dense] ${className}`}
+      >
         {images.map((src, i) => {
-          const r = ratios[i];
+          const s = spans[i] || { col: 1, row: 3 };
           return (
             <button
               key={i}
               type="button"
               onClick={() => setActive(i)}
-              className={`group relative overflow-hidden rounded-2xl bg-neutral-100 ${spanClass(r)}`}
+              style={{ gridColumn: `span ${s.col}`, gridRow: `span ${s.row}` }}
+              className="group relative overflow-hidden rounded-2xl bg-neutral-100"
             >
               <img
                 src={src}
