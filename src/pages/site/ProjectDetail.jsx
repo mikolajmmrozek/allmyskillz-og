@@ -4,7 +4,8 @@ import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
-import { Reveal, ParallaxImage } from '@/components/site/Motion';
+import { Reveal } from '@/components/site/Motion';
+import GalleryMasonry from '@/components/site/GalleryMasonry';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 
 export default function ProjectDetail() {
@@ -80,7 +81,7 @@ export default function ProjectDetail() {
       {project.cover_image && (
         <div className="px-5 md:px-10">
           <div className="rounded-3xl overflow-hidden bg-neutral-100 aspect-[16/9]">
-            <ParallaxImage src={project.cover_image} className="absolute inset-0 h-full w-full" strength={5} />
+            <img src={project.cover_image} alt={tr(project, 'title')} className="h-full w-full object-cover" />
           </div>
         </div>
       )}
@@ -125,16 +126,10 @@ export default function ProjectDetail() {
         </div>
       )}
 
-      {/* Masonry gallery — natural aspect ratios, Pinterest-like flow */}
+      {/* Gallery — dynamic masonry + lightbox */}
       {gallery.length > 0 && (
         <div className="px-5 md:px-10 pb-16">
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
-            {gallery.map((g, i) => (
-              <div key={i} className="mb-4 break-inside-avoid">
-                <img src={g} alt={tr(project, 'title')} loading="lazy" className="w-full h-auto rounded-2xl bg-neutral-100" />
-              </div>
-            ))}
-          </div>
+          <GalleryMasonry images={gallery} alt={tr(project, 'title')} />
         </div>
       )}
 

@@ -4,7 +4,8 @@ import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
-import { Reveal, ParallaxImage } from '@/components/site/Motion';
+import { Reveal } from '@/components/site/Motion';
+import GalleryMasonry from '@/components/site/GalleryMasonry';
 import { ArrowLeft } from 'lucide-react';
 
 export default function PostDetail() {
@@ -68,7 +69,7 @@ export default function PostDetail() {
       {post.featured_image && (
         <div className="px-5 md:px-10 mt-10">
           <div className="rounded-3xl overflow-hidden bg-neutral-100 aspect-[16/9] max-w-5xl mx-auto">
-            <ParallaxImage src={post.featured_image} className="absolute inset-0 h-full w-full" strength={4} />
+            <img src={post.featured_image} alt={tr(post, 'title')} className="h-full w-full object-cover" />
           </div>
         </div>
       )}
@@ -85,12 +86,8 @@ export default function PostDetail() {
         )}
 
         {gallery.length > 0 && (
-          <div className="grid gap-4 mt-10 md:grid-cols-2">
-            {gallery.map((g, i) => (
-              <div key={i} className={`overflow-hidden rounded-2xl bg-neutral-100 ${i % 2 === 0 ? 'aspect-[4/3]' : 'aspect-[1/1]'}`}>
-                <Image src={g} fittingType="fill" className="w-full h-full" />
-              </div>
-            ))}
+          <div className="mt-10">
+            <GalleryMasonry images={gallery} alt={tr(post, 'title')} />
           </div>
         )}
       </div>
