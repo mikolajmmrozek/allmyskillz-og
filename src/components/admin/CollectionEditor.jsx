@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MediaPicker from './MediaPicker';
+import RichTextEditor from './RichTextEditor';
 import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -352,7 +353,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
   }
 
   if (kind === 'richtext') {
-    return <Textarea value={value || ''} onChange={(e) => onChange(e.target.value)} rows={6} className="font-mono text-sm" />;
+    return <RichTextEditor value={value} onChange={onChange} placeholder={prop?.title || ''} />;
   }
 
   if (kind === 'boolean') {

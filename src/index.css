@@ -111,8 +111,12 @@
   ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
   /* Quill editor polish inside admin */
-  .ql-toolbar { border: none !important; border-bottom: 1px solid #e5e5e5 !important; }
-  .ql-container { border: none !important; min-height: 120px; font-family: inherit; }
+  .ql-toolbar { border: none !important; border-bottom: 1px solid #e5e5e5 !important; border-radius: 0.5rem 0.5rem 0 0; }
+  .ql-container { border: none !important; min-height: 160px; font-family: inherit; }
+  .rich-text-editor { border: 1px solid hsl(var(--border)); border-radius: 0.5rem; overflow: hidden; }
+  .rich-text-editor .ql-toolbar { background: hsl(var(--muted)); padding: 0.5rem 0.75rem; }
+  .rich-text-editor .ql-editor { padding: 0.75rem 1rem; font-size: 0.875rem; line-height: 1.6; }
+  .rich-text-editor .ql-editor.ql-blank::before { color: hsl(var(--muted-foreground)); font-style: normal; }
 
   /* Rich content rendered on public site */
   .rich-content h1, .rich-content h2, .rich-content h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin: 1.5em 0 0.5em; }
