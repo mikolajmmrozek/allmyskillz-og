@@ -118,8 +118,30 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   const save = async () => {
     setSaving(true);
     try {
-      // clean empty strings → undefined for numbers
-      const payload = { ...form };
+      let payload = { ...form };
+      // Auto-translate PL → EN for bilingual text fields that have PL but no EN
+      const forTranslation = {};
+      for (const g of groups) {
+        if (g.type !== 'bilingual') continue;
+        const kind = fieldKind(g.prop);
+        if (kind !== 'text' && kind !== 'richtext') continue;
+        const pl = payload[g.plKey];
+        if (pl && String(pl).trim() && !payload[g.enKey]) {
+          forTranslation[g.enKey] = String(pl);
+        }
+      }
+      if (Object.keys(forTranslation).length > 0) {
+        try {
+          const res = await base44.functions.invoke('translateContent', { fields: forTranslation });
+          const translations = res?.data?.translations || {};
+          if (Object.keys(translations).length > 0) {
+            payload = { ...payload, ...translations };
+            setForm(payload);
+          }
+        } catch (te) {
+          console.error('Auto-translation failed:', te);
+        }
+      }
       if (isNew) {
         const created = await base44.entities[entityName].create(payload);
         if (onSaved) { onSaved(created); setForm(created); }
