@@ -19,20 +19,31 @@ export default function About() {
   const [certificates, setCertificates] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [awards, setAwards] = useState([]);
+  const [projectsByExp, setProjectsByExp] = useState({});
 
   useEffect(() => {
     (async () => {
       try {
-        const [exp, edu, sk, cert, lang2, aw] = await Promise.all([
+        const [exp, edu, sk, cert, lang2, aw, projects] = await Promise.all([
           fetchPublished('Experience', '-start_year', 100),
           fetchPublished('Education', '-start_year', 100),
           fetchPublished('Skill', 'sort_order', 100),
           fetchPublished('Certificate', '-date', 100),
           fetchPublished('Language', 'sort_order', 100),
           fetchPublished('Award', '-date', 100),
+          fetchPublished('Project', '-sort_order', 200),
         ]);
         setExperience(exp); setEducation(edu); setSkills(sk);
         setCertificates(cert); setLanguages(lang2); setAwards(aw);
+        // Map: experience_id → projects that reference it
+        const map = {};
+        for (const ex of exp) {
+          map[ex.id] = (projects || []).filter((p) =>
+            (p.experience_ids || []).includes(ex.id) ||
+            (ex.project_ids || []).includes(p.id)
+          );
+        }
+        setProjectsByExp(map);
       } catch (e) { console.error(e); }
     })();
   }, []);
@@ -93,6 +104,29 @@ export default function About() {
                           <Image src={g} fittingType="fill" className="w-full h-full aspect-[4/3]" />
                         </div>
                       ))}
+                    </div>
+                  )}
+                  {(projectsByExp[it.id] || []).length > 0 && (
+                    <div className="mt-5">
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Projekty' : 'Projects'}</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {(projectsByExp[it.id] || []).map((p) => (
+                          <Link key={p.id} to={`/projects/${p.slug}`} className="group rounded-xl overflow-hidden border border-neutral-200 hover:border-black transition">
+                            {p.cover_image ? (
+                              <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
+                                <Image src={p.cover_image} fittingType="fill" className="w-full h-full transition-transform duration-500 group-hover:scale-105" />
+                              </div>
+                            ) : (
+                              <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+                                <span className="text-xs text-neutral-300">{lang === 'pl' ? 'Brak zdjęcia' : 'No image'}</span>
+                              </div>
+                            )}
+                            <div className="p-2">
+                              <p className="text-xs font-medium truncate">{tr(p, 'title')}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

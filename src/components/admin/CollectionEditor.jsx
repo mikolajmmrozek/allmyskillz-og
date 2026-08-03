@@ -288,7 +288,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
         <Select value={value || ''} onValueChange={onChange}>
           <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
           <SelectContent>
-            {options.map((o) => <SelectItem key={o.id} value={o.id}>{o.title_en || o.name_en || o.label_en || o.title || o.name || o.id}</SelectItem>)}
+            {options.map((o) => <SelectItem key={o.id} value={o.id}>{o.title_en || o.name_en || o.label_en || o.company_en || o.company_pl || o.school_en || o.title || o.name || o.id}</SelectItem>)}
           </SelectContent>
         </Select>
       );
@@ -300,7 +300,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
         {options.length === 0 && <span className="text-xs text-neutral-400">No {entity} records yet.</span>}
         {options.map((o) => {
           const sel = selected.includes(o.id);
-          const label = o.title_en || o.name_en || o.label_en || o.title || o.name || o.id;
+          const label = o.title_en || o.name_en || o.label_en || o.company_en || o.company_pl || o.school_en || o.title || o.name || o.id;
           return (
             <button key={o.id} type="button" onClick={() => toggle(o.id)} className={`px-2.5 py-1 text-xs rounded-full transition ${sel ? 'bg-[#CBFF00] text-black' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'}`}>
               {label}

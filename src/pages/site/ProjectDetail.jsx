@@ -111,7 +111,9 @@ export default function ProjectDetail() {
                   {related.experience.map((ex) => (
                     <li key={ex.id} className="text-sm text-neutral-600">
                       <span className="text-neutral-400 tabular-nums mr-2">{ex.start_year}{ex.end_year ? '–' + ex.end_year : ''}</span>
-                      {tr(ex, 'position')} · {tr(ex, 'company')}
+                      <Link to={`/about#${ex.slug || ex.id}`} className="hover:underline hover:text-black transition">
+                        {tr(ex, 'position')} · {tr(ex, 'company')}
+                      </Link>
                     </li>
                   ))}
                 </ul>

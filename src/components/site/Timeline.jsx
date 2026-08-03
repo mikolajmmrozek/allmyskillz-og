@@ -59,6 +59,7 @@ function TimelineItem({ item, index, active, render }) {
   const [open, setOpen] = useState(false);
   return (
     <div
+      id={item.slug || undefined}
       data-idx={index}
       className={`rounded-2xl border transition-all duration-500 ${active ? 'border-black bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)]' : 'border-neutral-200 bg-white/50'}`}
     >
