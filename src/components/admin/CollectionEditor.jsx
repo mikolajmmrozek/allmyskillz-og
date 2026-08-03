@@ -121,20 +121,25 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
     try {
       let payload = { ...form };
       // Auto-translate PL → EN for bilingual text fields that have PL but no EN
+      // Treat Quill's <p><br></p> and HTML-only-whitespace as empty
+      const stripHtml = (s) => String(s || '').replace(/<[^>]*>/g, '').trim();
       const forTranslation = {};
       for (const g of groups) {
         if (g.type !== 'bilingual') continue;
         const kind = fieldKind(g.prop);
         if (kind !== 'text' && kind !== 'richtext') continue;
         const pl = payload[g.plKey];
-        if (pl && String(pl).trim() && !payload[g.enKey]) {
+        const en = payload[g.enKey];
+        const plText = stripHtml(pl);
+        const enText = stripHtml(en);
+        if (plText && (!enText || enText === plText)) {
           forTranslation[g.enKey] = String(pl);
         }
       }
       if (Object.keys(forTranslation).length > 0) {
         try {
           const res = await base44.functions.invoke('translateContent', { fields: forTranslation });
-          const translations = res?.translations || res?.data?.translations || {};
+          const translations = res?.data?.translations || res?.translations || {};
           if (Object.keys(translations).length > 0) {
             payload = { ...payload, ...translations };
             setForm(payload);
