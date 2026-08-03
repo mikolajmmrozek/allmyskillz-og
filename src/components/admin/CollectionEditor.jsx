@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import MediaPicker from './MediaPicker';
 import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 // Determine the display type of a schema property using custom hints (format / relation)
 function fieldKind(prop) {
@@ -147,6 +148,28 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
     }
   };
 
+  // Reorder a media-list field and persist immediately (no Save button needed).
+  const reorderAndSave = async (field, from, to) => {
+    const cur = Array.isArray(form[field]) ? [...form[field]] : [];
+    if (from < 0 || from >= cur.length || to < 0 || to >= cur.length) return;
+    const [moved] = cur.splice(from, 1);
+    cur.splice(to, 0, moved);
+    const nextForm = { ...form, [field]: cur };
+    setForm(nextForm);
+    if (isNew) return; // new records save with the Save button
+    setSaving(true);
+    try {
+      const updated = await base44.entities[entityName].update(id, nextForm);
+      setForm((prev) => ({ ...prev, ...updated }));
+      if (onSaved) onSaved(updated);
+    } catch (e) {
+      console.error(e);
+      alert(e?.message || 'Reorder save failed');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading || !schema) {
     return <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>;
   }
@@ -198,6 +221,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
                 onPickMedia={() => openMediaPicker(group.field, false)}
                 onPickMediaMultiple={() => openMediaPicker(group.field, true)}
                 onRemoveMediaItem={(idx) => set(group.field, (form[group.field] || []).filter((_, i) => i !== idx))}
+                onReorderMedia={(from, to) => reorderAndSave(group.field, from, to)}
                 relationEntity={group.prop?.relation}
                 relationCache={relationCache}
                 loadRelation={loadRelation}
@@ -220,7 +244,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   );
 }
 
-function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMultiple, onRemoveMediaItem, relationEntity, relationCache, loadRelation, form, setForm, field }) {
+function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMultiple, onRemoveMediaItem, onReorderMedia, relationEntity, relationCache, loadRelation, form, setForm, field }) {
   // Always-safe effect: load related entity options when this is a relation field
   useEffect(() => {
     if ((kind === 'relation-single' || kind === 'relation-multi') && relationEntity) {
@@ -275,18 +299,32 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
     const arr = Array.isArray(value) ? value : [];
     return (
       <div>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {arr.map((url, idx) => (
-            <div key={idx} className="relative group">
-              <img src={url} alt="" className="w-20 h-20 object-cover rounded-lg border" />
-              <button type="button" onClick={() => onRemoveMediaItem?.(idx)} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><X className="w-3 h-3" /></button>
-            </div>
-          ))}
-          <button type="button" onClick={() => onPickMediaMultiple?.()} className="w-20 h-20 rounded-lg border border-dashed flex flex-col items-center justify-center text-neutral-400 hover:border-neutral-400">
-            <Plus className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Add</span>
-          </button>
-        </div>
+        <DragDropContext onDragEnd={(res) => {
+          if (!res.destination || res.destination.index === res.source.index) return;
+          onReorderMedia?.(res.source.index, res.destination.index);
+        }}>
+          <Droppable droppableId="media-list" direction="horizontal">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-wrap gap-2 mb-2">
+                {arr.map((url, idx) => (
+                  <Draggable key={url + '-' + idx} draggableId={url + '-' + idx} index={idx}>
+                    {(prov) => (
+                      <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="relative group cursor-grab active:cursor-grabbing">
+                        <img src={url} alt="" className="w-20 h-20 object-cover rounded-lg border" />
+                        <button type="button" onClick={(e) => { e.stopPropagation(); onRemoveMediaItem?.(idx); }} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><X className="w-3 h-3" /></button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+                <button type="button" onClick={() => onPickMediaMultiple?.()} className="w-20 h-20 rounded-lg border border-dashed flex flex-col items-center justify-center text-neutral-400 hover:border-neutral-400">
+                  <Plus className="w-5 h-5" />
+                  <span className="text-[10px] mt-1">Add</span>
+                </button>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     );
   }
