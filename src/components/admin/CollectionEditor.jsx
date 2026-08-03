@@ -134,7 +134,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
       if (Object.keys(forTranslation).length > 0) {
         try {
           const res = await base44.functions.invoke('translateContent', { fields: forTranslation });
-          const translations = res?.data?.translations || {};
+          const translations = res?.translations || res?.data?.translations || {};
           if (Object.keys(translations).length > 0) {
             payload = { ...payload, ...translations };
             setForm(payload);
