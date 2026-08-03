@@ -26,7 +26,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
     const grid = gridRef.current;
     if (!grid) return;
     const compute = () => {
-      const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+      const cols = window.getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
       if (!cols) return;
       setColWidth((grid.clientWidth - GAP_PX * (cols - 1)) / cols);
     };
