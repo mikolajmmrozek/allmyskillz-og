@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
+import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 
 export default function ProjectDetail() {
@@ -139,7 +140,7 @@ export default function ProjectDetail() {
       {videos.length > 0 && (
         <div className="px-5 md:px-10 pb-16 grid gap-4">
           {videos.map((v, i) => (
-            <video key={i} src={v} controls className="w-full rounded-2xl bg-black" />
+            <VideoEmbed key={i} url={v} />
           ))}
         </div>
       )}

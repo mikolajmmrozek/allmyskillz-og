@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
+import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft } from 'lucide-react';
 
 export default function PostDetail() {
@@ -81,7 +82,7 @@ export default function PostDetail() {
 
         {post.video_url && (
           <div className="mt-10">
-            <video src={post.video_url} controls className="w-full rounded-2xl bg-black" />
+            <VideoEmbed url={post.video_url} />
           </div>
         )}
 

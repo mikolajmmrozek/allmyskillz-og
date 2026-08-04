@@ -8,6 +8,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import Timeline from '@/components/site/Timeline';
+import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowUpRight } from 'lucide-react';
 
 export default function About() {
@@ -95,7 +96,7 @@ export default function About() {
               media: (it) => (
                 <div className="mt-5 space-y-4">
                   {(it.videos || []).map((v, i) => (
-                    <video key={i} src={v} controls className="w-full rounded-xl bg-black" />
+                    <VideoEmbed key={i} url={v} />
                   ))}
                   {(it.gallery || []).length > 0 && (
                     <div className="grid grid-cols-2 gap-3">
