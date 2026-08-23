@@ -320,12 +320,12 @@ export default function About() {
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {achievements.map((a, i) => (
-              <Reveal key={a.id} delay={i * 0.05}>
-                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black">
+              <Reveal key={a.id} delay={i * 0.05} className="h-full">
+                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black h-full flex flex-col">
                   {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
                   <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
                   {tr(a, 'description') && <RichContent html={tr(a, 'description')} className="text-sm text-black/70 mt-2 [&_a]:text-black [&_a]:underline" />}
-                  {a.date && <p className="text-xs text-black/50 mt-3">{new Date(a.date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { year: 'numeric', month: 'long' })}</p>}
+                  {a.date && <p className="text-xs text-black/50 mt-3 pt-3 mt-auto">{new Date(a.date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { year: 'numeric', month: 'long' })}</p>}
                 </div>
               </Reveal>
             ))}
@@ -337,7 +337,7 @@ export default function About() {
       {awards.length > 0 && (
         <section id="awards" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.awards')}</h2></Reveal>
-          <ul className="space-y-4">
+          <ul className="space-y-4 pl-6 md:pl-10">
             {awards.map((a, i) => (
               <Reveal key={a.id} delay={i * 0.05}>
                 <li className="pb-4 border-b border-neutral-100">
@@ -354,7 +354,7 @@ export default function About() {
       {certificates.length > 0 && (
         <section id="certificates" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.certificates')}</h2></Reveal>
-          <ul className="space-y-4">
+          <ul className="space-y-4 pl-6 md:pl-10">
             {certificates.map((c, i) => (
               <Reveal key={c.id} delay={i * 0.05}>
                 <li className="pb-4 border-b border-neutral-100 flex items-start gap-4">
