@@ -8,7 +8,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 
 export default function ProductDetail() {
   const { slug } = useParams();
-  const { tr, t } = useLang();
+  const { lang, tr, t } = useLang();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(0);
@@ -62,7 +62,7 @@ export default function ProductDetail() {
 
           {variants.length > 0 && (
             <div className="mt-8">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">Variants</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Warianty' : 'Variants'}</p>
               <div className="flex flex-wrap gap-2">
                 {variants.map((v, i) => (
                   <span key={i} className="px-3 py-1.5 rounded-full border border-neutral-300 text-sm">
@@ -80,7 +80,7 @@ export default function ProductDetail() {
             >
               {inStock ? <>{t('site.buyNow')} <ArrowUpRight className="w-4 h-4" /></> : t('site.outOfStock')}
             </Link>
-            {product.is_digital && <span className="text-sm text-neutral-500">Digital download</span>}
+            {product.is_digital && <span className="text-sm text-neutral-500">{lang === 'pl' ? 'Plik cyfrowy' : 'Digital download'}</span>}
           </div>
         </div>
       </div>

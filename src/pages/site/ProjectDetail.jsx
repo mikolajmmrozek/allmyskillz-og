@@ -64,7 +64,7 @@ export default function ProjectDetail() {
             {tr(project, 'title')}
           </h1>
         </Reveal>
-        {project.excerpt_en && (
+        {tr(project, 'excerpt') && (
           <Reveal delay={0.15}>
             <p className="mt-6 text-lg md:text-xl text-neutral-600 max-w-2xl leading-relaxed">{tr(project, 'excerpt')}</p>
           </Reveal>

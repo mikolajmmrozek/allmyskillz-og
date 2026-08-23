@@ -52,7 +52,7 @@ export default function Projects() {
                 <div className="mt-4 flex items-start justify-between gap-4">
                   <div>
                     <h3 className="font-display text-xl md:text-2xl tracking-tight">{tr(p, 'title')}</h3>
-                    {p.excerpt_en && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{tr(p, 'excerpt')}</p>}
+                    {tr(p, 'excerpt') && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{tr(p, 'excerpt')}</p>}
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-black shrink-0 transition" />
                 </div>

@@ -65,7 +65,7 @@ export default function OfferDetail() {
 
       <div className="px-5 md:px-10 py-16 grid md:grid-cols-2 gap-12 max-w-5xl">
         <Block title={t('site.about')}><RichContent html={tr(offer, 'description')} className="text-lg text-neutral-700 leading-relaxed" /></Block>
-        <Block title="Mission"><RichContent html={tr(offer, 'mission')} className="text-neutral-700 leading-relaxed" /></Block>
+        <Block title={lang === 'pl' ? 'Misja' : 'Mission'}><RichContent html={tr(offer, 'mission')} className="text-neutral-700 leading-relaxed" /></Block>
         <Block title={lang === 'pl' ? 'Czego się nauczysz' : 'What you learn'}><RichContent html={tr(offer, 'learn')} className="text-neutral-700 leading-relaxed" /></Block>
       </div>
 

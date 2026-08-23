@@ -59,7 +59,7 @@ export default function PostDetail() {
             {tr(post, 'title')}
           </h1>
         </Reveal>
-        {post.excerpt_en && <Reveal delay={0.1}><p className="text-lg md:text-xl text-neutral-600 mt-6 leading-relaxed">{tr(post, 'excerpt')}</p></Reveal>}
+        {tr(post, 'excerpt') && <Reveal delay={0.1}><p className="text-lg md:text-xl text-neutral-600 mt-6 leading-relaxed">{tr(post, 'excerpt')}</p></Reveal>}
         {tags.length > 0 && (
           <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1">
             {tags.map((tg) => <span key={tg.id} className="text-sm text-neutral-400">#{tr(tg, 'name').replace(/\s+/g, '')}</span>)}

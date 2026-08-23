@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Send } from 'lucide-react';
 
 export default function Contact() {
-  const { t } = useLang();
+  const { lang, tr, t } = useLang();
   const { settings } = useSite();
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
@@ -42,7 +42,7 @@ export default function Contact() {
         <div className="mt-10 space-y-4 text-sm">
           {settings?.email && <p><a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a></p>}
           {settings?.phone && <p><a href={`tel:${settings.phone}`} className="hover:underline">{settings.phone}</a></p>}
-          {settings?.address_en && <p className="text-neutral-500">{settings.address_en}</p>}
+          {tr(settings, 'address') && <p className="text-neutral-500">{tr(settings, 'address')}</p>}
         </div>
       </div>
 

@@ -61,7 +61,7 @@ export default function News() {
                   <span>{fmtDate(featured.published_date)}</span>
                 </div>
                 <h2 className="font-display text-3xl md:text-5xl lg:text-6xl tracking-[-0.02em] leading-[1.02]">{tr(featured, 'title')}</h2>
-                {featured.excerpt_en && <p className={`mt-4 max-w-xl ${featured.featured_image ? 'text-white/80' : 'text-black/70'}`}>{tr(featured, 'excerpt')}</p>}
+                {tr(featured, 'excerpt') && <p className={`mt-4 max-w-xl ${featured.featured_image ? 'text-white/80' : 'text-black/70'}`}>{tr(featured, 'excerpt')}</p>}
                 <span className="mt-6 inline-flex items-center gap-1 text-sm">{t('site.readMore')} →</span>
               </div>
             </Link>
@@ -82,7 +82,7 @@ export default function News() {
                     <span>{fmtDate(p.published_date)}</span>
                   </div>
                   <h3 className="font-display text-xl md:text-2xl tracking-tight mt-2 group-hover:underline">{tr(p, 'title')}</h3>
-                  {p.excerpt_en && <p className="text-sm text-neutral-500 mt-2 line-clamp-3">{tr(p, 'excerpt')}</p>}
+                  {tr(p, 'excerpt') && <p className="text-sm text-neutral-500 mt-2 line-clamp-3">{tr(p, 'excerpt')}</p>}
                 </Link>
               </Reveal>
             ))}

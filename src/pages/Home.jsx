@@ -157,7 +157,7 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.1} className="md:col-span-9">
             <p className="font-display text-2xl md:text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.12] max-w-4xl">
-              {tr(home, 'focus') || tr(settings, 'tagline') || 'A multidisciplinary artist exploring story, image and identity across mediums.'}
+              {tr(home, 'focus') || tr(settings, 'tagline') || (lang === 'pl' ? 'Artysta multidyscyplinarny badający relację między opowieścią, obrazem i tożsamością w różnych mediach.' : 'A multidisciplinary artist exploring story, image and identity across mediums.')}
             </p>
           </Reveal>
         </div>
@@ -190,7 +190,7 @@ export default function Home() {
                 <Reveal>
                   <p className="text-xs uppercase tracking-[0.24em] text-white/60 mb-3">{t('site.featuredWork')}</p>
                   <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-[16ch]">{tr(featured[0], 'title')}</h2>
-                  {featured[0].excerpt_en && <p className="mt-4 max-w-xl text-white/80">{tr(featured[0], 'excerpt')}</p>}
+                  {tr(featured[0], 'excerpt') && <p className="mt-4 max-w-xl text-white/80">{tr(featured[0], 'excerpt')}</p>}
                   <span className="mt-6 inline-flex items-center gap-1 text-sm">{t('site.readMore')} <ArrowUpRight className="w-4 h-4 transition group-hover:text-[var(--accent,#CBFF00)]" /></span>
                 </Reveal>
               </div>
@@ -207,7 +207,7 @@ export default function Home() {
                     <div className="mt-4 flex items-start justify-between gap-4">
                       <div>
                         <h3 className="font-display text-xl md:text-2xl tracking-tight">{tr(p, 'title')}</h3>
-                        {p.excerpt_en && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{tr(p, 'excerpt')}</p>}
+                        {tr(p, 'excerpt') && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{tr(p, 'excerpt')}</p>}
                       </div>
                       <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-[var(--accent,#CBFF00)] shrink-0 transition" />
                     </div>
@@ -263,7 +263,7 @@ export default function Home() {
                   )}
                   <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{fmtDate(p.published_date)}</p>
                   <h3 className="font-display text-xl tracking-tight mt-2 group-hover:underline">{tr(p, 'title')}</h3>
-                  {p.excerpt_en && <p className="text-sm text-neutral-500 mt-2 line-clamp-2">{tr(p, 'excerpt')}</p>}
+                  {tr(p, 'excerpt') && <p className="text-sm text-neutral-500 mt-2 line-clamp-2">{tr(p, 'excerpt')}</p>}
                 </Link>
               </Reveal>
             ))}
@@ -277,7 +277,7 @@ export default function Home() {
           <div className="mesh-bg absolute inset-0 opacity-50 pointer-events-none" />
           <div className="relative">
             <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-3xl mx-auto">
-              {tr(settings, 'tagline') || 'Let’s make something worth remembering.'}
+              {tr(settings, 'tagline') || (lang === 'pl' ? 'Stwórzmy coś, co warto zapamiętać.' : 'Let’s make something worth remembering.')}
             </h2>
             <Link to="/contact" className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-black text-white text-sm font-medium hover:opacity-90">
               {t('site.getInTouch')} <ArrowUpRight className="w-4 h-4" />
