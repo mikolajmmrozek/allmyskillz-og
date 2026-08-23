@@ -77,7 +77,8 @@ export default function About() {
     languages.length > 0 && { id: 'languages', label: t('about.languages') },
     skills.length > 0 && { id: 'skills', label: t('about.skills') },
     achievements.length > 0 && { id: 'achievements', label: t('about.achievements') },
-    (awards.length > 0 || certificates.length > 0) && { id: 'awards', label: t('about.awards') },
+    awards.length > 0 && { id: 'awards', label: t('about.awards') },
+    certificates.length > 0 && { id: 'certificates', label: t('about.certificates') },
   ].filter(Boolean);
 
   return (
@@ -332,42 +333,40 @@ export default function About() {
         </section>
       )}
 
-      {/* Awards + Certificates */}
-      {(awards.length > 0 || certificates.length > 0) && (
-        <section id="awards" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20 scroll-mt-20">
-          {awards.length > 0 && (
-            <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.awards')}</h2></Reveal>
-              <ul className="space-y-4">
-                {awards.map((a, i) => (
-                  <Reveal key={a.id} delay={i * 0.05}>
-                    <li className="pb-4 border-b border-neutral-100">
-                      <h3 className="font-medium">{tr(a, 'title')}</h3>
-                      <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
-                    </li>
-                  </Reveal>
-                ))}
-              </ul>
-            </div>
-          )}
-          {certificates.length > 0 && (
-            <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.certificates')}</h2></Reveal>
-              <ul className="space-y-4">
-                {certificates.map((c, i) => (
-                  <Reveal key={c.id} delay={i * 0.05}>
-                    <li className="pb-4 border-b border-neutral-100 flex items-start gap-4">
-                      {c.image && <Image src={c.image} fittingType="fill" className="w-12 h-12 rounded-lg shrink-0" />}
-                      <div>
-                        <h3 className="font-medium">{tr(c, 'title')}</h3>
-                        <p className="text-sm text-neutral-500">{c.issuer}{c.date ? ' · ' + new Date(c.date).getFullYear() : ''}</p>
-                      </div>
-                    </li>
-                  </Reveal>
-                ))}
-              </ul>
-            </div>
-          )}
+      {/* Awards */}
+      {awards.length > 0 && (
+        <section id="awards" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
+          <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.awards')}</h2></Reveal>
+          <ul className="space-y-4">
+            {awards.map((a, i) => (
+              <Reveal key={a.id} delay={i * 0.05}>
+                <li className="pb-4 border-b border-neutral-100">
+                  <h3 className="font-medium">{tr(a, 'title')}</h3>
+                  <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Certificates */}
+      {certificates.length > 0 && (
+        <section id="certificates" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
+          <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.certificates')}</h2></Reveal>
+          <ul className="space-y-4">
+            {certificates.map((c, i) => (
+              <Reveal key={c.id} delay={i * 0.05}>
+                <li className="pb-4 border-b border-neutral-100 flex items-start gap-4">
+                  {c.image && <Image src={c.image} fittingType="fill" className="w-12 h-12 rounded-lg shrink-0" />}
+                  <div>
+                    <h3 className="font-medium">{tr(c, 'title')}</h3>
+                    <p className="text-sm text-neutral-500">{c.issuer}{c.date ? ' · ' + new Date(c.date).getFullYear() : ''}</p>
+                  </div>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
         </section>
       )}
 
