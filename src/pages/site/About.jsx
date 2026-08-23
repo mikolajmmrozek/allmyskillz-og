@@ -265,7 +265,7 @@ export default function About() {
                   <h3 className="font-display text-lg tracking-tight">{tr(l, 'name')}</h3>
                   <p className="text-xs text-neutral-500 mt-1">{tr(l, 'level')}</p>
                   <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden mt-3">
-                    <div className="h-full bg-black rounded-full" style={{ width: `${l.proficiency || 0}%` }} />
+                    <div className="h-full bg-[var(--accent,#CBFF00)] rounded-full" style={{ width: `${l.proficiency || 0}%` }} />
                   </div>
                 </div>
               </Reveal>

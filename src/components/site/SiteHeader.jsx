@@ -6,12 +6,12 @@ import { SiteBrand } from './SiteLogo';
 import { Menu, X, Globe } from 'lucide-react';
 
 export default function SiteHeader() {
-  const { lang, setLang, t } = useLang();
+  const { lang, setLang, t, tr } = useLang();
   const { settings, nav } = useSite();
   const [open, setOpen] = useState(false);
   const loc = useLocation();
 
-  const links = [
+  const defaultLinks = [
     { to: '/about', label: t('site.about') },
     { to: '/projects', label: t('site.projects') },
     { to: '/offers', label: t('site.offers') },
@@ -19,6 +19,9 @@ export default function SiteHeader() {
     { to: '/shop', label: t('site.shop') },
     { to: '/contact', label: t('site.contact') },
   ];
+  const links = (nav && nav.length > 0)
+    ? nav.map((n) => ({ to: n.href, label: tr(n, 'label'), openInNewTab: n.open_in_new_tab }))
+    : defaultLinks;
 
   const isActive = (p) => loc.pathname === p || (p !== '/' && loc.pathname.startsWith(p));
 
@@ -28,16 +31,21 @@ export default function SiteHeader() {
         <SiteBrand size={34} nameClassName="text-lg" />
 
         <nav className="hidden md:flex items-center gap-7 text-sm">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`transition relative ${isActive(l.to) ? 'text-black font-medium' : 'text-neutral-500 hover:text-black'}`}
-            >
-              {l.label}
-              {isActive(l.to) && <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--accent,#CBFF00)] rounded-full" />}
-            </Link>
-          ))}
+          {links.map((l, i) => {
+            const external = /^https?:\/\//.test(l.to);
+            const cls = `transition relative ${isActive(l.to) ? 'text-black font-medium' : 'text-neutral-500 hover:text-black'}`;
+            const inner = (
+              <>
+                {l.label}
+                {isActive(l.to) && <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--accent,#CBFF00)] rounded-full" />}
+              </>
+            );
+            return external ? (
+              <a key={i} href={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} className={cls}>{l.label}</a>
+            ) : (
+              <Link key={i} to={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} className={cls}>{inner}</Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -58,16 +66,15 @@ export default function SiteHeader() {
       {open && (
         <div className="md:hidden border-t border-neutral-200 bg-[#FDFDFD]">
           <nav className="flex flex-col px-5 py-3">
-            {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                onClick={() => setOpen(false)}
-                className={`py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-black' : 'text-neutral-600'}`}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l, i) => {
+              const external = /^https?:\/\//.test(l.to);
+              const cls = `py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-black' : 'text-neutral-600'}`;
+              return external ? (
+                <a key={i} href={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} onClick={() => setOpen(false)} className={cls}>{l.label}</a>
+              ) : (
+                <Link key={i} to={l.to} onClick={() => setOpen(false)} className={cls}>{l.label}</Link>
+              );
+            })}
           </nav>
         </div>
       )}
