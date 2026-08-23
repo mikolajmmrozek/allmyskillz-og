@@ -8,6 +8,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
 import SiteLogo from '@/components/site/SiteLogo';
+import { ARTIST_NAME_LINES } from '@/lib/brand';
 import { ArrowUpRight, ArrowRight, MoveDown } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -42,8 +43,8 @@ export default function Home() {
     })();
   }, [home]);
 
-  const headline = tr(home, 'headline') || 'Living\nPortfolio.';
-  const lines = headline.split('\n');
+  // The name is a constant proper noun — never translated.
+  const lines = ARTIST_NAME_LINES;
   const heroVideo = home?.hero_video_url;
   const heroPoster = home?.hero_poster_url;
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -149,7 +150,10 @@ export default function Home() {
       <section className="px-5 md:px-10 py-20 md:py-28">
         <div className="grid md:grid-cols-12 gap-8 items-start">
           <Reveal className="md:col-span-3">
-            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400">{t('site.about')}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {t('site.about')}
+            </p>
           </Reveal>
           <Reveal delay={0.1} className="md:col-span-9">
             <p className="font-display text-2xl md:text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.12] max-w-4xl">
@@ -187,7 +191,7 @@ export default function Home() {
                   <p className="text-xs uppercase tracking-[0.24em] text-white/60 mb-3">{t('site.featuredWork')}</p>
                   <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-[16ch]">{tr(featured[0], 'title')}</h2>
                   {featured[0].excerpt_en && <p className="mt-4 max-w-xl text-white/80">{tr(featured[0], 'excerpt')}</p>}
-                  <span className="mt-6 inline-flex items-center gap-1 text-sm">{t('site.readMore')} <ArrowUpRight className="w-4 h-4" /></span>
+                  <span className="mt-6 inline-flex items-center gap-1 text-sm">{t('site.readMore')} <ArrowUpRight className="w-4 h-4 transition group-hover:text-[var(--accent,#CBFF00)]" /></span>
                 </Reveal>
               </div>
             </Link>
@@ -205,7 +209,7 @@ export default function Home() {
                         <h3 className="font-display text-xl md:text-2xl tracking-tight">{tr(p, 'title')}</h3>
                         {p.excerpt_en && <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{tr(p, 'excerpt')}</p>}
                       </div>
-                      <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-black shrink-0" />
+                      <ArrowUpRight className="w-5 h-5 text-neutral-400 group-hover:text-[var(--accent,#CBFF00)] shrink-0 transition" />
                     </div>
                   </Link>
                 </Reveal>
@@ -220,8 +224,8 @@ export default function Home() {
         <section className="px-5 md:px-10 py-20 md:py-28 bg-neutral-50">
           <div className="flex items-end justify-between mb-10">
             <Reveal><h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('site.offers')}</h2></Reveal>
-            <Link to="/offers" className="text-sm text-neutral-500 hover:text-black inline-flex items-center gap-1">
-              {t('site.viewAll')} <ArrowRight className="w-4 h-4" />
+            <Link to="/offers" className="text-sm text-neutral-500 hover:text-black inline-flex items-center gap-1 group/offers">
+              {t('site.viewAll')} <ArrowRight className="w-4 h-4 transition group-hover/offers:translate-x-0.5 group-hover/offers:text-[var(--accent,#CBFF00)]" />
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -244,8 +248,8 @@ export default function Home() {
         <section className="px-5 md:px-10 py-20 md:py-28">
           <div className="flex items-end justify-between mb-10">
             <Reveal><h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('site.latestNews')}</h2></Reveal>
-            <Link to="/news" className="text-sm text-neutral-500 hover:text-black inline-flex items-center gap-1">
-              {t('site.viewAll')} <ArrowRight className="w-4 h-4" />
+            <Link to="/news" className="text-sm text-neutral-500 hover:text-black inline-flex items-center gap-1 group/news">
+              {t('site.viewAll')} <ArrowRight className="w-4 h-4 transition group-hover/news:translate-x-0.5 group-hover/news:text-[var(--accent,#CBFF00)]" />
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-3">

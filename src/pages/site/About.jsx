@@ -57,7 +57,10 @@ export default function About() {
       <section className="px-5 md:px-10 pt-20 md:pt-32 pb-16">
         <div className="grid md:grid-cols-12 gap-8 items-end">
           <Reveal className="md:col-span-8">
-            <p className="text-xs uppercase tracking-[0.24em] text-neutral-500 mb-6">{t('site.about')}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-500 mb-6 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {t('site.about')}
+            </p>
             <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[12vw] md:text-[7vw] lg:text-[7rem] max-w-[14ch]">
               {tr(settings, 'tagline') || tr(home, 'headline') || 'About'}
             </h1>
@@ -141,7 +144,10 @@ export default function About() {
       {education.length > 0 && (
         <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
           <Reveal className="mb-10">
-            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{lang === 'pl' ? 'Kształcenie' : 'Foundation'}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {lang === 'pl' ? 'Kształcenie' : 'Foundation'}
+            </p>
             <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Edukacja' : 'Education'}</h2>
           </Reveal>
           <Timeline

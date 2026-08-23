@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
+import { ARTIST_NAME } from '@/lib/brand';
 import { Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
 
 export default function SiteFooter() {
@@ -52,7 +53,7 @@ export default function SiteFooter() {
           {socials.length > 0 && (
             <div className="flex gap-3 mt-5">
               {socials.map((s, i) => (
-                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-black hover:border-black transition">
+                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-black hover:border-[var(--accent,#CBFF00)] hover:bg-[var(--accent,#CBFF00)] transition">
                   <s.icon className="w-4 h-4" />
                 </a>
               ))}
@@ -61,7 +62,7 @@ export default function SiteFooter() {
         </div>
       </div>
       <div className="px-5 md:px-10 py-5 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-400">
-        <span>© {year} {lang === 'pl' ? settings.site_name_pl : settings.site_name_en}</span>
+        <span>© {year} {ARTIST_NAME}</span>
         <div className="flex items-center gap-4">
           <span>{t('site.rights')}</span>
           <Link to="/admin" className="hover:text-neutral-700 transition opacity-60 hover:opacity-100">Panel</Link>

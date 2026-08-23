@@ -32,10 +32,10 @@ export default function SiteHeader() {
             <Link
               key={l.to}
               to={l.to}
-              className={`transition relative ${isActive(l.to) ? 'text-black' : 'text-neutral-500 hover:text-black'}`}
+              className={`transition relative ${isActive(l.to) ? 'text-black font-medium' : 'text-neutral-500 hover:text-black'}`}
             >
               {l.label}
-              {isActive(l.to) && <span className="absolute -bottom-1 left-0 right-0 h-px bg-[var(--accent,#CBFF00)]" />}
+              {isActive(l.to) && <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--accent,#CBFF00)] rounded-full" />}
             </Link>
           ))}
         </nav>
