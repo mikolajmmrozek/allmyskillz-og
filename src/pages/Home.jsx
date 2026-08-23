@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useLang } from '@/lib/i18n';
+import { useAuth } from '@/lib/AuthContext';
 import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
@@ -15,6 +16,7 @@ const EASE = [0.22, 1, 0.36, 1];
 
 export default function Home() {
   const { lang, tr, t } = useLang();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
   const { home, settings, loading } = useSite();
   const [featured, setFeatured] = useState([]);
   const [achievements, setAchievements] = useState([]);
@@ -48,6 +50,14 @@ export default function Home() {
   const heroVideo = home?.hero_video_url;
   const heroPoster = home?.hero_poster_url;
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+  // Authenticated admins land on the panel — not the public homepage — when
+  // opening the app (incl. home-screen bookmarks on mobile). "View site" from
+  // the admin passes ?view=site to bypass this redirect.
+  const bypassRedirect = new URLSearchParams(window.location.search).get('view') === 'site';
+  if (isAuthenticated && !isLoadingAuth && !bypassRedirect) {
+    return <Navigate to="/admin" replace />;
+  }
 
   if (loading && !home) {
     return <div className="min-h-[60vh] flex items-center justify-center text-neutral-400">…</div>;

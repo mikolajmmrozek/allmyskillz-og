@@ -77,7 +77,7 @@ export default function AdminLayout() {
               <Globe className="w-3.5 h-3.5" />
               {!collapsed && <span className="uppercase">{lang}</span>}
             </button>
-            <Link to="/" target="_blank" className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-neutral-900 hover:bg-neutral-800 text-neutral-300">
+            <Link to="/?view=site" target="_blank" className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-neutral-900 hover:bg-neutral-800 text-neutral-300">
               <ExternalLink className="w-3.5 h-3.5" />
               {!collapsed && <span>{t('admin.view_site')}</span>}
             </Link>
