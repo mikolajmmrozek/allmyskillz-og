@@ -10,6 +10,7 @@ import { Reveal } from '@/components/site/Motion';
 import Timeline from '@/components/site/Timeline';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowUpRight } from 'lucide-react';
+import SectionNav from '@/components/site/SectionNav';
 
 export default function About() {
   const { lang, tr, t } = useLang();
@@ -70,8 +71,18 @@ export default function About() {
     }, {})
   );
 
+  const navSections = [
+    experience.length > 0 && { id: 'experience', label: t('about.experience') },
+    education.length > 0 && { id: 'education', label: t('about.education') },
+    languages.length > 0 && { id: 'languages', label: t('about.languages') },
+    skills.length > 0 && { id: 'skills', label: t('about.skills') },
+    achievements.length > 0 && { id: 'achievements', label: t('about.achievements') },
+    (awards.length > 0 || certificates.length > 0) && { id: 'awards', label: t('about.awards') },
+  ].filter(Boolean);
+
   return (
     <div>
+      <SectionNav sections={navSections} />
       {/* Story hero */}
       <section className="px-5 md:px-10 pt-20 md:pt-32 pb-16">
         <div className="grid md:grid-cols-12 gap-8 items-end">
@@ -103,7 +114,7 @@ export default function About() {
 
       {/* Experience */}
       {experience.length > 0 && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+        <section id="experience" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{t('about.journey')}</p>
             <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.experience')}</h2>
@@ -176,7 +187,7 @@ export default function About() {
 
       {/* Education */}
       {education.length > 0 && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+        <section id="education" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
@@ -238,7 +249,7 @@ export default function About() {
 
       {/* Languages — single row */}
       {languages.length > 0 && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+        <section id="languages" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
@@ -264,7 +275,7 @@ export default function About() {
 
       {/* Skills — grouped by category, 3 cols desktop / 2 tablet / 1 mobile */}
       {skills.length > 0 && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+        <section id="skills" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
@@ -298,7 +309,7 @@ export default function About() {
 
       {/* Achievements */}
       {achievements.length > 0 && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+        <section id="achievements" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 scroll-mt-20">
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
@@ -323,7 +334,7 @@ export default function About() {
 
       {/* Awards + Certificates */}
       {(awards.length > 0 || certificates.length > 0) && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20">
+        <section id="awards" className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20 scroll-mt-20">
           {awards.length > 0 && (
             <div>
               <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.awards')}</h2></Reveal>
