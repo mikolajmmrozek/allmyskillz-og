@@ -3,13 +3,24 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { collections } from '@/lib/entityRegistry';
 import { useLang } from '@/lib/i18n';
-import { Loader2, ArrowUpRight, Mail } from 'lucide-react';
+import { Loader2, ArrowUpRight, Mail, Pin } from 'lucide-react';
 
 export default function Dashboard() {
   const { t, lang } = useLang();
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [recentMessages, setRecentMessages] = useState([]);
+  const [pinned, setPinned] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dashboard_pinned') || '[]'); } catch { return []; }
+  });
+
+  const togglePin = (key) => {
+    setPinned((prev) => {
+      const next = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
+      localStorage.setItem('dashboard_pinned', JSON.stringify(next));
+      return next;
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -38,19 +49,49 @@ export default function Dashboard() {
       <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1">{t('admin.studio_title')}</h1>
       <p className="text-neutral-500 mb-10">{t('admin.studio_subtitle')}</p>
 
+      {pinned.length > 0 && (
+        <div className="mb-10">
+          <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Przypięte' : 'Pinned'}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {collections.filter((c) => !c.singleton && pinned.includes(c.key)).map((c) => {
+              const Icon = c.icon;
+              const count = stats[c.key] ?? 0;
+              return (
+                <div key={c.key} className="group relative p-5 bg-[#CBFF00] text-black border border-black rounded-2xl">
+                  <button onClick={() => togglePin(c.key)} className="absolute top-3 right-3 text-black/50 hover:text-black"><Pin className="w-4 h-4" /></button>
+                  <Link to={`/admin/collection/${c.key}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <Icon className="w-5 h-5" />
+                      <ArrowUpRight className="w-4 h-4" />
+                    </div>
+                    <p className="text-3xl font-semibold tracking-tight">{count}</p>
+                    <p className="text-xs text-black/70 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Wszystkie kolekcje' : 'All collections'}</p>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {collections.filter((c) => !c.singleton).map((c) => {
           const Icon = c.icon;
           const count = stats[c.key] ?? 0;
+          const isPinned = pinned.includes(c.key);
           return (
-            <Link key={c.key} to={`/admin/collection/${c.key}`} className="group p-5 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-900 transition">
-              <div className="flex items-center justify-between mb-3">
-                <Icon className="w-5 h-5 text-neutral-400 group-hover:text-black transition" />
-                <ArrowUpRight className="w-4 h-4 text-neutral-300 group-hover:text-black transition" />
-              </div>
-              <p className="text-3xl font-semibold tracking-tight">{count}</p>
-              <p className="text-xs text-neutral-500 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
-            </Link>
+            <div key={c.key} className="group relative p-5 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-900 transition">
+              <button onClick={() => togglePin(c.key)} className={`absolute top-3 right-3 transition ${isPinned ? 'text-black' : 'text-neutral-300 hover:text-neutral-600 opacity-0 group-hover:opacity-100'}`}><Pin className={`w-4 h-4 ${isPinned ? 'fill-current' : ''}`} /></button>
+              <Link to={`/admin/collection/${c.key}`}>
+                <div className="flex items-center justify-between mb-3">
+                  <Icon className="w-5 h-5 text-neutral-400 group-hover:text-black transition" />
+                  <ArrowUpRight className="w-4 h-4 text-neutral-300 group-hover:text-black transition" />
+                </div>
+                <p className="text-3xl font-semibold tracking-tight">{count}</p>
+                <p className="text-xs text-neutral-500 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
+              </Link>
+            </div>
           );
         })}
       </div>
