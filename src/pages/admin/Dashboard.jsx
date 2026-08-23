@@ -3,22 +3,26 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { collections } from '@/lib/entityRegistry';
 import { useLang } from '@/lib/i18n';
+import { useAuth } from '@/lib/AuthContext';
 import { Loader2, ArrowUpRight, Mail, Pin, Pencil } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 export default function Dashboard() {
   const { t, lang } = useLang();
+  const { user } = useAuth();
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [recentMessages, setRecentMessages] = useState([]);
-  const [pinned, setPinned] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('dashboard_pinned') || '[]'); } catch { return []; }
-  });
+  const [pinned, setPinned] = useState(() => Array.isArray(user?.dashboard_pinned) ? user.dashboard_pinned : []);
+
+  useEffect(() => {
+    if (Array.isArray(user?.dashboard_pinned)) setPinned(user.dashboard_pinned);
+  }, [user]);
 
   const togglePin = (key) => {
     setPinned((prev) => {
       const next = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
-      localStorage.setItem('dashboard_pinned', JSON.stringify(next));
+      base44.auth.updateMe({ dashboard_pinned: next }).catch(() => {});
       return next;
     });
   };

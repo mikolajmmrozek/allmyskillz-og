@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useLang } from '@/lib/i18n';
 import { useAuth } from '@/lib/AuthContext';
 import { useSite } from '@/components/site/SiteProvider';
+import { base44 } from '@/api/base44Client';
 import { fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
@@ -53,8 +54,17 @@ export default function Home() {
 
   // Authenticated admins land on the panel — not the public homepage — when
   // opening the app (incl. home-screen bookmarks on mobile). "View site" from
-  // the admin passes ?view=site to bypass this redirect.
+  // the admin passes ?view=site to bypass this redirect. The hard redirect
+  // below fires even on iOS cold starts where the in-memory auth state lags.
   const bypassRedirect = new URLSearchParams(window.location.search).get('view') === 'site';
+  useEffect(() => {
+    if (bypassRedirect) return;
+    let cancelled = false;
+    base44.auth.isAuthenticated().then((authed) => {
+      if (authed && !cancelled) window.location.replace('/admin');
+    });
+    return () => { cancelled = true; };
+  }, [bypassRedirect]);
   if (isAuthenticated && !isLoadingAuth && !bypassRedirect) {
     return <Navigate to="/admin" replace />;
   }
