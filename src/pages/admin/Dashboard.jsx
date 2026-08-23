@@ -6,7 +6,7 @@ import { useLang } from '@/lib/i18n';
 import { Loader2, ArrowUpRight, Mail } from 'lucide-react';
 
 export default function Dashboard() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [recentMessages, setRecentMessages] = useState([]);
@@ -35,8 +35,8 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 md:p-8 max-w-6xl">
-      <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1">Studio</h1>
-      <p className="text-neutral-500 mb-10">Your personal brand operating system.</p>
+      <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1">{t('admin.studio_title')}</h1>
+      <p className="text-neutral-500 mb-10">{t('admin.studio_subtitle')}</p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {collections.filter((c) => !c.singleton).map((c) => {
@@ -49,7 +49,7 @@ export default function Dashboard() {
                 <ArrowUpRight className="w-4 h-4 text-neutral-300 group-hover:text-black transition" />
               </div>
               <p className="text-3xl font-semibold tracking-tight">{count}</p>
-              <p className="text-xs text-neutral-500 mt-1">{c.key}</p>
+              <p className="text-xs text-neutral-500 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
             </Link>
           );
         })}
@@ -58,11 +58,11 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="p-6 bg-white border border-neutral-200 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold">Recent messages</h2>
-            <Link to="/admin/messages" className="text-xs text-neutral-500 hover:text-black">View all</Link>
+            <h2 className="font-semibold">{t('admin.recent_messages')}</h2>
+            <Link to="/admin/messages" className="text-xs text-neutral-500 hover:text-black">{t('admin.view_all')}</Link>
           </div>
           {recentMessages.length === 0 ? (
-            <p className="text-sm text-neutral-400 py-6 text-center">No messages yet.</p>
+            <p className="text-sm text-neutral-400 py-6 text-center">{t('admin.no_messages')}</p>
           ) : (
             <div className="space-y-3">
               {recentMessages.map((m) => (
@@ -80,13 +80,13 @@ export default function Dashboard() {
         </div>
 
         <div className="p-6 bg-neutral-900 text-white rounded-2xl">
-          <h2 className="font-semibold mb-2">Quick start</h2>
-          <p className="text-sm text-neutral-400 mb-4">Manage every piece of content from here. No code required.</p>
+          <h2 className="font-semibold mb-2">{t('admin.quick_start')}</h2>
+          <p className="text-sm text-neutral-400 mb-4">{t('admin.quick_start_desc')}</p>
           <div className="space-y-2">
-            <Link to="/admin/collection/Project/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">+ Add a project</Link>
-            <Link to="/admin/collection/Post/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">+ Write a news post</Link>
-            <Link to="/admin/homepage" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">+ Edit homepage</Link>
-            <Link to="/admin/settings" className="block px-4 py-3 bg-[#CBFF00] text-black rounded-lg text-sm font-medium hover:opacity-90 transition">Site settings</Link>
+            <Link to="/admin/collection/Project/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.add_project')}</Link>
+            <Link to="/admin/collection/Post/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.add_post')}</Link>
+            <Link to="/admin/homepage" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.edit_homepage')}</Link>
+            <Link to="/admin/settings" className="block px-4 py-3 bg-[#CBFF00] text-black rounded-lg text-sm font-medium hover:opacity-90 transition">{t('admin.site_settings_link')}</Link>
           </div>
         </div>
       </div>

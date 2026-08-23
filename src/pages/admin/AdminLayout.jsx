@@ -43,7 +43,7 @@ export default function AdminLayout() {
           <SidebarLink to="/admin" icon={LayoutDashboard} label={t('nav.dashboard')} collapsed={collapsed} end />
           <SidebarLink to="/admin/media" icon={Image} label={t('nav.media')} collapsed={collapsed} />
           <SidebarLink to="/admin/messages" icon={Mail} label={t('nav.messages')} collapsed={collapsed} />
-          <SidebarLink to="/admin/navigation" icon={Menu} label="Nawigacja" collapsed={collapsed} />
+          <SidebarLink to="/admin/navigation" icon={Menu} label={t('nav.navigation')} collapsed={collapsed} />
 
           {collectionGroups.map((group) => {
             // Collections with dedicated pages are linked above/in singletons — skip them here
@@ -62,7 +62,7 @@ export default function AdminLayout() {
                       className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[#CBFF00] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
-                      {!collapsed && <span className="truncate">{c.label_pl || c.key}</span>}
+                      {!collapsed && <span className="truncate">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</span>}
                     </NavLink>
                   );
                 })}

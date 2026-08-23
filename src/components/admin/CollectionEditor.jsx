@@ -64,7 +64,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   const navigate = useNavigate();
   const params = useParams();
   const id = recordId || params.id;
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const isNew = !id || id === 'new';
 
   const [schema, setSchema] = useState(null);
@@ -160,7 +160,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
       }
     } catch (e) {
       console.error(e);
-      alert(e?.message || 'Save failed');
+      alert(e?.message || t('admin.save_failed'));
     } finally {
       setSaving(false);
     }
@@ -193,7 +193,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
       if (onSaved) onSaved(updated);
     } catch (e) {
       console.error(e);
-      alert(e?.message || 'Reorder save failed');
+      alert(e?.message || t('admin.reorder_failed'));
     } finally {
       setSaving(false);
     }
@@ -208,16 +208,16 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
       <div className="flex items-center justify-between mb-8 sticky top-0 bg-neutral-50 z-10 -mx-4 md:-mx-8 px-4 md:px-8 py-4 border-b flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <button onClick={() => onSaved ? navigate('/admin') : navigate(`/admin/collection/${entityName}`)} className="p-2 rounded-lg hover:bg-neutral-200 text-neutral-600"><ArrowLeft className="w-4 h-4" /></button>
-          <h1 className="text-xl font-semibold">{isNew ? `New ${entityName}` : `Edit ${entityName}`}</h1>
+          <h1 className="text-xl font-semibold">{isNew ? `${t('admin.new_entity')} ${entityName}` : `${t('admin.edit_entity')} ${entityName}`}</h1>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex md:hidden gap-1">
             <button onClick={() => setMobileLang('pl')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'pl' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>PL</button>
             <button onClick={() => setMobileLang('en')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'en' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>EN</button>
           </div>
-          <Button variant="outline" onClick={() => navigate(`/admin/collection/${entityName}`)}>Cancel</Button>
+          <Button variant="outline" onClick={() => navigate(`/admin/collection/${entityName}`)}>{t('action.cancel')}</Button>
           <Button onClick={save} disabled={saving} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90">
-            {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+            {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} {t('action.save')}
           </Button>
         </div>
       </div>
@@ -278,6 +278,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
 }
 
 function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMultiple, onRemoveMediaItem, onReorderMedia, relationEntity, relationCache, loadRelation, form, setForm, field }) {
+  const { t } = useLang();
   // Always-safe effect: load related entity options when this is a relation field
   useEffect(() => {
     if ((kind === 'relation-single' || kind === 'relation-multi') && relationEntity) {
@@ -291,7 +292,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
     if (kind === 'relation-single') {
       return (
         <Select value={value || ''} onValueChange={onChange}>
-          <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t('admin.select_placeholder')} /></SelectTrigger>
           <SelectContent>
             {options.map((o) => <SelectItem key={o.id} value={o.id}>{o.title_en || o.name_en || o.label_en || o.company_en || o.company_pl || o.school_en || o.title || o.name || o.id}</SelectItem>)}
           </SelectContent>
@@ -302,7 +303,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
     const toggle = (oid) => onChange(selected.includes(oid) ? selected.filter((x) => x !== oid) : [...selected, oid]);
     return (
       <div className="flex flex-wrap gap-2 min-h-[40px] p-2 border rounded-lg">
-        {options.length === 0 && <span className="text-xs text-neutral-400">No {entity} records yet.</span>}
+        {options.length === 0 && <span className="text-xs text-neutral-400">{t('admin.no_records_entity')}</span>}
         {options.map((o) => {
           const sel = selected.includes(o.id);
           const label = o.title_en || o.name_en || o.label_en || o.company_en || o.company_pl || o.school_en || o.title || o.name || o.id;
@@ -321,8 +322,8 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
       <div className="flex items-center gap-3">
         {value ? <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" /> : <div className="w-20 h-20 rounded-lg border border-dashed flex items-center justify-center text-neutral-300"><ImageIcon className="w-6 h-6" /></div>}
         <div className="flex gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={onPickMedia}>Choose</Button>
-          {value && <Button type="button" variant="ghost" size="sm" onClick={() => onChange('')}>Clear</Button>}
+          <Button type="button" variant="outline" size="sm" onClick={onPickMedia}>{t('admin.choose')}</Button>
+           {value && <Button type="button" variant="ghost" size="sm" onClick={() => onChange('')}>{t('admin.clear')}</Button>}
         </div>
       </div>
     );
@@ -352,7 +353,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
                 {provided.placeholder}
                 <button type="button" onClick={() => onPickMediaMultiple?.()} className="w-20 h-20 rounded-lg border border-dashed flex flex-col items-center justify-center text-neutral-400 hover:border-neutral-400">
                   <Plus className="w-5 h-5" />
-                  <span className="text-[10px] mt-1">Add</span>
+                  <span className="text-[10px] mt-1">{t('admin.add')}</span>
                 </button>
               </div>
             )}
@@ -377,7 +378,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
   if (kind === 'enum') {
     return (
       <Select value={value || ''} onValueChange={onChange}>
-        <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+        <SelectTrigger><SelectValue placeholder={t('admin.select_placeholder')} /></SelectTrigger>
         <SelectContent>{prop.enum.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
       </Select>
     );
@@ -404,7 +405,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
             <Button type="button" variant="ghost" size="sm" onClick={() => onChange(arr.filter((_, i) => i !== idx))}><X className="w-4 h-4" /></Button>
           </div>
         ))}
-        <Button type="button" variant="outline" size="sm" onClick={() => onChange([...arr, ''])}><Plus className="w-4 h-4 mr-1" /> Add</Button>
+        <Button type="button" variant="outline" size="sm" onClick={() => onChange([...arr, ''])}><Plus className="w-4 h-4 mr-1" /> {t('admin.add')}</Button>
       </div>
     );
   }
@@ -416,6 +417,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
 
 // Repeatable sub-form for array-of-objects (e.g. variants, FAQ)
 function ObjectListEditor({ prop, value, onChange }) {
+  const { t } = useLang();
   const itemProps = prop.items?.properties || {};
   const arr = Array.isArray(value) ? value : [];
   const update = (idx, key, val) => {
@@ -442,7 +444,7 @@ function ObjectListEditor({ prop, value, onChange }) {
           </div>
         </div>
       ))}
-      <Button type="button" variant="outline" size="sm" onClick={add}><Plus className="w-4 h-4 mr-1" /> Add item</Button>
+      <Button type="button" variant="outline" size="sm" onClick={add}><Plus className="w-4 h-4 mr-1" /> {t('admin.add_item')}</Button>
     </div>
   );
 }

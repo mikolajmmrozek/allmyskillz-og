@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
 import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 export default function MediaLibrary() {
   const [items, setItems] = useState([]);
@@ -12,6 +13,7 @@ export default function MediaLibrary() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState('');
   const [showGen, setShowGen] = useState(false);
+  const { t } = useLang();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -43,7 +45,7 @@ export default function MediaLibrary() {
   };
 
   const remove = async (id) => {
-    if (!confirm('Remove this media item?')) return;
+    if (!confirm(t('admin.confirm_remove_media'))) return;
     await base44.entities.MediaItem.delete(id);
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
@@ -54,20 +56,20 @@ export default function MediaLibrary() {
     <div className="p-4 md:p-8 max-w-6xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Media Library</h1>
-          <p className="text-sm text-neutral-500 mt-1">{items.length} files · reusable across the site</p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('admin.media_library')}</h1>
+          <p className="text-sm text-neutral-500 mt-1">{items.length} {t('admin.media_count_suffix')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowGen((v) => !v)}
             className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition ${showGen ? 'bg-black text-white border-black' : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400'}`}
           >
-            <Sparkles className="w-4 h-4" /> Generate
+            <Sparkles className="w-4 h-4" /> {t('admin.generate')}
           </button>
           <label className="cursor-pointer">
             <input type="file" multiple className="hidden" onChange={handleUpload} />
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} Upload
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} {t('admin.upload')}
             </span>
           </label>
         </div>
@@ -77,7 +79,7 @@ export default function MediaLibrary() {
         <div className="mb-6 max-w-md border border-neutral-200 rounded-2xl p-4 bg-neutral-50/50">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-neutral-500" />
-            <h2 className="text-sm font-semibold">AI Media Generation</h2>
+            <h2 className="text-sm font-semibold">{t('admin.ai_media_gen')}</h2>
           </div>
           <GenerateMedia onSaved={(created) => setItems((prev) => [created, ...prev])} />
         </div>
@@ -85,7 +87,7 @@ export default function MediaLibrary() {
 
       <div className="relative max-w-sm mb-5">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-        <Input className="pl-9" placeholder="Search media…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Input className="pl-9" placeholder={t('admin.search_media')} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
       {loading ? (
@@ -93,7 +95,7 @@ export default function MediaLibrary() {
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-neutral-400 border border-dashed rounded-2xl">
           <ImageIcon className="w-10 h-10 mb-3" />
-          <p className="text-sm">No media yet.</p>
+          <p className="text-sm">{t('admin.no_media')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

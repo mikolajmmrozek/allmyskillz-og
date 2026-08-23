@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import CollectionEditor from '@/components/admin/CollectionEditor';
 import { Loader2 } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 // Singleton wrapper: finds the single SiteSetting record (or lets the editor create it)
 export default function Settings() {
   const [recordId, setRecordId] = useState(undefined);
   const [loading, setLoading] = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     (async () => {
@@ -22,8 +24,8 @@ export default function Settings() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl">
-      <h1 className="text-3xl font-semibold tracking-tight mb-1">Site Settings</h1>
-      <p className="text-sm text-neutral-500 mb-8">Global configuration, SEO defaults & social links.</p>
+      <h1 className="text-3xl font-semibold tracking-tight mb-1">{t('admin.settings_title')}</h1>
+      <p className="text-sm text-neutral-500 mb-8">{t('admin.settings_desc')}</p>
       <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} />
     </div>
   );

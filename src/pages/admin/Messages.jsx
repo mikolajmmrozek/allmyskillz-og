@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Loader2, Mail, MailOpen, Archive, Trash2 } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 export default function Messages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
+  const { t } = useLang();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -29,7 +31,7 @@ export default function Messages() {
   };
 
   const remove = async (id) => {
-    if (!confirm('Delete this message?')) return;
+    if (!confirm(t('admin.confirm_delete_message'))) return;
     await base44.entities.ContactMessage.delete(id);
     setMessages((prev) => prev.filter((m) => m.id !== id));
   };
@@ -38,15 +40,15 @@ export default function Messages() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl">
-      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-1">Messages</h1>
-      <p className="text-sm text-neutral-500 mb-8">{visible.length} active · forwarded to your email</p>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-1">{t('admin.messages_title')}</h1>
+      <p className="text-sm text-neutral-500 mb-8">{visible.length} {t('admin.messages_count_suffix')}</p>
 
       {loading ? (
         <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>
       ) : visible.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-neutral-400 border border-dashed rounded-2xl">
           <Mail className="w-10 h-10 mb-3" />
-          <p className="text-sm">No messages yet.</p>
+          <p className="text-sm">{t('admin.no_messages')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -66,15 +68,15 @@ export default function Messages() {
               {expanded === m.id && (
                 <div className="px-4 pb-4 pt-1 border-t border-neutral-100">
                   <div className="flex flex-wrap gap-4 text-xs text-neutral-500 mb-3">
-                    <span><strong className="text-neutral-700">Email:</strong> {m.email}</span>
-                    {m.phone && <span><strong className="text-neutral-700">Phone:</strong> {m.phone}</span>}
-                    {m.subject && <span><strong className="text-neutral-700">Subject:</strong> {m.subject}</span>}
+                    <span><strong className="text-neutral-700">{t('admin.email_label')}:</strong> {m.email}</span>
+                     {m.phone && <span><strong className="text-neutral-700">{t('admin.phone_label')}:</strong> {m.phone}</span>}
+                     {m.subject && <span><strong className="text-neutral-700">{t('admin.subject_label')}:</strong> {m.subject}</span>}
                   </div>
                   <p className="text-sm text-neutral-700 whitespace-pre-wrap">{m.message}</p>
                   <div className="flex gap-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => markRead(m.id, m.is_read)}>{m.is_read ? 'Mark unread' : 'Mark read'}</Button>
-                    <Button variant="outline" size="sm" onClick={() => archive(m.id)}><Archive className="w-3.5 h-3.5 mr-1" /> Archive</Button>
-                    <Button variant="ghost" size="sm" className="text-red-500" onClick={() => remove(m.id)}><Trash2 className="w-3.5 h-3.5 mr-1" /> Delete</Button>
+                    <Button variant="outline" size="sm" onClick={() => markRead(m.id, m.is_read)}>{m.is_read ? t('admin.mark_unread') : t('admin.mark_read')}</Button>
+                     <Button variant="outline" size="sm" onClick={() => archive(m.id)}><Archive className="w-3.5 h-3.5 mr-1" /> {t('admin.archive_btn')}</Button>
+                     <Button variant="ghost" size="sm" className="text-red-500" onClick={() => remove(m.id)}><Trash2 className="w-3.5 h-3.5 mr-1" /> {t('admin.delete_btn')}</Button>
                   </div>
                 </div>
               )}

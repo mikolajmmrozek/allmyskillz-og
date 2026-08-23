@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles, Save, Plus, Film, Image as ImageIcon, Check } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 const pill = (active) =>
   `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
@@ -19,6 +20,7 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null); // { url, type }
   const [saved, setSaved] = useState(false);
+  const { t } = useLang();
 
   const generate = async () => {
     if (!prompt.trim()) return;
@@ -32,7 +34,7 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
         setResult({ url: res.url, type: 'video' });
       }
     } catch (e) {
-      alert(e?.message || 'Generation failed');
+      alert(e?.message || t('admin.generation_failed'));
     } finally {
       setBusy(false);
     }
@@ -41,12 +43,12 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
   const save = async () => {
     if (!result) return;
     try {
-      const title = prompt.trim().slice(0, 80) || (mode === 'image' ? 'Generated image' : 'Generated video');
+      const title = prompt.trim().slice(0, 80) || (mode === 'image' ? t('admin.generated_image') : t('admin.generated_video'));
       const created = await base44.entities.MediaItem.create({ title, type: result.type, url: result.url });
       setSaved(true);
       onSaved?.(created);
     } catch (e) {
-      alert(e?.message || 'Save failed');
+      alert(e?.message || t('admin.save_failed'));
     }
   };
 
@@ -54,15 +56,15 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
     <div className="space-y-3">
       <div className="flex gap-2">
         <button type="button" onClick={() => { setMode('image'); setResult(null); setSaved(false); }} className={pill(mode === 'image')}>
-          <ImageIcon className="w-3.5 h-3.5" /> Image
+          <ImageIcon className="w-3.5 h-3.5" /> {t('admin.image_mode')}
         </button>
         <button type="button" onClick={() => { setMode('video'); setResult(null); setSaved(false); }} className={pill(mode === 'video')}>
-          <Film className="w-3.5 h-3.5" /> Video
+          <Film className="w-3.5 h-3.5" /> {t('admin.video_mode')}
         </button>
       </div>
 
       <Textarea
-        placeholder={mode === 'image' ? 'Describe the image to generate…' : 'Describe the video to generate…'}
+        placeholder={mode === 'image' ? t('admin.describe_image') : t('admin.describe_video')}
         rows={compact ? 2 : 3}
         value={prompt}
         onChange={(e) => { setPrompt(e.target.value); setSaved(false); }}
@@ -78,11 +80,11 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
 
       <Button type="button" onClick={generate} disabled={busy || !prompt.trim()} className="w-full bg-[#CBFF00] text-black hover:opacity-90">
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-        {busy ? (mode === 'video' ? 'Generating video…' : 'Generating…') : 'Generate'}
+        {busy ? (mode === 'video' ? t('admin.generating_video') : t('admin.generating')) : t('admin.generate')}
       </Button>
 
       {busy && mode === 'video' && (
-        <p className="text-xs text-neutral-400">Video generation takes about 30–60 seconds…</p>
+        <p className="text-xs text-neutral-400">{t('admin.video_gen_time')}</p>
       )}
 
       {result && (
@@ -92,11 +94,11 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
             : <video src={result.url} controls className="w-full rounded-lg bg-black" />}
           <div className="flex gap-2">
             <Button type="button" size="sm" variant="outline" onClick={save} disabled={saved} className="flex-1">
-              {saved ? <><Check className="w-4 h-4" /> Saved</> : <><Save className="w-4 h-4" /> Save to library</>}
+              {saved ? <><Check className="w-4 h-4" /> {t('admin.saved')}</> : <><Save className="w-4 h-4" /> {t('admin.save_to_library')}</>}
             </Button>
             {onInsert && (
               <Button type="button" size="sm" onClick={() => onInsert(result.url, null)} className="flex-1 bg-black text-white hover:opacity-90">
-                <Plus className="w-4 h-4" /> Insert
+                <Plus className="w-4 h-4" /> {t('admin.insert')}
               </Button>
             )}
           </div>

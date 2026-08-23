@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
 import { Image as ImageIcon, Upload, Link2, Loader2, Check, Sparkles } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 // Reusable media picker: browse MediaItem library or upload a new file.
 // onPick(url, mediaItem?) => called when user selects.
@@ -16,6 +17,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
   const [selected, setSelected] = useState(allowMultiple ? [] : null);
   const [externalUrl, setExternalUrl] = useState('');
   const [tab, setTab] = useState('library');
+  const { t } = useLang();
 
   // Reset selection whenever the dialog opens or the multiple/single mode
   // changes. Without this, opening single first (selected=null) then multiple
@@ -84,7 +86,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Media Library</DialogTitle>
+          <DialogTitle>{t('admin.media_library')}</DialogTitle>
         </DialogHeader>
         <div className="flex gap-2 items-center pb-3 border-b">
           <div className="flex gap-1.5">
@@ -93,14 +95,14 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
               onClick={() => setTab('library')}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${tab === 'library' ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'}`}
             >
-              Library
+              {t('admin.library_tab')}
             </button>
             <button
               type="button"
               onClick={() => setTab('generate')}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition ${tab === 'generate' ? 'bg-black text-white border-black' : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'}`}
             >
-              <Sparkles className="w-3.5 h-3.5" /> Generate
+              <Sparkles className="w-3.5 h-3.5" /> {t('admin.generate')}
             </button>
           </div>
           {tab === 'library' && (
@@ -108,13 +110,13 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
               <input type="file" className="hidden" onChange={handleUpload} />
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                Upload
+                {t('admin.upload')}
               </span>
             </label>
           )}
           {tab === 'library' && (
             <div className="flex gap-2 flex-1">
-              <Input placeholder="Paste external URL…" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} />
+              <Input placeholder={t('admin.paste_url')} value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} />
               <Button variant="outline" size="sm" onClick={handleAddExternal}><Link2 className="w-4 h-4" /></Button>
             </div>
           )}
@@ -140,7 +142,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
           ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-neutral-400">
               <ImageIcon className="w-10 h-10 mb-3" />
-              <p className="text-sm">No media yet. Upload your first file.</p>
+              <p className="text-sm">{t('admin.no_media_upload')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 py-3">
@@ -175,10 +177,10 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
         )}
         {allowMultiple && (
           <div className="flex justify-between items-center pt-3 border-t">
-            <span className="text-sm text-neutral-500">{(Array.isArray(selected) ? selected : []).length} selected</span>
+            <span className="text-sm text-neutral-500">{(Array.isArray(selected) ? selected : []).length} {t('admin.selected')}</span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
-              <Button size="sm" onClick={confirmMultiple} disabled={(Array.isArray(selected) ? selected : []).length === 0}>Insert</Button>
+              <Button variant="outline" size="sm" onClick={onClose}>{t('action.cancel')}</Button>
+              <Button size="sm" onClick={confirmMultiple} disabled={(Array.isArray(selected) ? selected : []).length === 0}>{t('admin.insert')}</Button>
             </div>
           </div>
         )}

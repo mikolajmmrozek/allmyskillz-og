@@ -3,10 +3,12 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
 
 export default function Navigation() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLang();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -47,10 +49,10 @@ export default function Navigation() {
     <div className="p-4 md:p-8 max-w-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Navigation</h1>
-          <p className="text-sm text-neutral-500 mt-1">Drag-free reorder with up/down controls.</p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('admin.navigation_title')}</h1>
+          <p className="text-sm text-neutral-500 mt-1">{t('admin.navigation_desc')}</p>
         </div>
-        <Button onClick={add} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto"><Plus className="w-4 h-4 mr-1" /> Add link</Button>
+        <Button onClick={add} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto"><Plus className="w-4 h-4 mr-1" /> {t('admin.add_link')}</Button>
       </div>
 
       {loading ? (
@@ -66,13 +68,13 @@ export default function Navigation() {
                 </div>
                 <button onClick={() => remove(it.id)} className="sm:hidden p-2 text-red-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
               </div>
-              <Input className="flex-1 min-w-0" placeholder="Label (EN)" value={it.label_en || ''} onChange={(e) => update(it.id, { label_en: e.target.value })} />
-              <Input className="flex-1 min-w-0" placeholder="Label (PL)" value={it.label_pl || ''} onChange={(e) => update(it.id, { label_pl: e.target.value })} />
-              <Input className="flex-1 min-w-0" placeholder="/path" value={it.href || ''} onChange={(e) => update(it.id, { href: e.target.value })} />
+              <Input className="flex-1 min-w-0" placeholder={t('admin.label_en_ph')} value={it.label_en || ''} onChange={(e) => update(it.id, { label_en: e.target.value })} />
+               <Input className="flex-1 min-w-0" placeholder={t('admin.label_pl_ph')} value={it.label_pl || ''} onChange={(e) => update(it.id, { label_pl: e.target.value })} />
+               <Input className="flex-1 min-w-0" placeholder={t('admin.path_ph')} value={it.href || ''} onChange={(e) => update(it.id, { href: e.target.value })} />
               <button onClick={() => remove(it.id)} className="hidden sm:block p-2 text-red-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
             </div>
           ))}
-          {items.length === 0 && <p className="text-sm text-neutral-400 text-center py-12">No navigation items yet.</p>}
+          {items.length === 0 && <p className="text-sm text-neutral-400 text-center py-12">{t('admin.no_nav_items')}</p>}
         </div>
       )}
     </div>

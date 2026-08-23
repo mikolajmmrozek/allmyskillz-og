@@ -17,27 +17,9 @@ const statusColors = {
   read: 'bg-neutral-200 text-neutral-600',
 };
 
-const fieldLabels = {
-  title_en: 'Tytuł', school_en: 'Szkoła', degree_en: 'Stopień',
-  company_en: 'Firma', position_en: 'Stanowisko', name_en: 'Nazwa',
-  category_en: 'Kategoria', level: 'Poziom', level_en: 'Poziom',
-  proficiency: 'Biegłość', issuer: 'Wydawca', date: 'Data',
-  start_year: 'Od', end_year: 'Do', featured: 'Wyróżnione',
-  status: 'Status', slug: 'Slug', price: 'Cena', stock: 'Stan',
-  is_digital: 'Cyfrowy', metric: 'Metryka', website: 'Strona',
-  sort_order: 'Kolejność', published_date: 'Data publikacji',
-  href: 'Link', label_en: 'Etykieta', site_name_en: 'Nazwa strony',
-  headline_en: 'Nagłówek', email: 'E-mail', type: 'Typ',
-  cover_image: 'Okładka', image: 'Obraz', logo_url: 'Logo',
-};
-
-const filterLabels = {
-  all: 'Wszystkie', draft: 'Szkice', published: 'Opublikowane', archived: 'Zarchiwizowane',
-};
-
 export default function CollectionList({ entityName }) {
   const navigate = useNavigate();
-  const { t, tr } = useLang();
+  const { t, tr, lang } = useLang();
   const col = getCollection(entityName);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,7 +64,7 @@ export default function CollectionList({ entityName }) {
   };
 
   const remove = async (id) => {
-    if (!confirm('Trwale usunąć ten rekord?')) return;
+    if (!confirm(t('admin.confirm_delete_record'))) return;
     await base44.entities[entityName].delete(id);
     setRecords((prev) => prev.filter((r) => r.id !== id));
   };
@@ -91,8 +73,8 @@ export default function CollectionList({ entityName }) {
     <div className="p-4 md:p-8 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{col.label_pl || col.key}</h1>
-          <p className="text-sm text-neutral-500 mt-1">{filtered.length} {filtered.length === 1 ? 'rekord' : filtered.length >= 2 && filtered.length <= 4 ? 'rekordy' : 'rekordów'}</p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{lang === 'pl' ? (col.label_pl || col.key) : col.key}</h1>
+          <p className="text-sm text-neutral-500 mt-1">{filtered.length} {filtered.length === 1 ? t('records.one') : t('records.many')}</p>
         </div>
         <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-1" /> {t('action.new')}
@@ -111,7 +93,7 @@ export default function CollectionList({ entityName }) {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 text-xs rounded-md transition whitespace-nowrap ${statusFilter === s ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'}`}
             >
-              {filterLabels[s] || s}
+              {t('filter.' + s)}
             </button>
           ))}
         </div>
@@ -167,9 +149,9 @@ export default function CollectionList({ entityName }) {
               <thead>
                 <tr className="border-b border-neutral-200 bg-neutral-50">
                   {col.list.map((f) => (
-                    <th key={f} className="text-left text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">{fieldLabels[f] || f.replace(/_en$/, '').replace(/_/g, ' ')}</th>
+                    <th key={f} className="text-left text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">{(() => { const l = t('field.' + f); return l === 'field.' + f ? f.replace(/_en$/, '').replace(/_/g, ' ') : l; })()}</th>
                     ))}
-                    <th className="text-right text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">Akcje</th>
+                    <th className="text-right text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">{t('admin.actions')}</th>
                 </tr>
               </thead>
               <tbody>
