@@ -51,16 +51,22 @@ export default function Dashboard() {
       <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1">{t('admin.studio_title')}</h1>
       <p className="text-neutral-500 mb-10">{t('admin.studio_subtitle')}</p>
 
-      {pinned.length > 0 && (
-        <div className="mb-10">
-          <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Przypięte' : 'Pinned'}</p>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{lang === 'pl' ? 'Przypięte' : 'Pinned'}</p>
+          <button onClick={() => setEditOpen(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-black transition">
+            <Pencil className="w-3.5 h-3.5" />
+            {lang === 'pl' ? 'Edytuj' : 'Edit'}
+          </button>
+        </div>
+        {pinned.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {collections.filter((c) => !c.singleton && pinned.includes(c.key)).map((c) => {
               const Icon = c.icon;
               const count = stats[c.key] ?? 0;
               return (
                 <div key={c.key} className="group relative p-5 bg-[#CBFF00] text-black border border-black rounded-2xl">
-                  <button onClick={() => togglePin(c.key)} className="absolute top-3 right-3 text-black/50 hover:text-black"><Pin className="w-4 h-4" /></button>
+                  <button onClick={() => togglePin(c.key)} className="absolute top-3 right-3 text-black/50 hover:text-black"><Pin className="w-4 h-4 fill-current" /></button>
                   <Link to={`/admin/collection/${c.key}`}>
                     <div className="flex items-center justify-between mb-3">
                       <Icon className="w-5 h-5" />
@@ -73,35 +79,11 @@ export default function Dashboard() {
               );
             })}
           </div>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{lang === 'pl' ? 'Wszystkie kolekcje' : 'All collections'}</p>
-        <button onClick={() => setEditOpen(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-black transition">
-          <Pencil className="w-3.5 h-3.5" />
-          {lang === 'pl' ? 'Edytuj' : 'Edit'}
-        </button>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        {collections.filter((c) => !c.singleton).map((c) => {
-          const Icon = c.icon;
-          const count = stats[c.key] ?? 0;
-          const isPinned = pinned.includes(c.key);
-          return (
-            <div key={c.key} className="group relative p-5 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-900 transition">
-              <button onClick={() => togglePin(c.key)} className={`absolute top-3 right-3 transition ${isPinned ? 'text-black' : 'text-neutral-300 hover:text-neutral-600 opacity-0 group-hover:opacity-100'}`}><Pin className={`w-4 h-4 ${isPinned ? 'fill-current' : ''}`} /></button>
-              <Link to={`/admin/collection/${c.key}`}>
-                <div className="flex items-center justify-between mb-3">
-                  <Icon className="w-5 h-5 text-neutral-400 group-hover:text-black transition" />
-                  <ArrowUpRight className="w-4 h-4 text-neutral-300 group-hover:text-black transition" />
-                </div>
-                <p className="text-3xl font-semibold tracking-tight">{count}</p>
-                <p className="text-xs text-neutral-500 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
-              </Link>
-            </div>
-          );
-        })}
+        ) : (
+          <button onClick={() => setEditOpen(true)} className="w-full p-8 bg-white border border-dashed border-neutral-300 rounded-2xl text-sm text-neutral-500 hover:border-neutral-900 hover:text-black transition">
+            {lang === 'pl' ? 'Brak przypiętych kolekcji — kliknij, aby wybrać.' : 'No pinned collections — click to choose.'}
+          </button>
+        )}
       </div>
 
       <Sheet open={editOpen} onOpenChange={setEditOpen}>
