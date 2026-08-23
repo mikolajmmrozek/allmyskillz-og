@@ -47,18 +47,21 @@ export default function News() {
         <>
           {/* Featured article */}
           {featured && (
-            <Link to={`/news/${featured.slug}`} className="group mt-16 block relative rounded-3xl overflow-hidden bg-neutral-100">
+            <Link
+              to={`/news/${featured.slug}`}
+              className={`group mt-16 block relative rounded-3xl overflow-hidden ${featured.featured_image ? 'bg-neutral-100' : 'bg-[var(--accent,#CBFF00)]'}`}
+            >
               <div className="aspect-[16/10] md:aspect-[16/8]">
                 {featured.featured_image && <ParallaxImage src={featured.featured_image} className="absolute inset-0 h-full w-full" strength={6} />}
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6 md:p-12 text-white max-w-3xl">
-                <div className="flex items-center gap-3 mb-4 text-[11px] uppercase tracking-[0.18em] text-white/70">
+              {featured.featured_image && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />}
+              <div className={`absolute bottom-0 left-0 p-6 md:p-12 max-w-3xl ${featured.featured_image ? 'text-white' : 'text-black'}`}>
+                <div className={`flex items-center gap-3 mb-4 text-[11px] uppercase tracking-[0.18em] ${featured.featured_image ? 'text-white/70' : 'text-black/60'}`}>
                   {catName(featured.category_id) && <span>{catName(featured.category_id)}</span>}
                   <span>{fmtDate(featured.published_date)}</span>
                 </div>
                 <h2 className="font-display text-3xl md:text-5xl lg:text-6xl tracking-[-0.02em] leading-[1.02]">{tr(featured, 'title')}</h2>
-                {featured.excerpt_en && <p className="text-white/80 mt-4 max-w-xl">{tr(featured, 'excerpt')}</p>}
+                {featured.excerpt_en && <p className={`mt-4 max-w-xl ${featured.featured_image ? 'text-white/80' : 'text-black/70'}`}>{tr(featured, 'excerpt')}</p>}
                 <span className="mt-6 inline-flex items-center gap-1 text-sm">{t('site.readMore')} →</span>
               </div>
             </Link>
