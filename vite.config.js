@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   optimizeDeps: {
-    include: ['@hello-pangea/dnd']
+    include: ['@hello-pangea/dnd', 'react-quill']
   },
   plugins: [
     base44({
