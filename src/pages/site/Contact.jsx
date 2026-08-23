@@ -5,7 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
+import TikTokIcon from '@/components/site/TikTokIcon';
 
 export default function Contact() {
   const { lang, tr, t } = useLang();
@@ -14,6 +15,14 @@ export default function Contact() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+
+  const socials = [
+    { url: settings?.instagram, icon: Instagram },
+    { url: settings?.linkedin, icon: Linkedin },
+    { url: settings?.youtube, icon: Youtube },
+    { url: settings?.facebook, icon: Facebook },
+    { url: settings?.tiktok, icon: TikTokIcon },
+  ].filter((s) => s.url);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -39,10 +48,21 @@ export default function Contact() {
         <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[12vw] md:text-[7vw] lg:text-[6.5rem]">
           {t('site.getInTouch')}
         </h1>
-        <div className="mt-10 space-y-4 text-sm">
-          {settings?.email && <p><a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a></p>}
-          {settings?.phone && <p><a href={`tel:${settings.phone}`} className="hover:underline">{settings.phone}</a></p>}
-          {tr(settings, 'address') && <p className="text-neutral-500">{tr(settings, 'address')}</p>}
+        <div className="mt-10 rounded-2xl bg-[#CBFF00] p-6 md:p-8 text-black">
+          <div className="space-y-3 text-sm">
+            {settings?.email && <p><a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a></p>}
+            {settings?.phone && <p><a href={`tel:${settings.phone}`} className="hover:underline">{settings.phone}</a></p>}
+            {tr(settings, 'address') && <p className="text-black/70">{tr(settings, 'address')}</p>}
+          </div>
+          {socials.length > 0 && (
+            <div className="flex gap-3 mt-5">
+              {socials.map((s, i) => (
+                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-[#CBFF00] hover:bg-black/80 transition">
+                  <s.icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
