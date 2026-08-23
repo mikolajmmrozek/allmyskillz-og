@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { collections } from '@/lib/entityRegistry';
 import { useLang } from '@/lib/i18n';
-import { Loader2, ArrowUpRight, Mail, Pin } from 'lucide-react';
+import { Loader2, ArrowUpRight, Mail, Pin, Pencil } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 export default function Dashboard() {
   const { t, lang } = useLang();
@@ -21,6 +22,7 @@ export default function Dashboard() {
       return next;
     });
   };
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -74,7 +76,13 @@ export default function Dashboard() {
         </div>
       )}
 
-      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Wszystkie kolekcje' : 'All collections'}</p>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{lang === 'pl' ? 'Wszystkie kolekcje' : 'All collections'}</p>
+        <button onClick={() => setEditOpen(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-black transition">
+          <Pencil className="w-3.5 h-3.5" />
+          {lang === 'pl' ? 'Edytuj' : 'Edit'}
+        </button>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {collections.filter((c) => !c.singleton).map((c) => {
           const Icon = c.icon;
@@ -95,6 +103,31 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      <Sheet open={editOpen} onOpenChange={setEditOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>{lang === 'pl' ? 'Edytuj pulpit' : 'Edit dashboard'}</SheetTitle>
+            <SheetDescription>{lang === 'pl' ? 'Wybierz kolekcje do przypięcia na górze pulpitu.' : 'Choose collections to pin at the top of the dashboard.'}</SheetDescription>
+          </SheetHeader>
+          <div className="flex flex-wrap gap-2 mt-6">
+            {collections.filter((c) => !c.singleton).map((c) => {
+              const Icon = c.icon;
+              const isPinned = pinned.includes(c.key);
+              return (
+                <button
+                  key={c.key}
+                  onClick={() => togglePin(c.key)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition ${isPinned ? 'bg-[#CBFF00] border-black text-black' : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900 hover:text-black'}`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {lang === 'pl' ? (c.label_pl || c.key) : c.key}
+                </button>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="p-6 bg-white border border-neutral-200 rounded-2xl">
