@@ -318,14 +318,14 @@ export default function About() {
             </p>
             <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.achievements')}</h2>
           </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [&>*]:mb-6">
             {achievements.map((a, i) => (
-              <Reveal key={a.id} delay={i * 0.05} className="h-full">
-                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black h-full flex flex-col">
+              <Reveal key={a.id} delay={i * 0.05}>
+                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black break-inside-avoid">
                   {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
                   <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
                   {tr(a, 'description') && <RichContent html={tr(a, 'description')} className="text-sm text-black/70 mt-2 [&_a]:text-black [&_a]:underline" />}
-                  {a.date && <p className="text-xs text-black/50 mt-3 pt-3 mt-auto">{new Date(a.date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { year: 'numeric', month: 'long' })}</p>}
+                  {a.date && <p className="text-xs text-black/50 mt-3 pt-3">{new Date(a.date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { year: 'numeric', month: 'long' })}</p>}
                 </div>
               </Reveal>
             ))}
