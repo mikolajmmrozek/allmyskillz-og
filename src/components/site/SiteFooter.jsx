@@ -42,25 +42,28 @@ export default function SiteFooter() {
             <li><Link to="/offers" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.offers')}</Link></li>
             <li><Link to="/news" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.news')}</Link></li>
             <li><Link to="/shop" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.shop')}</Link></li>
+            <li><Link to="/contact" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.contact')}</Link></li>
           </ul>
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-neutral-500 mb-4">{t('site.contact')}</p>
-          <ul className="space-y-2.5 text-sm">
-            {settings.email && <li><a href={`mailto:${settings.email}`} className="text-neutral-400 hover:text-[#CBFF00] transition">{settings.email}</a></li>}
-            {settings.phone && <li><a href={`tel:${settings.phone}`} className="text-neutral-400 hover:text-[#CBFF00] transition">{settings.phone}</a></li>}
-            {settings.address_en && <li className="text-neutral-400">{lang === 'pl' ? settings.address_pl : settings.address_en}</li>}
-          </ul>
-          {socials.length > 0 && (
-            <div className="flex gap-3 mt-5">
-              {socials.map((s, i) => (
-                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 hover:text-black hover:bg-[#CBFF00] hover:border-[#CBFF00] transition">
-                  <s.icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
-          )}
+          <div className="rounded-2xl bg-[#CBFF00] p-6 text-black">
+            <p className="text-xs uppercase tracking-[0.18em] text-black/60 mb-4">{t('site.contact')}</p>
+            <ul className="space-y-2.5 text-sm">
+              {settings.email && <li><a href={`mailto:${settings.email}`} className="text-black/80 hover:text-black transition">{settings.email}</a></li>}
+              {settings.phone && <li><a href={`tel:${settings.phone}`} className="text-black/80 hover:text-black transition">{settings.phone}</a></li>}
+              {settings.address_en && <li className="text-black/80">{lang === 'pl' ? settings.address_pl : settings.address_en}</li>}
+            </ul>
+            {socials.length > 0 && (
+              <div className="flex gap-3 mt-5">
+                {socials.map((s, i) => (
+                  <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-black flex items-center justify-center text-[#CBFF00] hover:bg-black/80 transition">
+                    <s.icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="px-5 md:px-10 py-5 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-500">
