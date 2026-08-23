@@ -109,6 +109,22 @@
       "title": "Tags",
       "relation": "Tag"
     },
+    "seo_title_pl": {
+      "type": "string",
+      "title": "SEO Title (PL)"
+    },
+    "seo_title_en": {
+      "type": "string",
+      "title": "SEO Title (EN)"
+    },
+    "seo_description_pl": {
+      "type": "string",
+      "title": "SEO Description (PL)"
+    },
+    "seo_description_en": {
+      "type": "string",
+      "title": "SEO Description (EN)"
+    },
     "featured": {
       "type": "boolean",
       "title": "Featured",

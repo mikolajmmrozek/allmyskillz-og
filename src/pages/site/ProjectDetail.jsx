@@ -8,6 +8,7 @@ import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -15,6 +16,13 @@ export default function ProjectDetail() {
   const [project, setProject] = useState(null);
   const [related, setRelated] = useState({ achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] });
   const [loading, setLoading] = useState(true);
+
+  useSEO({
+    title: project && (tr(project, 'seo_title') || tr(project, 'title')),
+    description: project && (tr(project, 'seo_description') || tr(project, 'excerpt')),
+    image: project?.cover_image,
+    url: typeof window !== 'undefined' ? window.location.href : undefined,
+  });
 
   useEffect(() => {
     setLoading(true);
