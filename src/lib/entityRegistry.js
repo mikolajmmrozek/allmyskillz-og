@@ -22,7 +22,7 @@ export const collections = [
   { key: 'Certificate', group: 'biography', icon: ScrollText, primary: 'title_en', list: ['title_en', 'issuer', 'date', 'status'] },
   { key: 'Language', group: 'biography', icon: Languages, primary: 'name_en', list: ['name_en', 'level_en', 'proficiency', 'status'] },
 
-  { key: 'Project', group: 'work', icon: FolderKanban, primary: 'title_en', list: ['title_en', 'slug', 'featured', 'status'] },
+  { key: 'Project', group: 'work', icon: FolderKanban, primary: 'title_en', list: ['title_en', 'featured', 'status'] },
   { key: 'Achievement', group: 'work', icon: Trophy, primary: 'title_en', list: ['title_en', 'metric', 'date', 'status'] },
   { key: 'Award', group: 'work', icon: Award, primary: 'title_en', list: ['title_en', 'issuer', 'date', 'status'] },
   { key: 'Partner', group: 'work', icon: Handshake, primary: 'name_en', list: ['name_en', 'website', 'status'] },

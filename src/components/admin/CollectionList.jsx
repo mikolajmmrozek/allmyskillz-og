@@ -6,7 +6,7 @@ import { getCollection } from '@/lib/entityRegistry';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Pencil, Copy, Trash2, Archive, Send, EyeOff, Loader2 } from 'lucide-react';
+import { Search, Plus, Pencil, Copy, Trash2, Archive, Send, EyeOff, Loader2, Star } from 'lucide-react';
 
 const statusColors = {
   draft: 'bg-neutral-200 text-neutral-600',
@@ -101,49 +101,86 @@ export default function CollectionList({ entityName }) {
           <p className="text-sm mt-1">{t('empty.subtitle')}</p>
         </div>
       ) : (
-        <div className="border border-neutral-200 rounded-xl overflow-x-auto bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200 bg-neutral-50">
-                {col.list.map((f) => (
-                  <th key={f} className="text-left text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">{f.replace(/_en$/, '').replace(/_/g, ' ')}</th>
-                ))}
-                <th className="text-right text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60 transition">
-                  {col.list.map((f) => (
-                    <td key={f} className="px-4 py-3 text-sm">
-                      {f === 'status' ? (
-                        <span className={`inline-flex px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColors[r[f]] || 'bg-neutral-200'}`}>{r[f]}</span>
-                      ) : f === 'featured' || f === 'is_digital' ? (
-                        r[f] ? <span className="text-[#CBFF00]">●</span> : <span className="text-neutral-300">○</span>
-                      ) : f === 'price' ? (
-                        r[f] != null ? `${r[f]} ${r.currency || ''}`.trim() : '—'
-                      ) : f === 'cover_image' || f === 'image' || f === 'logo_url' ? (
-                        r[f] ? <img src={r[f]} className="w-10 h-10 object-cover rounded" alt="" /> : <span className="text-neutral-300">—</span>
-                      ) : (
-                        <span className="text-neutral-700">{String(r[f] ?? '—').slice(0, 60)}</span>
+        <>
+          {/* Mobile cards */}
+          <div className="md:hidden divide-y divide-neutral-100 border border-neutral-200 rounded-xl bg-white overflow-hidden">
+            {filtered.map((r) => {
+              const titleField = col.list[0];
+              const titleVal = r[titleField] ?? '—';
+              const hasFeatured = col.list.includes('featured');
+              const hasStatus = col.list.includes('status');
+              const imgField = col.list.find((f) => ['cover_image', 'image', 'logo_url'].includes(f));
+              const extraFields = col.list.filter((f) => f !== titleField && f !== 'featured' && f !== 'status' && f !== imgField);
+              return (
+                <div key={r.id} className="flex items-start gap-3 p-4">
+                  {imgField && r[imgField] ? <img src={r[imgField]} className="w-10 h-10 rounded-lg object-cover shrink-0" alt="" /> : null}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{String(titleVal).slice(0, 80)}</p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      {hasFeatured && r.featured && <Star className="w-3.5 h-3.5 fill-[#CBFF00] text-[#CBFF00] shrink-0" />}
+                      {hasStatus && r.status && (
+                        <span className={`inline-flex px-1.5 py-0.5 text-[10px] font-medium rounded-full ${statusColors[r.status] || 'bg-neutral-200'}`}>{t(`status.${r.status}`)}</span>
                       )}
-                    </td>
-                  ))}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
-                      <button onClick={() => duplicate(r)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.duplicate')}><Copy className="w-4 h-4" /></button>
-                      {r.status === 'draft' && <button onClick={() => updateStatus(r.id, 'published')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.publish')}><Send className="w-4 h-4" /></button>}
-                      {r.status === 'published' && <button onClick={() => updateStatus(r.id, 'draft')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.unpublish')}><EyeOff className="w-4 h-4" /></button>}
-                      <button onClick={() => updateStatus(r.id, 'archived')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.archive')}><Archive className="w-4 h-4" /></button>
-                      <button onClick={() => remove(r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500" title={t('action.delete')}><Trash2 className="w-4 h-4" /></button>
+                      {extraFields.slice(0, 1).map((f) => (
+                        r[f] != null && r[f] !== '' ? <span key={f} className="text-[11px] text-neutral-400 truncate">{f === 'price' ? `${r[f]} ${r.currency || ''}`.trim() : String(r[f]).slice(0, 30)}</span> : null
+                      ))}
                     </div>
-                  </td>
+                  </div>
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
+                    {r.status === 'draft' && <button onClick={() => updateStatus(r.id, 'published')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.publish')}><Send className="w-4 h-4" /></button>}
+                    {r.status === 'published' && <button onClick={() => updateStatus(r.id, 'draft')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.unpublish')}><EyeOff className="w-4 h-4" /></button>}
+                    <button onClick={() => remove(r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500" title={t('action.delete')}><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Desktop table */}
+          <div className="hidden md:block border border-neutral-200 rounded-xl overflow-x-auto bg-white">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-neutral-200 bg-neutral-50">
+                  {col.list.map((f) => (
+                    <th key={f} className="text-left text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">{f.replace(/_en$/, '').replace(/_/g, ' ')}</th>
+                  ))}
+                  <th className="text-right text-xs font-medium text-neutral-500 uppercase tracking-wider px-4 py-3">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60 transition">
+                    {col.list.map((f) => (
+                      <td key={f} className="px-4 py-3 text-sm">
+                        {f === 'status' ? (
+                          <span className={`inline-flex px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColors[r[f]] || 'bg-neutral-200'}`}>{t(`status.${r[f]}`)}</span>
+                        ) : f === 'featured' || f === 'is_digital' ? (
+                          r[f] ? <Star className="w-3.5 h-3.5 fill-[#CBFF00] text-[#CBFF00]" /> : <span className="text-neutral-300">○</span>
+                        ) : f === 'price' ? (
+                          r[f] != null ? `${r[f]} ${r.currency || ''}`.trim() : '—'
+                        ) : f === 'cover_image' || f === 'image' || f === 'logo_url' ? (
+                          r[f] ? <img src={r[f]} className="w-10 h-10 object-cover rounded" alt="" /> : <span className="text-neutral-300">—</span>
+                        ) : (
+                          <span className="text-neutral-700">{String(r[f] ?? '—').slice(0, 60)}</span>
+                        )}
+                      </td>
+                    ))}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
+                        <button onClick={() => duplicate(r)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.duplicate')}><Copy className="w-4 h-4" /></button>
+                        {r.status === 'draft' && <button onClick={() => updateStatus(r.id, 'published')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.publish')}><Send className="w-4 h-4" /></button>}
+                        {r.status === 'published' && <button onClick={() => updateStatus(r.id, 'draft')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.unpublish')}><EyeOff className="w-4 h-4" /></button>}
+                        <button onClick={() => updateStatus(r.id, 'archived')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.archive')}><Archive className="w-4 h-4" /></button>
+                        <button onClick={() => remove(r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500" title={t('action.delete')}><Trash2 className="w-4 h-4" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );
