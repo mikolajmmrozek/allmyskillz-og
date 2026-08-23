@@ -8,6 +8,7 @@ import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
 
 export default function PostDetail() {
   const { slug } = useParams();
@@ -17,6 +18,13 @@ export default function PostDetail() {
   const [tags, setTags] = useState([]);
   const [more, setMore] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useSEO({
+    title: post && (tr(post, 'seo_title') || tr(post, 'title')),
+    description: post && (tr(post, 'seo_description') || tr(post, 'excerpt')),
+    image: post?.featured_image,
+    url: typeof window !== 'undefined' ? window.location.href : undefined,
+  });
 
   useEffect(() => {
     setLoading(true);
