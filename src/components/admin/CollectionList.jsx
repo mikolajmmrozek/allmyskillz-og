@@ -64,28 +64,28 @@ export default function CollectionList({ entityName }) {
   };
 
   return (
-    <div className="p-8 max-w-7xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8 max-w-7xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{col.key}</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{col.key}</h1>
           <p className="text-sm text-neutral-500 mt-1">{filtered.length} {filtered.length === 1 ? 'record' : 'records'}</p>
         </div>
-        <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90">
+        <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-1" /> {t('action.new')}
         </Button>
       </div>
 
-      <div className="flex gap-3 mb-5">
+      <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <Input className="pl-9" placeholder={t('action.search')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 overflow-x-auto">
           {['all', 'draft', 'published', 'archived'].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 text-xs rounded-md capitalize transition ${statusFilter === s ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'}`}
+              className={`px-3 py-1.5 text-xs rounded-md capitalize transition whitespace-nowrap ${statusFilter === s ? 'bg-neutral-900 text-white' : 'text-neutral-500 hover:bg-neutral-100'}`}
             >
               {s}
             </button>
@@ -101,7 +101,7 @@ export default function CollectionList({ entityName }) {
           <p className="text-sm mt-1">{t('empty.subtitle')}</p>
         </div>
       ) : (
-        <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white">
+        <div className="border border-neutral-200 rounded-xl overflow-x-auto bg-white">
           <table className="w-full">
             <thead>
               <tr className="border-b border-neutral-200 bg-neutral-50">

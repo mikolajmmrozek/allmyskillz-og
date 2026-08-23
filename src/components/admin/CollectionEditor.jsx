@@ -73,6 +73,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [relationCache, setRelationCache] = useState({});
   const [mediaPicker, setMediaPicker] = useState({ open: false, field: null, multiple: false });
+  const [mobileLang, setMobileLang] = useState('pl');
 
   const groups = useMemo(() => (schema ? buildGroups(schema.properties) : []), [schema]);
 
@@ -203,13 +204,17 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   }
 
   return (
-    <div className="p-8 max-w-4xl pb-32">
-      <div className="flex items-center justify-between mb-8 sticky top-0 bg-neutral-50 z-10 -mx-8 px-8 py-4 border-b">
+    <div className="p-4 md:p-8 max-w-4xl pb-32">
+      <div className="flex items-center justify-between mb-8 sticky top-0 bg-neutral-50 z-10 -mx-4 md:-mx-8 px-4 md:px-8 py-4 border-b flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <button onClick={() => onSaved ? navigate('/admin') : navigate(`/admin/collection/${entityName}`)} className="p-2 rounded-lg hover:bg-neutral-200 text-neutral-600"><ArrowLeft className="w-4 h-4" /></button>
           <h1 className="text-xl font-semibold">{isNew ? `New ${entityName}` : `Edit ${entityName}`}</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex md:hidden gap-1">
+            <button onClick={() => setMobileLang('pl')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'pl' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>PL</button>
+            <button onClick={() => setMobileLang('en')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'en' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>EN</button>
+          </div>
           <Button variant="outline" onClick={() => navigate(`/admin/collection/${entityName}`)}>Cancel</Button>
           <Button onClick={save} disabled={saving} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90">
             {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
@@ -224,12 +229,12 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
             return (
               <div key={group.base}>
                 <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-3 block">{group.base.replace(/_/g, ' ')}</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={mobileLang === 'en' ? 'hidden md:block' : ''}>
                     <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">POLSKI</span>
                     <FieldRenderer kind={kind} prop={group.prop} value={form[group.plKey]} onChange={(v) => set(group.plKey, v)} onPickMedia={() => openMediaPicker(group.plKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
                   </div>
-                  <div>
+                  <div className={mobileLang === 'pl' ? 'hidden md:block' : ''}>
                     <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">ENGLISH</span>
                     <FieldRenderer kind={kind} prop={group.prop} value={form[group.enKey]} onChange={(v) => set(group.enKey, v)} onPickMedia={() => openMediaPicker(group.enKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
                   </div>
@@ -425,7 +430,7 @@ function ObjectListEditor({ prop, value, onChange }) {
       {arr.map((obj, idx) => (
         <div key={idx} className="border rounded-lg p-3 bg-neutral-50/50 relative">
           <button type="button" onClick={() => remove(idx)} className="absolute top-2 right-2 p-1 text-red-400 hover:text-red-600"><X className="w-4 h-4" /></button>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {Object.entries(itemProps).map(([k, p]) => (
               <div key={k}>
                 <span className="text-[10px] text-neutral-400 mb-0.5 block">{k.replace(/_/g, ' ')}</span>

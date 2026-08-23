@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useLang } from '@/lib/i18n';
 import { collections, collectionGroups, getCollection } from '@/lib/entityRegistry';
-import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight, X } from 'lucide-react';
 import { SiteLogo } from '@/components/site/SiteLogo';
 import { ARTIST_NAME } from '@/lib/brand';
 
@@ -14,22 +14,32 @@ export default function AdminLayout() {
   const { lang, setLang, t } = useLang();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => { logout(); };
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-neutral-200 flex">
+      {/* Mobile top bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-[#0C0C0C] border-b border-neutral-800">
+        <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Menu className="w-5 h-5" /></button>
+        <span className="font-semibold text-white text-sm tracking-tight">{ARTIST_NAME}</span>
+        <button onClick={() => setLang(lang === 'en' ? 'pl' : 'en')} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Globe className="w-4 h-4" /></button>
+      </div>
+      {/* Mobile backdrop */}
+      {mobileOpen && <div className="md:hidden fixed inset-0 z-40 bg-black/60" onClick={() => setMobileOpen(false)} />}
       {/* Sidebar */}
-      <aside className={`${collapsed ? 'w-16' : 'w-64'} shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] sticky top-0 h-screen`}>
+      <aside className={`${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${collapsed ? 'md:w-16' : 'md:w-64'} w-64 shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] fixed md:sticky top-0 h-screen z-50 md:z-auto`}>
         <div className="p-4 flex items-center gap-2 border-b border-neutral-800/80">
           <SiteLogo size={32} tone="light" className="shrink-0" />
           {!collapsed && <span className="font-semibold text-white tracking-tight">{ARTIST_NAME}</span>}
-          <button onClick={() => setCollapsed(!collapsed)} className="ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
+          <button onClick={() => setMobileOpen(false)} className="md:hidden ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500"><X className="w-4 h-4" /></button>
+          <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
             <ChevronRight className={`w-4 h-4 transition ${collapsed ? '' : 'rotate-180'}`} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-3">
+        <nav className="flex-1 overflow-y-auto py-3" onClick={() => setMobileOpen(false)}>
           <SidebarLink to="/admin" icon={LayoutDashboard} label={t('nav.dashboard')} collapsed={collapsed} end />
           <SidebarLink to="/admin/media" icon={Image} label={t('nav.media')} collapsed={collapsed} />
           <SidebarLink to="/admin/messages" icon={Mail} label={t('nav.messages')} collapsed={collapsed} />
@@ -90,7 +100,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 min-w-0 bg-[#FDFDFD] text-neutral-900 overflow-x-hidden">
+      <main className="flex-1 min-w-0 bg-[#FDFDFD] text-neutral-900 overflow-x-hidden pt-14 md:pt-0">
         <Outlet />
       </main>
     </div>

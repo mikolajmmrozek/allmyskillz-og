@@ -51,10 +51,10 @@ export default function MediaLibrary() {
   const filtered = items.filter((i) => !search || i.title?.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="p-8 max-w-6xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8 max-w-6xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Media Library</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Media Library</h1>
           <p className="text-sm text-neutral-500 mt-1">{items.length} files · reusable across the site</p>
         </div>
         <div className="flex items-center gap-2">

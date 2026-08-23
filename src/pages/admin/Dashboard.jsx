@@ -34,8 +34,8 @@ export default function Dashboard() {
   if (loading) return <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>;
 
   return (
-    <div className="p-8 max-w-6xl">
-      <h1 className="text-4xl font-semibold tracking-tight mb-1">Studio</h1>
+    <div className="p-4 md:p-8 max-w-6xl">
+      <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1">Studio</h1>
       <p className="text-neutral-500 mb-10">Your personal brand operating system.</p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">

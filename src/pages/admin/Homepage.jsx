@@ -21,7 +21,7 @@ export default function Homepage() {
   if (loading) return <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>;
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-4xl">
       <h1 className="text-3xl font-semibold tracking-tight mb-1">Homepage</h1>
       <p className="text-sm text-neutral-500 mb-8">Hero, intro, featured projects & workshop announcements.</p>
       <CollectionEditor entityName="HomepageConfig" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} />

@@ -37,8 +37,8 @@ export default function Messages() {
   const visible = messages.filter((m) => m.status !== 'archived');
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-3xl font-semibold tracking-tight mb-1">Messages</h1>
+    <div className="p-4 md:p-8 max-w-4xl">
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-1">Messages</h1>
       <p className="text-sm text-neutral-500 mb-8">{visible.length} active · forwarded to your email</p>
 
       {loading ? (
@@ -61,7 +61,7 @@ export default function Messages() {
                   </div>
                   <p className="text-xs text-neutral-500 truncate">{m.subject || m.message}</p>
                 </div>
-                <span className="text-xs text-neutral-400 shrink-0">{m.email}</span>
+                <span className="text-xs text-neutral-400 shrink-0 hidden sm:block">{m.email}</span>
               </button>
               {expanded === m.id && (
                 <div className="px-4 pb-4 pt-1 border-t border-neutral-100">
