@@ -75,7 +75,7 @@ function buildSrcSet(parsed, options) {
 const ImageWrapper = React.forwardRef(({ aspectRatio, className, style, children }, ref) => (
   <span
     ref={ref}
-    className={cn("inline-block relative", className)}
+    className={cn("block relative", className)}
     style={{ aspectRatio, ...style }}
   >
     {children}
@@ -202,7 +202,7 @@ const Image = React.forwardRef(
       // click-to-edit toolbar keys its "Replace Image" action off the DOM
       // tag being `img`, so a placeholder div would be unrecoverable in the
       // editor. FALLBACK_IMAGE_URL doubles as the "no image chosen" graphic.
-      return <img ref={ref} src={FALLBACK_IMAGE_URL} {...imageProps} data-empty-image />
+      return <img ref={ref} src={FALLBACK_IMAGE_URL} {...imageProps} className={cn(fittingType === "fit" ? "object-contain" : "object-cover", imageProps.className)} data-empty-image />
     }
 
     // The fallback renders as a plain <img> so a broken upload can't cascade
@@ -212,7 +212,7 @@ const Image = React.forwardRef(
     if (!parsed) {
       const isErrorUrl = imgSrc === FALLBACK_IMAGE_URL
       return (
-        <img ref={ref} src={imgSrc} {...imageProps} data-error-image={isErrorUrl || undefined} />
+        <img ref={ref} src={imgSrc} {...imageProps} className={cn(fittingType === "fit" ? "object-contain" : "object-cover", imageProps.className)} data-error-image={isErrorUrl || undefined} />
       )
     }
 
