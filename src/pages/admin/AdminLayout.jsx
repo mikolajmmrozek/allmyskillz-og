@@ -5,6 +5,7 @@ import { useLang } from '@/lib/i18n';
 import { collections, collectionGroups, getCollection } from '@/lib/entityRegistry';
 import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight } from 'lucide-react';
 import { SiteLogo } from '@/components/site/SiteLogo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 const ICON_MAP = { LayoutDashboard, Image, Settings, Mail, Menu };
 
@@ -22,7 +23,7 @@ export default function AdminLayout() {
       <aside className={`${collapsed ? 'w-16' : 'w-64'} shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] sticky top-0 h-screen`}>
         <div className="p-4 flex items-center gap-2 border-b border-neutral-800/80">
           <SiteLogo size={32} tone="light" className="shrink-0" />
-          {!collapsed && <span className="font-semibold text-white tracking-tight">Studio</span>}
+          {!collapsed && <span className="font-semibold text-white tracking-tight">{ARTIST_NAME}</span>}
           <button onClick={() => setCollapsed(!collapsed)} className="ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
             <ChevronRight className={`w-4 h-4 transition ${collapsed ? '' : 'rotate-180'}`} />
           </button>
@@ -48,7 +49,7 @@ export default function AdminLayout() {
                     <NavLink
                       key={c.key}
                       to={c.singleton ? `/admin/${c.key === 'SiteSetting' ? 'settings' : c.key === 'HomepageConfig' ? 'homepage' : c.key.toLowerCase()}` : `/admin/collection/${c.key}`}
-                      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-neutral-800/60 text-white' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+                      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
                       {!collapsed && <span className="truncate">{c.key}</span>}
@@ -101,7 +102,7 @@ function SidebarLink({ to, icon: Icon, label, collapsed, end }) {
     <NavLink
       to={to}
       end={end}
-      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-neutral-800/60 text-white' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
     >
       <Icon className="w-4 h-4 shrink-0" />
       {!collapsed && <span>{label}</span>}

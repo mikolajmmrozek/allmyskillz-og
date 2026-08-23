@@ -115,19 +115,21 @@ export default function About() {
                       <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Projekty' : 'Projects'}</p>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {(projectsByExp[it.id] || []).map((p) => (
-                          <Link key={p.id} to={`/projects/${p.slug}`} className="group rounded-xl overflow-hidden border border-neutral-200 hover:border-black transition">
+                          <Link key={p.id} to={`/projects/${p.slug}`} className={`group rounded-xl overflow-hidden border transition ${p.cover_image ? 'border-neutral-200 bg-white hover:border-black' : 'border-black/10 bg-[var(--accent,#CBFF00)] hover:border-black'}`}>
                             {p.cover_image ? (
                               <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
                                 <Image src={p.cover_image} fittingType="fill" className="w-full h-full transition-transform duration-500 group-hover:scale-105" />
                               </div>
                             ) : (
-                              <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center">
-                                <span className="text-xs text-neutral-300">{lang === 'pl' ? 'Brak zdjęcia' : 'No image'}</span>
+                              <div className="aspect-[4/3] bg-[var(--accent,#CBFF00)] flex items-center justify-center p-3">
+                                <span className="text-xs font-semibold text-black text-center line-clamp-3">{tr(p, 'title')}</span>
                               </div>
                             )}
-                            <div className="p-2">
-                              <p className="text-xs font-medium truncate">{tr(p, 'title')}</p>
-                            </div>
+                            {p.cover_image && (
+                              <div className="p-2">
+                                <p className="text-xs font-medium truncate">{tr(p, 'title')}</p>
+                              </div>
+                            )}
                           </Link>
                         ))}
                       </div>
@@ -270,13 +272,18 @@ export default function About() {
         </section>
       )}
 
-      {/* CTA */}
+      {/* CTA — accent field */}
       <section className="px-5 md:px-10 py-20 md:py-28">
-        <Link to="/projects" className="group block">
-          <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{t('site.projects')}</p>
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="font-display text-4xl md:text-6xl tracking-tight max-w-[14ch]">{lang === 'pl' ? 'Zobacz wybrane prace' : 'Explore the work'}</h2>
-            <ArrowUpRight className="w-10 h-10 text-neutral-400 group-hover:text-black transition shrink-0" />
+        <Link to="/projects" className="group block relative rounded-3xl bg-[var(--accent,#CBFF00)] p-10 md:p-20 text-center overflow-hidden">
+          <div className="mesh-bg absolute inset-0 opacity-50 pointer-events-none" />
+          <div className="relative">
+            <p className="text-xs uppercase tracking-[0.24em] text-black/60 mb-3">{t('site.projects')}</p>
+            <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-3xl mx-auto text-black">
+              {lang === 'pl' ? 'Zobacz wszystkie moje prace' : 'Explore all my work'}
+            </h2>
+            <span className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-black text-white text-sm font-medium group-hover:opacity-90 transition">
+              {lang === 'pl' ? 'Zobacz wszystkie' : 'View all'} <ArrowUpRight className="w-4 h-4" />
+            </span>
           </div>
         </Link>
       </section>

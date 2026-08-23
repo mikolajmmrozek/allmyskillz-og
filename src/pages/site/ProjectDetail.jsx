@@ -152,10 +152,10 @@ export default function ProjectDetail() {
           <div className="grid md:grid-cols-2 gap-6">
             {related.achievements.map((a, i) => (
               <Reveal key={a.id} delay={i * 0.08}>
-                <div className="p-6 rounded-2xl border border-neutral-200">
+                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black">
                   {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
                   <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
-                  <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />
+                  <RichContent html={tr(a, 'description')} className="text-sm text-black/70 mt-2 [&_a]:text-black [&_a]:underline" />
                 </div>
               </Reveal>
             ))}
