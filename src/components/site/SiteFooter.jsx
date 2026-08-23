@@ -5,6 +5,7 @@ import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
 import { ARTIST_NAME } from '@/lib/brand';
 import { Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
+import TikTokIcon from '@/components/site/TikTokIcon';
 
 export default function SiteFooter() {
   const { lang, t } = useLang();
@@ -17,6 +18,7 @@ export default function SiteFooter() {
     { url: settings.linkedin, icon: Linkedin },
     { url: settings.youtube, icon: Youtube },
     { url: settings.facebook, icon: Facebook },
+    { url: settings.tiktok, icon: TikTokIcon },
   ].filter((s) => s.url);
 
   return (
