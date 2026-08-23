@@ -51,6 +51,12 @@ export default function CollectionList({ entityName }) {
     setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
   };
 
+  const toggleFeatured = async (rec) => {
+    const next = !rec.featured;
+    await base44.entities[entityName].update(rec.id, { featured: next });
+    setRecords((prev) => prev.map((r) => (r.id === rec.id ? { ...r, featured: next } : r)));
+  };
+
   const duplicate = async (rec) => {
     const { id, created_date, updated_date, created_by_id, ...rest } = rec;
     await base44.entities[entityName].create({ ...rest, status: 'draft', slug: rest.slug ? `${rest.slug}-copy` : undefined });
@@ -115,22 +121,23 @@ export default function CollectionList({ entityName }) {
                 <div key={r.id} className="flex items-start gap-3 p-4">
                   {imgField && r[imgField] ? <img src={r[imgField]} className="w-10 h-10 rounded-lg object-cover shrink-0" alt="" /> : null}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{String(titleVal).slice(0, 80)}</p>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      {hasFeatured && r.featured && <Star className="w-3.5 h-3.5 fill-[#CBFF00] text-[#CBFF00] shrink-0" />}
-                      {hasStatus && r.status && (
-                        <span className={`inline-flex px-1.5 py-0.5 text-[10px] font-medium rounded-full ${statusColors[r.status] || 'bg-neutral-200'}`}>{t(`status.${r.status}`)}</span>
-                      )}
-                      {extraFields.slice(0, 1).map((f) => (
-                        r[f] != null && r[f] !== '' ? <span key={f} className="text-[11px] text-neutral-400 truncate">{f === 'price' ? `${r[f]} ${r.currency || ''}`.trim() : String(r[f]).slice(0, 30)}</span> : null
-                      ))}
-                    </div>
+                    <p className="text-sm font-medium line-clamp-2">{String(titleVal)}</p>
                   </div>
-                  <div className="flex items-center gap-0.5 shrink-0">
-                    <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
-                    {r.status === 'draft' && <button onClick={() => updateStatus(r.id, 'published')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.publish')}><Send className="w-4 h-4" /></button>}
-                    {r.status === 'published' && <button onClick={() => updateStatus(r.id, 'draft')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.unpublish')}><EyeOff className="w-4 h-4" /></button>}
-                    <button onClick={() => remove(r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500" title={t('action.delete')}><Trash2 className="w-4 h-4" /></button>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <div className="flex items-center gap-0.5">
+                      {hasFeatured && (
+                        <button onClick={() => toggleFeatured(r)} className={`p-1.5 rounded hover:bg-neutral-200 ${r.featured ? 'text-[#CBFF00]' : 'text-neutral-300'}`} title="Featured">
+                          <Star className={`w-4 h-4 ${r.featured ? 'fill-[#CBFF00]' : ''}`} />
+                        </button>
+                      )}
+                      <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
+                      {r.status === 'draft' && <button onClick={() => updateStatus(r.id, 'published')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.publish')}><Send className="w-4 h-4" /></button>}
+                      {r.status === 'published' && <button onClick={() => updateStatus(r.id, 'draft')} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.unpublish')}><EyeOff className="w-4 h-4" /></button>}
+                      <button onClick={() => remove(r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500" title={t('action.delete')}><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                    {hasStatus && r.status && (
+                      <span className={`inline-flex px-1.5 py-0.5 text-[10px] font-medium rounded-full ${statusColors[r.status] || 'bg-neutral-200'}`}>{t(`status.${r.status}`)}</span>
+                    )}
                   </div>
                 </div>
               );
