@@ -273,10 +273,10 @@ export default function Home() {
 
       {/* Contact CTA */}
       <section className="px-5 md:px-10 py-20 md:py-28">
-        <div className="relative rounded-3xl bg-[var(--accent,#CBFF00)] p-10 md:p-20 text-center overflow-hidden">
+        <div className="accent-surface relative rounded-3xl bg-[var(--accent,#CBFF00)] p-6 md:p-20 text-center overflow-hidden">
           <div className="mesh-bg absolute inset-0 opacity-50 pointer-events-none" />
           <div className="relative">
-            <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-3xl mx-auto">
+            <h2 className="font-display text-3xl md:text-7xl tracking-[-0.02em] max-w-3xl mx-auto break-words balance-text">
               {tr(settings, 'tagline') || (lang === 'pl' ? 'Stwórzmy coś, co warto zapamiętać.' : 'Let’s make something worth remembering.')}
             </h2>
             <Link to="/contact" className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-black text-white text-sm font-medium hover:opacity-90">
