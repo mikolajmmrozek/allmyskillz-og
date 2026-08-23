@@ -92,7 +92,7 @@ export default function About() {
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
               {t('site.about')}
             </p>
-            <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[10vw] md:text-[7vw] lg:text-[7rem] max-w-[14ch] break-words hyphens-auto">
+            <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[8.5vw] md:text-[7vw] lg:text-[7rem] max-w-[18ch]">
               {tr(settings, 'tagline') || tr(home, 'headline') || 'About'}
             </h1>
           </Reveal>
