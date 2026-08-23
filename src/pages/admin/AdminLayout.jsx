@@ -49,7 +49,7 @@ export default function AdminLayout() {
                     <NavLink
                       key={c.key}
                       to={c.singleton ? `/admin/${c.key === 'SiteSetting' ? 'settings' : c.key === 'HomepageConfig' ? 'homepage' : c.key.toLowerCase()}` : `/admin/collection/${c.key}`}
-                      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+                      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[#CBFF00] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
                       {!collapsed && <span className="truncate">{c.key}</span>}
@@ -102,7 +102,7 @@ function SidebarLink({ to, icon: Icon, label, collapsed, end }) {
     <NavLink
       to={to}
       end={end}
-      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+      className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm transition ${isActive ? 'bg-[#CBFF00] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
     >
       <Icon className="w-4 h-4 shrink-0" />
       {!collapsed && <span>{label}</span>}
