@@ -62,6 +62,14 @@ export default function About() {
 
   const period = (it) => `${it.start_year || ''}${it.end_year ? ' — ' + it.end_year : ' — '}`;
 
+  const skillGroups = Object.entries(
+    skills.reduce((acc, s) => {
+      const cat = tr(s, 'category') || (lang === 'pl' ? 'Inne' : 'Other');
+      (acc[cat] = acc[cat] || []).push(s);
+      return acc;
+    }, {})
+  );
+
   return (
     <div>
       {/* Story hero */}
@@ -86,7 +94,7 @@ export default function About() {
           <Reveal delay={0.25} className="mt-12 flex items-start gap-4 max-w-2xl">
             <span className="mt-2 w-10 h-px bg-[var(--accent,#CBFF00)] shrink-0" />
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-2">{lang === 'pl' ? 'Obecnie' : 'Currently'}</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-2">{t('about.currently')}</p>
               <p className="font-display text-xl md:text-2xl tracking-tight">{tr(home, 'focus')}</p>
             </div>
           </Reveal>
@@ -97,8 +105,8 @@ export default function About() {
       {experience.length > 0 && (
         <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
           <Reveal className="mb-10">
-            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{lang === 'pl' ? 'Droga' : 'Journey'}</p>
-            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Doświadczenie' : 'Experience'}</h2>
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3">{t('about.journey')}</p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.experience')}</h2>
           </Reveal>
           <Timeline
             items={experience}
@@ -123,7 +131,7 @@ export default function About() {
                   )}
                   {(projectsByExp[it.id] || []).length > 0 && (
                     <div className="mt-5">
-                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Projekty' : 'Projects'}</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{t('about.projects')}</p>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {(projectsByExp[it.id] || []).map((p) => (
                           <Link key={p.id} to={`/projects/${p.slug}`} className={`group rounded-xl overflow-hidden border transition ${p.cover_image ? 'border-neutral-200 bg-white hover:border-black' : 'border-black/10 bg-[var(--accent,#CBFF00)] hover:border-black'}`}>
@@ -148,7 +156,7 @@ export default function About() {
                   )}
                   {(postsByExp[it.id] || []).length > 0 && (
                     <div className="mt-5">
-                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Aktualności' : 'News'}</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{t('about.news')}</p>
                       <div className="space-y-2">
                         {(postsByExp[it.id] || []).map((p) => (
                           <Link key={p.id} to={`/news/${p.slug}`} className="group block text-sm hover:underline">
@@ -172,9 +180,9 @@ export default function About() {
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
-              {lang === 'pl' ? 'Kształcenie' : 'Foundation'}
+              {t('about.foundation')}
             </p>
-            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Edukacja' : 'Education'}</h2>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.education')}</h2>
           </Reveal>
           <Timeline
             items={education}
@@ -203,14 +211,14 @@ export default function About() {
                     <div className="flex flex-wrap gap-2">
                       {it.attachments.map((a, i) => (
                         <a key={i} href={a} target="_blank" rel="noreferrer" className="text-xs px-3 py-1.5 rounded-full border border-neutral-200 hover:border-black transition">
-                          {lang === 'pl' ? 'Załącznik' : 'Attachment'} {i + 1} ↗
+                          {t('about.attachment')} {i + 1} ↗
                         </a>
                       ))}
                     </div>
                   )}
                   {(postsByExp[it.id] || []).length > 0 && (
                     <div className="mt-5">
-                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Aktualności' : 'News'}</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{t('about.news')}</p>
                       <div className="space-y-2">
                         {(postsByExp[it.id] || []).map((p) => (
                           <Link key={p.id} to={`/news/${p.slug}`} className="group block text-sm hover:underline">
@@ -228,45 +236,63 @@ export default function About() {
         </section>
       )}
 
-      {/* Skills + Languages */}
-      {(skills.length > 0 || languages.length > 0) && (
-        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20">
-          {skills.length > 0 && (
-            <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Umiejętności' : 'Skills'}</h2></Reveal>
-              <div className="space-y-6">
-                {skills.map((s, i) => (
-                  <Reveal key={s.id} delay={i * 0.05}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">{tr(s, 'name')}</span>
-                      <span className="text-xs text-neutral-400">{tr(s, 'category')}</span>
-                    </div>
-                    <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden">
-                      <motion.div className="h-full bg-[var(--accent,#CBFF00)] rounded-full" style={{ width: `${s.level || 0}%` }} />
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          )}
-          {languages.length > 0 && (
-            <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Języki' : 'Languages'}</h2></Reveal>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {languages.map((l, i) => (
-                  <Reveal key={l.id} delay={i * 0.05}>
-                    <div className="p-6 rounded-2xl border border-neutral-200">
-                      <h3 className="font-display text-xl tracking-tight">{tr(l, 'name')}</h3>
-                      <p className="text-sm text-neutral-500 mt-1">{tr(l, 'level')}</p>
-                      <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden mt-4">
-                        <div className="h-full bg-black rounded-full" style={{ width: `${l.proficiency || 0}%` }} />
+      {/* Languages — single row */}
+      {languages.length > 0 && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+          <Reveal className="mb-10">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {t('about.languages')}
+            </p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.languages')}</h2>
+          </Reveal>
+          <div className="flex flex-wrap gap-4">
+            {languages.map((l, i) => (
+              <Reveal key={l.id} delay={i * 0.05} className="flex-1 min-w-[180px]">
+                <div className="p-6 rounded-2xl border border-neutral-200 h-full">
+                  <h3 className="font-display text-lg tracking-tight">{tr(l, 'name')}</h3>
+                  <p className="text-xs text-neutral-500 mt-1">{tr(l, 'level')}</p>
+                  <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden mt-3">
+                    <div className="h-full bg-black rounded-full" style={{ width: `${l.proficiency || 0}%` }} />
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Skills — grouped by category, 3 cols desktop / 2 tablet / 1 mobile */}
+      {skills.length > 0 && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+          <Reveal className="mb-10">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {t('about.skills')}
+            </p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.skills')}</h2>
+          </Reveal>
+          {skillGroups.map(([cat, items], gi) => (
+            <div key={cat} className="mb-12 last:mb-0">
+              <Reveal>
+                <h3 className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-5 pb-2 border-b border-neutral-100">{cat}</h3>
+              </Reveal>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((s, i) => (
+                  <Reveal key={s.id} delay={i * 0.04}>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">{tr(s, 'name')}</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-neutral-200 overflow-hidden">
+                        <motion.div className="h-full bg-[var(--accent,#CBFF00)] rounded-full" style={{ width: `${s.level || 0}%` }} />
                       </div>
                     </div>
                   </Reveal>
                 ))}
               </div>
             </div>
-          )}
+          ))}
         </section>
       )}
 
@@ -276,9 +302,9 @@ export default function About() {
           <Reveal className="mb-10">
             <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
-              {lang === 'pl' ? 'Wyróżnienia' : 'Milestones'}
+              {t('about.milestones')}
             </p>
-            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Osiągnięcia' : 'Achievements'}</h2>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{t('about.achievements')}</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {achievements.map((a, i) => (
@@ -300,7 +326,7 @@ export default function About() {
         <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200 grid md:grid-cols-2 gap-12 md:gap-20">
           {awards.length > 0 && (
             <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Nagrody' : 'Awards'}</h2></Reveal>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.awards')}</h2></Reveal>
               <ul className="space-y-4">
                 {awards.map((a, i) => (
                   <Reveal key={a.id} delay={i * 0.05}>
@@ -315,7 +341,7 @@ export default function About() {
           )}
           {certificates.length > 0 && (
             <div>
-              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Certyfikaty' : 'Certificates'}</h2></Reveal>
+              <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{t('about.certificates')}</h2></Reveal>
               <ul className="space-y-4">
                 {certificates.map((c, i) => (
                   <Reveal key={c.id} delay={i * 0.05}>
@@ -341,10 +367,10 @@ export default function About() {
           <div className="relative">
             <p className="text-xs uppercase tracking-[0.24em] text-black/60 mb-3">{t('site.projects')}</p>
             <h2 className="font-display text-4xl md:text-7xl tracking-[-0.02em] max-w-3xl mx-auto text-black">
-              {lang === 'pl' ? 'Zobacz wszystkie moje prace' : 'Explore all my work'}
+              {t('about.exploreAll')}
             </h2>
             <span className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-black text-white text-sm font-medium group-hover:opacity-90 transition">
-              {lang === 'pl' ? 'Zobacz wszystkie' : 'View all'} <ArrowUpRight className="w-4 h-4" />
+              {t('about.viewAll')} <ArrowUpRight className="w-4 h-4" />
             </span>
           </div>
         </Link>
