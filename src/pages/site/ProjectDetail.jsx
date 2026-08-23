@@ -13,7 +13,7 @@ export default function ProjectDetail() {
   const { slug } = useParams();
   const { lang, tr, t } = useLang();
   const [project, setProject] = useState(null);
-  const [related, setRelated] = useState({ achievements: [], experience: [], partners: [], news: [], categories: [], tags: [] });
+  const [related, setRelated] = useState({ achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,15 +21,16 @@ export default function ProjectDetail() {
     fetchBySlug('Project', slug).then(async (p) => {
       setProject(p);
       if (p) {
-        const [achievements, experience, partners, news, categories, tags] = await Promise.all([
+        const [achievements, awards, experience, partners, news, categories, tags] = await Promise.all([
           fetchByIds('Achievement', p.achievement_ids || []),
+          fetchByIds('Award', p.award_ids || []),
           fetchByIds('Experience', p.experience_ids || []),
           fetchByIds('Partner', p.partner_ids || []),
           fetchByIds('Post', p.post_ids || []),
           fetchByIds('Category', p.category_ids || []),
           fetchByIds('Tag', p.tag_ids || []),
         ]);
-        setRelated({ achievements, experience, partners, news, categories, tags });
+        setRelated({ achievements, awards, experience, partners, news, categories, tags });
       }
       setLoading(false);
     });
@@ -156,6 +157,25 @@ export default function ProjectDetail() {
                   {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
                   <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
                   <RichContent html={tr(a, 'description')} className="text-sm text-black/70 mt-2 [&_a]:text-black [&_a]:underline" />
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Awards */}
+      {related.awards.length > 0 && (
+        <section className="px-5 md:px-10 py-16 md:py-20 border-t border-neutral-200">
+          <Reveal><h2 className="font-display text-2xl md:text-3xl tracking-tight mb-8">{lang === 'pl' ? 'Nagrody' : 'Awards'}</h2></Reveal>
+          <div className="grid md:grid-cols-2 gap-6">
+            {related.awards.map((a, i) => (
+              <Reveal key={a.id} delay={i * 0.08}>
+                <div className="p-6 rounded-2xl border border-neutral-200">
+                  {a.image && <Image src={a.image} fittingType="fill" className="w-full aspect-[16/9] rounded-xl mb-4" />}
+                  <h3 className="font-medium">{tr(a, 'title')}</h3>
+                  <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
+                  <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />
                 </div>
               </Reveal>
             ))}

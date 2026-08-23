@@ -69,6 +69,14 @@
       "title": "Achievements",
       "relation": "Achievement"
     },
+    "award_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Awards",
+      "relation": "Award"
+    },
     "experience_ids": {
       "type": "array",
       "items": {

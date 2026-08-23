@@ -20,22 +20,27 @@ export default function About() {
   const [certificates, setCertificates] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [awards, setAwards] = useState([]);
+  const [achievements, setAchievements] = useState([]);
   const [projectsByExp, setProjectsByExp] = useState({});
+  const [postsByExp, setPostsByExp] = useState({});
 
   useEffect(() => {
     (async () => {
       try {
-        const [exp, edu, sk, cert, lang2, aw, projects] = await Promise.all([
+        const [exp, edu, sk, cert, lang2, aw, ach, projects, posts] = await Promise.all([
           fetchPublished('Experience', '-start_year', 100),
           fetchPublished('Education', '-start_year', 100),
           fetchPublished('Skill', 'sort_order', 100),
           fetchPublished('Certificate', '-date', 100),
           fetchPublished('Language', 'sort_order', 100),
           fetchPublished('Award', '-date', 100),
+          fetchPublished('Achievement', '-date', 100),
           fetchPublished('Project', '-sort_order', 200),
+          fetchPublished('Post', '-published_date', 100),
         ]);
         setExperience(exp); setEducation(edu); setSkills(sk);
         setCertificates(cert); setLanguages(lang2); setAwards(aw);
+        setAchievements(ach);
         // Map: experience_id → projects that reference it
         const map = {};
         for (const ex of exp) {
@@ -45,6 +50,12 @@ export default function About() {
           );
         }
         setProjectsByExp(map);
+        // Map: experience/education_id → posts that reference it
+        const pmap = {};
+        for (const it of [...exp, ...edu]) {
+          pmap[it.id] = (posts || []).filter((p) => (it.post_ids || []).includes(p.id));
+        }
+        setPostsByExp(pmap);
       } catch (e) { console.error(e); }
     })();
   }, []);
@@ -135,6 +146,19 @@ export default function About() {
                       </div>
                     </div>
                   )}
+                  {(postsByExp[it.id] || []).length > 0 && (
+                    <div className="mt-5">
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Aktualności' : 'News'}</p>
+                      <div className="space-y-2">
+                        {(postsByExp[it.id] || []).map((p) => (
+                          <Link key={p.id} to={`/news/${p.slug}`} className="group block text-sm hover:underline">
+                            <span className="font-medium">{tr(p, 'title')}</span>
+                            {p.published_date && <span className="text-neutral-400 ml-2">· {new Date(p.published_date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ),
             }}
@@ -184,6 +208,19 @@ export default function About() {
                       ))}
                     </div>
                   )}
+                  {(postsByExp[it.id] || []).length > 0 && (
+                    <div className="mt-5">
+                      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{lang === 'pl' ? 'Aktualności' : 'News'}</p>
+                      <div className="space-y-2">
+                        {(postsByExp[it.id] || []).map((p) => (
+                          <Link key={p.id} to={`/news/${p.slug}`} className="group block text-sm hover:underline">
+                            <span className="font-medium">{tr(p, 'title')}</span>
+                            {p.published_date && <span className="text-neutral-400 ml-2">· {new Date(p.published_date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ),
             }}
@@ -230,6 +267,31 @@ export default function About() {
               </div>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Achievements */}
+      {achievements.length > 0 && (
+        <section className="px-5 md:px-10 py-20 md:py-28 border-t border-neutral-200">
+          <Reveal className="mb-10">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral-400 mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent,#CBFF00)]" />
+              {lang === 'pl' ? 'Wyróżnienia' : 'Milestones'}
+            </p>
+            <h2 className="font-display text-3xl md:text-5xl tracking-tight">{lang === 'pl' ? 'Osiągnięcia' : 'Achievements'}</h2>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {achievements.map((a, i) => (
+              <Reveal key={a.id} delay={i * 0.05}>
+                <div className="p-6 rounded-2xl bg-[var(--accent,#CBFF00)] text-black">
+                  {a.metric && <p className="font-display text-4xl tracking-tight">{a.metric}</p>}
+                  <h3 className="font-medium mt-2">{tr(a, 'title')}</h3>
+                  {tr(a, 'description') && <RichContent html={tr(a, 'description')} className="text-sm text-black/70 mt-2 [&_a]:text-black [&_a]:underline" />}
+                  {a.date && <p className="text-xs text-black/50 mt-3">{new Date(a.date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { year: 'numeric', month: 'long' })}</p>}
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </section>
       )}
 

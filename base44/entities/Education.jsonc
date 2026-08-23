@@ -65,6 +65,14 @@
       "title": "Attachments",
       "format": "media-list"
     },
+    "post_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Related News",
+      "relation": "Post"
+    },
     "slug": {
       "type": "string",
       "title": "Slug"
