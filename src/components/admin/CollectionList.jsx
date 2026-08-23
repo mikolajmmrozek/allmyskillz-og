@@ -40,8 +40,10 @@ export default function CollectionList({ entityName }) {
 
   useEffect(() => { load(); }, [load]);
 
+  const cellVal = (r, f) => f.endsWith('_en') ? (tr(r, f.replace(/_en$/, '')) || r[f] || '') : (r[f] ?? '');
+
   const filtered = records.filter((r) => {
-    const matchesSearch = !search || col.list.some((f) => String(r[f] ?? '').toLowerCase().includes(search.toLowerCase()));
+    const matchesSearch = !search || col.list.some((f) => String(cellVal(r, f)).toLowerCase().includes(search.toLowerCase()));
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -112,7 +114,7 @@ export default function CollectionList({ entityName }) {
           <div className="md:hidden divide-y divide-neutral-100 border border-neutral-200 rounded-xl bg-white overflow-hidden">
             {filtered.map((r) => {
               const titleField = col.list[0];
-              const titleVal = r[titleField] ?? '—';
+               const titleVal = cellVal(r, titleField) || '—';
               const hasFeatured = col.list.includes('featured');
               const hasStatus = col.list.includes('status');
               const imgField = col.list.find((f) => ['cover_image', 'image', 'logo_url'].includes(f));
@@ -168,7 +170,7 @@ export default function CollectionList({ entityName }) {
                         ) : f === 'cover_image' || f === 'image' || f === 'logo_url' ? (
                           r[f] ? <img src={r[f]} className="w-10 h-10 object-cover rounded" alt="" /> : <span className="text-neutral-300">—</span>
                         ) : (
-                          <span className="text-neutral-700">{String(r[f] ?? '—').slice(0, 60)}</span>
+                          <span className="text-neutral-700">{String(cellVal(r, f) ?? '—').slice(0, 60)}</span>
                         )}
                       </td>
                     ))}
