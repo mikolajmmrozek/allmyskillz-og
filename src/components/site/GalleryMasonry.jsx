@@ -88,17 +88,17 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
             >
               {video ? (
                 <>
+                  {/* #t=0.1 forces the browser to decode & show a real frame
+                      instead of a black square before the first paint. */}
                   <video
-                    src={src}
+                    src={`${src}#t=0.1`}
                     muted
                     playsInline
                     preload="metadata"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-90">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
-                      <Play className="h-5 w-5 translate-x-0.5 fill-current" />
-                    </span>
+                  <span className="absolute bottom-2 left-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm">
+                    <Play className="h-4 w-4 translate-x-0.5 fill-current" />
                   </span>
                 </>
               ) : (
@@ -119,7 +119,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
       <AnimatePresence>
         {active != null && (
           <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
