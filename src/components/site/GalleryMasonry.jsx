@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { Image } from '@/components/ui/image';
 
 // Organic masonry: each image's row-span is computed from its natural aspect
 // ratio, so portrait images become tall in varying heights (not lined up),
 // while landscape images span two columns. A dense auto-flow fills gaps.
-// Click any image to open a fullscreen lightbox with prev/next + keyboard nav.
+// Click any item to open a fullscreen lightbox with prev/next + keyboard nav.
+// Supports images (incl. HEIC via CDN conversion) and direct video files (mp4…).
 const ROW_PX = 120;
 const GAP_PX = 12;
+
+const VIDEO_EXT = /\.(mp4|webm|mov|m4v|ogg|ogv)$/i;
+export const isVideoUrl = (url = '') => VIDEO_EXT.test(url);
 
 export default function GalleryMasonry({ images = [], alt = '', className = '' }) {
   const [ratios, setRatios] = useState({});
@@ -39,8 +44,8 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
   useEffect(() => {
     if (!colWidth) return;
     const next = {};
-    images.forEach((_, i) => {
-      const r = ratios[i];
+    images.forEach((src, i) => {
+      const r = isVideoUrl(src) ? 16 / 9 : ratios[i];
       if (r == null) { next[i] = { col: 1, row: 3 }; return; }
       const col = r >= 1.4 ? 2 : 1;                       // landscape → wider
       const cellW = colWidth * col + GAP_PX * (col - 1);
@@ -72,6 +77,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
       >
         {images.map((src, i) => {
           const s = spans[i] || { col: 1, row: 3 };
+          const video = isVideoUrl(src);
           return (
             <button
               key={i}
@@ -80,13 +86,31 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
               style={{ gridColumn: `span ${s.col}`, gridRow: `span ${s.row}` }}
               className="group relative overflow-hidden rounded-2xl bg-neutral-100"
             >
-              <img
-                src={src}
-                alt={alt}
-                loading="lazy"
-                onLoad={(e) => onLoad(i, e)}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-              />
+              {video ? (
+                <>
+                  <video
+                    src={src}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-90">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
+                      <Play className="h-5 w-5 translate-x-0.5 fill-current" />
+                    </span>
+                  </span>
+                </>
+              ) : (
+                <Image
+                  src={src}
+                  alt={alt}
+                  fittingType="fill"
+                  loading="lazy"
+                  onLoad={(e) => onLoad(i, e)}
+                  className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+              )}
             </button>
           );
         })}
@@ -122,12 +146,29 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
                 </button>
               </>
             )}
-            <img
-              src={images[active]}
-              alt={alt}
-              className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {(() => {
+              const src = images[active];
+              if (isVideoUrl(src)) {
+                return (
+                  <video
+                    src={src}
+                    controls
+                    autoPlay
+                    className="max-h-[88vh] max-w-[92vw] rounded-lg bg-black"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                );
+              }
+              return (
+                <Image
+                  src={src}
+                  alt={alt}
+                  fittingType="fit"
+                  className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              );
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
