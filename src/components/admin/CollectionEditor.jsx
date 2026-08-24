@@ -121,6 +121,12 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
     setSaving(true);
     try {
       let payload = { ...form };
+      // Drop empty values for number fields (e.g. end_year left blank = ongoing)
+      for (const [k, p] of Object.entries(schema.properties || {})) {
+        if (p.type === 'number' && (payload[k] === '' || payload[k] === null || payload[k] === undefined)) {
+          delete payload[k];
+        }
+      }
       // Auto-translate PL → EN for bilingual text fields that have PL but no EN
       // Treat Quill's <p><br></p> and HTML-only-whitespace as empty
       const stripHtml = (s) => String(s || '').replace(/<[^>]*>/g, '').trim();

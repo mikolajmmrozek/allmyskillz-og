@@ -61,7 +61,10 @@ export default function About() {
     })();
   }, []);
 
-  const period = (it) => `${it.start_year || ''}${it.end_year ? ' — ' + it.end_year : ' — '}`;
+  const period = (it) => {
+    if (!it.end_year) return `${it.start_year || ''} — ${lang === 'pl' ? 'obecnie' : 'present'}`;
+    return `${it.start_year || ''} — ${it.end_year}`;
+  };
 
   const skillGroups = Object.entries(
     skills.reduce((acc, s) => {
