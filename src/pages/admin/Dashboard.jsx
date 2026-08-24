@@ -33,7 +33,7 @@ export default function Dashboard() {
       const entries = collections.filter((c) => !c.singleton);
       const results = await Promise.allSettled(
         entries.map(async (c) => {
-          const items = await base44.entities[c.key].list('-created_date', 1);
+          const items = await base44.entities[c.key].filter({ status: 'published' });
           return [c.key, items.length];
         })
       );
