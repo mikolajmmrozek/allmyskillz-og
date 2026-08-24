@@ -61,9 +61,19 @@ export default function About() {
     })();
   }, []);
 
+  const MONTHS = lang === 'pl'
+    ? ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru']
+    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const fmt = (year, month) => {
+    if (!year && !month) return '';
+    if (month && year) return `${MONTHS[month - 1]} ${year}`;
+    return `${year || ''}`;
+  };
   const period = (it) => {
-    if (!it.end_year || it.end_year === 0) return `${it.start_year || ''} — ${lang === 'pl' ? 'obecnie' : 'present'}`;
-    return `${it.start_year || ''} — ${it.end_year}`;
+    const start = fmt(it.start_year, it.start_month);
+    const ongoing = !it.end_year || it.end_year === 0;
+    const end = ongoing ? (lang === 'pl' ? 'obecnie' : 'present') : fmt(it.end_year, it.end_month);
+    return `${start} — ${end}`;
   };
 
   const skillGroups = Object.entries(
