@@ -13,7 +13,7 @@ export default function MediaLibrary() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState('');
   const [showGen, setShowGen] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState([]); // {name, status: 'uploading'|'done'|'error'}
+  const [uploadStatus, setUploadStatus] = useState([]); // {name, status: 'uploading'|'done'|'error', msg?}
   const { t } = useLang();
 
   const load = useCallback(async () => {
@@ -44,17 +44,26 @@ export default function MediaLibrary() {
         setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'done' } : s)));
       } catch (err) {
         console.error(`Upload failed for ${file.name}:`, err);
-        setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'error' } : s)));
+        const msg = err?.message || err?.error || (typeof err === 'string' ? err : 'Błąd');
+        setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'error', msg } : s)));
       }
     };
 
-    await Promise.allSettled(files.map((f, i) => uploadOne(f, i)));
+    // Limited concurrency — uploading 10+ large iPhone photos at once overwhelms
+    // the upload service and causes silent failures. Process 3 at a time.
+    const CONCURRENCY = 3;
+    const queue = files.map((f, i) => ({ file: f, idx: i }));
+    const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+      while (queue.length) {
+        const next = queue.shift();
+        if (!next) break;
+        await uploadOne(next.file, next.idx);
+      }
+    });
+    await Promise.all(workers);
+
     setUploading(false);
     e.target.value = '';
-    // keep error items visible a bit longer
-    setTimeout(() => {
-      setUploadStatus((prev) => (prev.some((s) => s.status === 'error') ? prev : []));
-    }, 2000);
   };
 
   const remove = async (id) => {
@@ -92,11 +101,11 @@ export default function MediaLibrary() {
         <div className="mb-5 space-y-1.5">
           {uploadStatus.map((s, i) => (
             <div key={i} className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-neutral-50 border border-neutral-200">
-              {s.status === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />}
-              {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px]">✓</span>}
-              {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white">✕</span>}
+              {s.status === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400 shrink-0" />}
+              {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px] shrink-0">✓</span>}
+              {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white shrink-0">✕</span>}
               <span className={`truncate flex-1 ${s.status === 'error' ? 'text-red-500' : 'text-neutral-600'}`}>{s.name}</span>
-              {s.status === 'error' && <span className="text-red-400">{t('admin.upload_failed') || 'Błąd'}</span>}
+              {s.status === 'error' && <span className="text-red-400 text-[10px] truncate max-w-[40%]">{s.msg || t('admin.upload_failed')}</span>}
             </div>
           ))}
         </div>

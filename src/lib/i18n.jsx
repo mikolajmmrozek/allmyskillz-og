@@ -195,6 +195,8 @@ const dictionaries = {
     'filter.archived': 'Archived',
     'records.one': 'record',
     'records.many': 'records',
+    'admin.upload_failed': 'Failed',
+    'admin.upload_retry': 'Retry',
   },
   pl: {
     'site.home': 'Start',
@@ -386,6 +388,8 @@ const dictionaries = {
     'filter.archived': 'Zarchiwizowane',
     'records.one': 'rekord',
     'records.many': 'rekordów',
+    'admin.upload_failed': 'Błąd',
+    'admin.upload_retry': 'Spróbuj ponownie',
   }
 };
 
