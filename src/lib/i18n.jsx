@@ -390,7 +390,7 @@ const dictionaries = {
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [lang, setLangState] = useState(() => localStorage.getItem(STORAGE_KEY) || 'en');
+  const [lang, setLangState] = useState(() => localStorage.getItem(STORAGE_KEY) || 'pl');
 
   const setLang = useCallback((next) => {
     localStorage.setItem(STORAGE_KEY, next);
