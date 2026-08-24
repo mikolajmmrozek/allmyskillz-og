@@ -62,7 +62,7 @@ export default function About() {
   }, []);
 
   const period = (it) => {
-    if (!it.end_year) return `${it.start_year || ''} — ${lang === 'pl' ? 'obecnie' : 'present'}`;
+    if (!it.end_year || it.end_year === 0) return `${it.start_year || ''} — ${lang === 'pl' ? 'obecnie' : 'present'}`;
     return `${it.start_year || ''} — ${it.end_year}`;
   };
 

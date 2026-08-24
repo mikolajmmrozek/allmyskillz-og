@@ -291,7 +291,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
 }
 
 function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMultiple, onRemoveMediaItem, onReorderMedia, relationEntity, relationCache, loadRelation, form, setForm, field }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   // Always-safe effect: load related entity options when this is a relation field
   useEffect(() => {
     if ((kind === 'relation-single' || kind === 'relation-multi') && relationEntity) {
@@ -385,7 +385,21 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
   }
 
   if (kind === 'number') {
-    return <Input type="number" value={value ?? ''} onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))} />;
+    const isYear = /year|rok/i.test(field || '') || /year|rok/i.test(prop?.title || '');
+    const presentLabel = lang === 'pl' ? 'obecnie' : 'present';
+    return (
+      <div>
+        <Input
+          type="number"
+          value={value ?? ''}
+          placeholder={isYear ? presentLabel : ''}
+          onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
+        />
+        {isYear && (
+          <p className="text-[11px] text-neutral-400 mt-1">0 = {presentLabel}</p>
+        )}
+      </div>
+    );
   }
 
   if (kind === 'enum') {
