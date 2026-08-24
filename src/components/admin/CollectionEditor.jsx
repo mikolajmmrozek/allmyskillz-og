@@ -121,10 +121,17 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
     setSaving(true);
     try {
       let payload = { ...form };
-      // Drop empty values for number fields (e.g. end_year left blank = ongoing)
+      // Drop empty/invalid values for number fields (e.g. end_year left blank = ongoing)
       for (const [k, p] of Object.entries(schema.properties || {})) {
-        if (p.type === 'number' && (payload[k] === '' || payload[k] === null || payload[k] === undefined)) {
-          delete payload[k];
+        if (p.type === 'number') {
+          const v = payload[k];
+          if (v === '' || v === null || v === undefined || (typeof v === 'number' && isNaN(v))) {
+            delete payload[k];
+          } else if (typeof v === 'string' && v.trim() !== '' && !isNaN(Number(v))) {
+            payload[k] = Number(v);
+          } else if (typeof v === 'string') {
+            delete payload[k];
+          }
         }
       }
       // Auto-translate PL → EN for bilingual text fields that have PL but no EN
