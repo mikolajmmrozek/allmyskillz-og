@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { Image } from '@/components/ui/image';
@@ -116,62 +117,69 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
         })}
       </div>
 
-      <AnimatePresence>
-        {active != null && (
-          <motion.div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
-          >
-            <button className="absolute right-4 top-4 p-2 text-white/80 hover:text-white" onClick={() => setActive(null)} aria-label="Close">
-              <X className="h-6 w-6" />
-            </button>
-            {images.length > 1 && (
-              <>
-                <button
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/80 hover:text-white"
-                  onClick={(e) => { e.stopPropagation(); setActive((v) => (v - 1 + images.length) % images.length); }}
-                  aria-label="Previous"
-                >
-                  <ChevronLeft className="h-8 w-8" />
-                </button>
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/80 hover:text-white"
-                  onClick={(e) => { e.stopPropagation(); setActive((v) => (v + 1) % images.length); }}
-                  aria-label="Next"
-                >
-                  <ChevronRight className="h-8 w-8" />
-                </button>
-              </>
-            )}
-            {(() => {
-              const src = images[active];
-              if (isVideoUrl(src)) {
+      {createPortal(
+        <AnimatePresence>
+          {active != null && (
+            <motion.div
+              className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActive(null)}
+            >
+              <button className="absolute right-4 top-4 z-20 p-2 text-white/80 hover:text-white" onClick={() => setActive(null)} aria-label="Close">
+                <X className="h-6 w-6" />
+              </button>
+              {images.length > 1 && (
+                <>
+                  <button
+                    className="absolute left-3 top-1/2 z-20 -translate-y-1/2 p-2 text-white/80 hover:text-white"
+                    onClick={(e) => { e.stopPropagation(); setActive((v) => (v - 1 + images.length) % images.length); }}
+                    aria-label="Previous"
+                  >
+                    <ChevronLeft className="h-8 w-8" />
+                  </button>
+                  <button
+                    className="absolute right-3 top-1/2 z-20 -translate-y-1/2 p-2 text-white/80 hover:text-white"
+                    onClick={(e) => { e.stopPropagation(); setActive((v) => (v + 1) % images.length); }}
+                    aria-label="Next"
+                  >
+                    <ChevronRight className="h-8 w-8" />
+                  </button>
+                </>
+              )}
+              {(() => {
+                const src = images[active];
+                // Plain <img>/<video> (not the Image component): the Image
+                // component stacks a blurred placeholder + main img inside a
+                // dimensionless wrapper, which leaks a floating thumbnail over
+                // the video. Plain elements render cleanly and stay on top.
+                if (isVideoUrl(src)) {
+                  return (
+                    <video
+                      src={src}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="relative z-10 max-h-[88vh] max-w-[92vw] rounded-lg bg-black"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  );
+                }
                 return (
-                  <video
+                  <img
                     src={src}
-                    controls
-                    autoPlay
-                    className="max-h-[88vh] max-w-[92vw] rounded-lg bg-black"
+                    alt={alt}
+                    className="relative z-10 max-h-[88vh] max-w-[92vw] rounded-lg object-contain"
                     onClick={(e) => e.stopPropagation()}
                   />
                 );
-              }
-              return (
-                <Image
-                  src={src}
-                  alt={alt}
-                  fittingType="fit"
-                  className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain"
-                  onClick={(e) => e.stopPropagation()}
-                />
-              );
-            })()}
-          </motion.div>
-        )}
-      </AnimatePresence>
+              })()}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
