@@ -6,7 +6,37 @@ import { Image } from '@/components/ui/image';
 import { Reveal } from '@/components/site/Motion';
 import { ArrowUpRight } from 'lucide-react';
 
-const ASPECTS = ['aspect-[4/5]', 'aspect-[4/3]', 'aspect-[1/1]', 'aspect-[3/4]', 'aspect-[16/10]'];
+// Each card keeps its cover image's natural aspect ratio so the masonry
+// columns stack with genuinely varying heights (Pinterest-style) instead of
+// aligned rows. A default ratio avoids a 0-height box before first measure.
+const DEFAULT_RATIO = 4 / 5;
+
+// Cover image that keeps its natural aspect ratio so the masonry columns
+// stack with varying heights instead of aligned rows.
+function ProjectCover({ src, featured }) {
+  const [ratio, setRatio] = useState(DEFAULT_RATIO);
+  return (
+    <div className="relative overflow-hidden rounded-2xl bg-neutral-100" style={{ aspectRatio: ratio }}>
+      {src && (
+        <Image
+          src={src}
+          fittingType="fill"
+          className="w-full h-full transition-transform duration-[900ms] group-hover:scale-105"
+          onLoad={(e) => {
+            const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+            if (w && h) setRatio(w / h);
+          }}
+        />
+      )}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
+      {featured && (
+        <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-[var(--accent,#CBFF00)] text-black">
+          Featured
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function Projects() {
   const { tr, t } = useLang();
@@ -38,17 +68,7 @@ export default function Projects() {
           {projects.map((p, i) => (
             <Reveal key={p.id} delay={(i % 3) * 0.08} className="mb-6 break-inside-avoid">
               <Link to={`/projects/${p.slug}`} className="group block">
-                <div className={`relative overflow-hidden rounded-2xl bg-neutral-100 ${ASPECTS[i % ASPECTS.length]}`}>
-                  {p.cover_image && (
-                    <Image src={p.cover_image} fittingType="fill" className="w-full h-full transition-transform duration-[900ms] group-hover:scale-105" />
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
-                  {p.featured && (
-                    <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-[var(--accent,#CBFF00)] text-black">
-                      Featured
-                    </span>
-                  )}
-                </div>
+                <ProjectCover src={p.cover_image} featured={p.featured} />
                 <div className="mt-4 flex items-start justify-between gap-4">
                   <div>
                     <h3 className="font-display text-xl md:text-2xl tracking-tight">{tr(p, 'title')}</h3>
