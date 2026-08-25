@@ -42,11 +42,11 @@ export default function MediaLibrary() {
     const uploadOne = async (file, idx) => {
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        const ext = uploadFile.name.split('.').pop()?.toLowerCase();
+        const ext = file.name.split('.').pop()?.toLowerCase();
         const type = ['jpg','jpeg','png','webp','gif','svg'].includes(ext) ? 'image'
           : ['mp4','webm','mov'].includes(ext) ? 'video'
           : ['pdf'].includes(ext) ? 'pdf' : 'document';
-        const created = await base44.entities.MediaItem.create({ title: uploadFile.name.replace(/\.[^.]+$/, ''), type, url: file_url });
+        const created = await base44.entities.MediaItem.create({ title: file.name.replace(/\.[^.]+$/, ''), type, url: file_url });
         setItems((prev) => [created, ...prev]);
         setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'done' } : s)));
       } catch (err) {

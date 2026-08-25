@@ -197,6 +197,7 @@ const dictionaries = {
     'records.many': 'records',
     'admin.upload_failed': 'Failed',
     'admin.upload_retry': 'Retry',
+    'admin.heic_not_supported': 'HEIC/HEIF images are not supported. Please convert them to JPG or PNG before uploading.',
   },
   pl: {
     'site.home': 'Start',
@@ -390,6 +391,7 @@ const dictionaries = {
     'records.many': 'rekordów',
     'admin.upload_failed': 'Błąd',
     'admin.upload_retry': 'Spróbuj ponownie',
+    'admin.heic_not_supported': 'Obrazy HEIC/HEIF nie są obsługiwane. Przekonwertuj je na JPG lub PNG przed przesłaniem.',
   }
 };
 
