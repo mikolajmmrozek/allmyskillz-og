@@ -9,6 +9,7 @@ import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import Timeline from '@/components/site/Timeline';
 import VideoEmbed from '@/components/site/VideoEmbed';
+import AwardGallery from '@/components/site/AwardGallery';
 import { ArrowUpRight } from 'lucide-react';
 import SectionNav from '@/components/site/SectionNav';
 
@@ -356,6 +357,7 @@ export default function About() {
                 <li className="pb-4 border-b border-neutral-100">
                   <h3 className="font-medium">{tr(a, 'title')}</h3>
                   <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
+                  <AwardGallery image={a.image} gallery={a.gallery} alt={tr(a, 'title')} />
                 </li>
               </Reveal>
             ))}

@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
+import AwardGallery from '@/components/site/AwardGallery';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
@@ -180,7 +181,7 @@ export default function ProjectDetail() {
             {related.awards.map((a, i) => (
               <Reveal key={a.id} delay={i * 0.08}>
                 <div className="p-6 rounded-2xl border border-neutral-200">
-                  {a.image && <Image src={a.image} fittingType="fill" className="w-full aspect-[16/9] rounded-xl mb-4" />}
+                  <AwardGallery image={a.image} gallery={a.gallery} alt={tr(a, 'title')} />
                   <h3 className="font-medium">{tr(a, 'title')}</h3>
                   <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
                   <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />
