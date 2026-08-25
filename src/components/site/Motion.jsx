@@ -47,14 +47,14 @@ export function StaggerItem({ children, className = '', y = 28 }) {
 }
 
 // Scroll-driven vertical parallax for an image (kept overscaled so edges never show).
-export function ParallaxImage({ src, className = '', strength = 6 }) {
+export function ParallaxImage({ src, className = '', strength = 6, alt = '' }) {
   const ref = React.useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [`-${strength}%`, `${strength}%`]);
   return (
     <div ref={ref} className={`relative overflow-hidden ${className}`}>
       <motion.div style={{ y }} className="absolute inset-0 scale-[1.18] will-change-transform">
-        <Image src={src} fittingType="fill" className="w-full h-full" />
+        <Image src={src} fittingType="fill" className="w-full h-full" alt={alt} />
       </motion.div>
     </div>
   );

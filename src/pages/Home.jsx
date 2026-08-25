@@ -79,7 +79,7 @@ export default function Home() {
           </video>
         ) : heroPoster ? (
           <div className="absolute inset-0">
-            <Image src={heroPoster} fittingType="fill" className="h-full w-full" />
+            <Image src={heroPoster} fittingType="fill" className="h-full w-full" alt={`${ARTIST_NAME} — tattoo artist and creative entrepreneur`} />
           </div>
         ) : (
           <div className="absolute inset-0 mesh-bg-dark bg-neutral-900" />
@@ -109,6 +109,7 @@ export default function Home() {
                     </motion.span>
                   </span>
                 ))}
+                <span className="sr-only">, Tattoo Artist &amp; Creative Entrepreneur</span>
               </h1>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -191,7 +192,7 @@ export default function Home() {
           {featured[0] && (
             <Link to={`/projects/${featured[0].slug}`} className="group block relative h-[78svh] min-h-[460px] overflow-hidden">
               {featured[0].cover_image && (
-                <ParallaxImage src={featured[0].cover_image} className="absolute inset-0 h-full w-full" strength={8} />
+                <ParallaxImage src={featured[0].cover_image} className="absolute inset-0 h-full w-full" strength={8} alt={tr(featured[0], 'title')} />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end px-5 md:px-10 pb-10 md:pb-16 text-white">
@@ -210,7 +211,7 @@ export default function Home() {
                 <Reveal key={p.id} delay={i * 0.1}>
                   <Link to={`/projects/${p.slug}`} className="group block">
                     <div className="relative overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/3]">
-                      {p.cover_image && <ParallaxImage src={p.cover_image} className="absolute inset-0 h-full w-full" strength={5} />}
+                      {p.cover_image && <ParallaxImage src={p.cover_image} className="absolute inset-0 h-full w-full" strength={5} alt={tr(p, 'title')} />}
                     </div>
                     <div className="mt-4 flex items-start justify-between gap-4">
                       <div>
@@ -266,7 +267,7 @@ export default function Home() {
                 <Link to={`/news/${p.slug}`} className="group">
                   {p.featured_image && (
                     <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100 mb-4">
-                      <Image src={p.featured_image} fittingType="fill" className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
+                      <Image src={p.featured_image} fittingType="fill" className="w-full h-full transition-transform duration-700 group-hover:scale-105" alt={tr(p, 'title')} />
                     </div>
                   )}
                   <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{fmtDate(p.published_date)}</p>

@@ -2,23 +2,36 @@
 
 > Tattoo artist & creative entrepreneur. Living portfolio — projects, experience, education, skills, awards, workshops and news.
 
-## Full portfolio (auto-generated, always current)
-- Portfolio data (semantic HTML): https://mikolajmrozek.base44.app/portfolio-data
-- Full text portfolio: https://mikolajmrozek.base44.app/functions/llms-txt
+Website: https://mikolajmrozek.base44.app/
+Machine-readable portfolio (semantic HTML): https://mikolajmrozek.base44.app/portfolio-data
+Full live portfolio text (auto-generated): https://mikolajmrozek.base44.app/functions/llms-txt
+Sitemap: https://mikolajmrozek.base44.app/sitemap.xml
 
-## Sitemap
-- https://mikolajmrozek.base44.app/sitemap.xml
+## About
+Multidisciplinary artist, creative entrepreneur & educator.
+Current focus: Building a creative studio, mentoring the next generation, and exploring art as a practice of attention.
+I'm a tattoo artist, creative entrepreneur and educator working where image, identity and story meet. For over a decade I've built studios, led teams and shaped brands — always guided by the belief that craft is a form of care.
 
-## Public sections
-- Home: https://mikolajmrozek.base44.app/
-- About: https://mikolajmrozek.base44.app/about
-- Projects: https://mikolajmrozek.base44.app/projects
-- Workshops & offers: https://mikolajmrozek.base44.app/offers
-- News: https://mikolajmrozek.base44.app/news
-- Shop: https://mikolajmrozek.base44.app/shop
-- Contact: https://mikolajmrozek.base44.app/contact
+## Experience
+- Owner & Creative Director @ Romans Tattoo (2018–present) — Wolsztyn, Poland
+  I founded and lead Romans Tattoo — a studio built around craft, trust and care. Over the years I've grown it into an eight-person team, launched three studios across cities, and shaped every layer of the brand, from visual identity to the way a client feels in the chair.
+- Tattoo Artist & Content Creator @ Independent Practice (2014–present) — Poland
+  Before the studio, I worked freelance — tattooing, building brands for small businesses and producing photo and video content. It was a formative season of conventions, late-night drawing and learning to treat every client like a collaboration.
+
+## Projects
+- Painting workshops for children — https://mikolajmrozek.base44.app/projects/warsztaty-malerskie-dzieci
+  I teach children painting, conveying the basics of techniques, impressions, and color theory. I build the lesson plan dynamically, not always indoors and not always with a single medium.
+- Cancer Fighters — Charity Initiative — https://mikolajmrozek.base44.app/projects/cancer-fighters-charity
+  The Cancer Fighters Charity Picnic in Wolsztyn brought together artists, clients, and the local community for a single purpose: supporting children fighting cancer. We turned a day of tattooing into a powerful fundraising initiative.
+- Mikołaj Mrozek — TATTOO Portfolio — https://mikolajmrozek.base44.app/projects/portfolio-tattoo-mikolaj-mrozek
+  For me, tattooing is a combination of art, technique, and an individual human story. Since 2014, I have been developing my own approach to neotraditional tattooing, combining inspiration from Art Nouveau, strong contrast, and composition with the vision of the person for whom the tattoo will become a part of their body.
+- Plein-air painting (August impressions) — https://mikolajmrozek.base44.app/projects/plener-malerski-sierpien-wrazen
+
+## News
+- Total Tattoo Magazine — interview — https://mikolajmrozek.base44.app/news/total-tattoo-magazine-mikolaj-mrozek-wywiad
+- Ostoja inspiracji — interview — https://mikolajmrozek.base44.app/news/ostoja-inspiracji-wywiad-mikolaj-mrozek
+- TattooFest 168 — neotradycja, secesyjna nuta — https://mikolajmrozek.base44.app/news/tattoofest-168-mikolaj-mrozek-neotradycja-secesyjna-nuta
 
 ## Notes
-This file is a stable index per the llms.txt specification.
-The linked /portfolio-data and /functions/llms-txt resources are generated live
-from the content management system and always reflect the current portfolio state.
+This file is a static snapshot of the public portfolio.
+For the complete, always-current data — including education, skills, awards, certificates, languages, workshops, partners and contact details — see the auto-generated resources linked above (/portfolio-data and /functions/llms-txt), which are regenerated live from the content management system on every request.
