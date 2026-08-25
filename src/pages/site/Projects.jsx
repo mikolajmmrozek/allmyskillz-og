@@ -2,11 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchPublished } from '@/lib/siteData';
-import { Image } from '@/components/ui/image';
 import { Reveal } from '@/components/site/Motion';
 import { ArrowUpRight } from 'lucide-react';
 
-const ASPECTS = ['aspect-[4/5]', 'aspect-[4/3]', 'aspect-[1/1]', 'aspect-[3/4]', 'aspect-[16/10]'];
+// Each card renders its cover at the image's natural aspect ratio so the
+// masonry columns stagger organically (Pinterest-style) instead of aligning.
+function ProjectCover({ src, alt }) {
+  const [ratio, setRatio] = useState(null);
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl bg-neutral-100 w-full"
+      style={{ aspectRatio: ratio || '4 / 5' }}
+    >
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onLoad={(e) => {
+            const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+            if (w && h) setRatio(`${w} / ${h}`);
+          }}
+          className="w-full h-full object-cover transition-transform duration-[900ms] group-hover:scale-105"
+        />
+      ) : (
+        <div className="w-full h-full bg-neutral-100" />
+      )}
+    </div>
+  );
+}
 
 export default function Projects() {
   const { tr, t } = useLang();
@@ -38,11 +62,9 @@ export default function Projects() {
           {projects.map((p, i) => (
             <Reveal key={p.id} delay={(i % 3) * 0.08} className="mb-6 break-inside-avoid">
               <Link to={`/projects/${p.slug}`} className="group block">
-                <div className={`relative overflow-hidden rounded-2xl bg-neutral-100 ${ASPECTS[i % ASPECTS.length]}`}>
-                  {p.cover_image && (
-                    <Image src={p.cover_image} fittingType="fill" className="w-full h-full transition-transform duration-[900ms] group-hover:scale-105" />
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
+                <div className="relative">
+                  <ProjectCover src={p.cover_image} alt={tr(p, 'title')} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500 rounded-2xl pointer-events-none" />
                   {p.featured && (
                     <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-2 py-1 rounded-full bg-[var(--accent,#CBFF00)] text-black">
                       Featured
