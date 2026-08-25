@@ -29,31 +29,19 @@ export default function MediaLibrary() {
   const handleUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
+    // HEIC/HEIF are not supported — block them outright with a clear error.
+    const blocked = files.some((f) => /\.(heic|heif)$/i.test(f.name) || f.type === 'image/heic' || f.type === 'image/heif');
+    if (blocked) {
+      alert(t('admin.heic_not_supported'));
+      e.target.value = '';
+      return;
+    }
     setUploading(true);
     setUploadStatus(files.map((f) => ({ name: f.name, status: 'uploading' })));
 
-    const isHeic = (file) => {
-      const ext = file.name.toLowerCase().split('.').pop();
-      return ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif';
-    };
-
     const uploadOne = async (file, idx) => {
       try {
-        // HEIC isn't decodable by browsers or the media CDN — convert to JPEG
-        // in-browser before upload so the file renders everywhere.
-        let uploadFile = file;
-        if (isHeic(file)) {
-          try {
-            const heic2any = (await import('heic2any')).default;
-            const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
-            const jpeg = Array.isArray(blob) ? blob[0] : blob;
-            const jpgName = file.name.replace(/\.(heic|heif)$/i, '') + '.jpg';
-            uploadFile = new File([jpeg], jpgName, { type: 'image/jpeg' });
-          } catch (convErr) {
-            console.error('HEIC conversion failed, uploading original:', convErr);
-          }
-        }
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: uploadFile });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
         const ext = uploadFile.name.split('.').pop()?.toLowerCase();
         const type = ['jpg','jpeg','png','webp','gif','svg'].includes(ext) ? 'image'
           : ['mp4','webm','mov'].includes(ext) ? 'video'
@@ -108,7 +96,7 @@ export default function MediaLibrary() {
             <Sparkles className="w-4 h-4" /> {t('admin.generate')}
           </button>
           <label className="cursor-pointer">
-            <input type="file" multiple accept="image/*,image/heic,image/heif,video/*,application/pdf" className="hidden" onChange={handleUpload} />
+            <input type="file" multiple accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg,video/*,application/pdf" className="hidden" onChange={handleUpload} />
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} {t('admin.upload')}
             </span>
