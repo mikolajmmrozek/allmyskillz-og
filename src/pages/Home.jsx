@@ -8,7 +8,9 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
 import SiteLogo from '@/components/site/SiteLogo';
-import { ARTIST_NAME_LINES } from '@/lib/brand';
+import { ARTIST_NAME, ARTIST_NAME_LINES } from '@/lib/brand';
+import { useSEO } from '@/hooks/use-seo';
+import { personJsonLd, websiteJsonLd } from '@/lib/seo';
 import { ArrowUpRight, ArrowRight, MoveDown } from 'lucide-react';
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -16,6 +18,12 @@ const EASE = [0.22, 1, 0.36, 1];
 export default function Home() {
   const { lang, tr, t } = useLang();
   const { home, settings, loading } = useSite();
+  useSEO({
+    title: settings ? `${ARTIST_NAME} — ${settings.tagline_en || 'Tattoo Artist & Creative Entrepreneur'}` : `${ARTIST_NAME} — Tattoo Artist & Creative Entrepreneur`,
+    description: settings?.default_seo_description_en || undefined,
+    image: home?.hero_poster_url,
+    jsonLd: [websiteJsonLd(settings), personJsonLd(settings, home)],
+  });
   const [featured, setFeatured] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [news, setNews] = useState([]);

@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
+import { productJsonLd } from '@/lib/seo';
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -19,6 +20,7 @@ export default function ProductDetail() {
     description: product && (tr(product, 'seo_description') || tr(product, 'title')),
     image: product?.images?.[0],
     url: typeof window !== 'undefined' ? window.location.href : undefined,
+    jsonLd: product ? productJsonLd(product, '/shop/' + slug) : undefined,
   });
 
   useEffect(() => {

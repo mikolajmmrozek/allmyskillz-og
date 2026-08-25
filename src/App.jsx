@@ -22,6 +22,7 @@ import PostDetail from '@/pages/site/PostDetail';
 import Shop from '@/pages/site/Shop';
 import ProductDetail from '@/pages/site/ProductDetail';
 import Contact from '@/pages/site/Contact';
+import PortfolioData from '@/pages/site/PortfolioData';
 
 // Auth pages
 import Login from '@/pages/Login';
@@ -87,6 +88,7 @@ const AuthenticatedApp = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/:slug" element={<ProductDetail />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/portfolio-data" element={<PortfolioData />} />
       </Route>
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/admin" element={<AdminLayout />}>

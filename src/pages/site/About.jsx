@@ -12,10 +12,18 @@ import VideoEmbed from '@/components/site/VideoEmbed';
 import AwardGallery from '@/components/site/AwardGallery';
 import { ArrowUpRight } from 'lucide-react';
 import SectionNav from '@/components/site/SectionNav';
+import { useSEO } from '@/hooks/use-seo';
+import { personJsonLd, websiteJsonLd } from '@/lib/seo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 export default function About() {
   const { lang, tr, t } = useLang();
   const { home, settings } = useSite();
+  useSEO({
+    title: `${ARTIST_NAME} — ${lang === 'pl' ? 'O mnie' : 'About'}`,
+    description: settings?.default_seo_description_en || undefined,
+    jsonLd: [websiteJsonLd(settings), personJsonLd(settings, home)],
+  });
   const [experience, setExperience] = useState([]);
   const [education, setEducation] = useState([]);
   const [skills, setSkills] = useState([]);
