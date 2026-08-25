@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
-import { Image } from '@/components/ui/image';
 
 // Organic masonry: each image's row-span is computed from its natural aspect
 // ratio, so portrait images become tall in varying heights (not lined up),
@@ -103,13 +102,12 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
                   </span>
                 </>
               ) : (
-                <Image
+                <img
                   src={src}
                   alt={alt}
-                  fittingType="fill"
                   loading="lazy"
                   onLoad={(e) => onLoad(i, e)}
-                  className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               )}
             </button>
