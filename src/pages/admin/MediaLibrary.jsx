@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
 import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import { thumbUrl } from '@/lib/media';
 
 export default function MediaLibrary() {
   const [items, setItems] = useState([]);
@@ -146,7 +147,7 @@ export default function MediaLibrary() {
             <div key={it.id} className="group relative bg-white border border-neutral-200 rounded-xl overflow-hidden">
               <div className="aspect-square">
                 {it.type === 'image' ? (
-                  <img src={it.url} alt={it.title} className="w-full h-full object-cover" />
+                  <img src={thumbUrl(it.url, 300)} alt={it.title} loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
                     <ImageIcon className="w-8 h-8 text-neutral-300 mb-1" />

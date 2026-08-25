@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
 import { Image as ImageIcon, Upload, Link2, Loader2, Check, Sparkles } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import { thumbUrl } from '@/lib/media';
 
 // Reusable media picker: browse MediaItem library or upload a new file.
 // onPick(url, mediaItem?) => called when user selects.
@@ -156,7 +157,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
                     className={`relative aspect-square rounded-lg overflow-hidden border-2 bg-neutral-100 transition ${isSel ? 'border-[#CBFF00]' : 'border-transparent hover:border-neutral-300'}`}
                   >
                     {it.type === 'image' ? (
-                      <img src={it.url} alt={it.title} className="w-full h-full object-cover" />
+                      <img src={thumbUrl(it.url, 300)} alt={it.title} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-2">
                         <ImageIcon className="w-6 h-6 text-neutral-400 mb-1" />

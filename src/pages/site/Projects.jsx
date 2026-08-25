@@ -4,6 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { fetchPublished } from '@/lib/siteData';
 import { Reveal } from '@/components/site/Motion';
 import { ArrowUpRight } from 'lucide-react';
+import { thumbUrl } from '@/lib/media';
 
 // Each card renders its cover at the image's natural aspect ratio so the
 // masonry columns stagger organically (Pinterest-style) instead of aligning.
@@ -16,7 +17,7 @@ function ProjectCover({ src, alt }) {
     >
       {src ? (
         <img
-          src={src}
+          src={thumbUrl(src, 700)}
           alt={alt}
           loading="lazy"
           onLoad={(e) => {

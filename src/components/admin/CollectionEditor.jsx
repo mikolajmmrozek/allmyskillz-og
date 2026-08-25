@@ -13,6 +13,7 @@ import RichTextEditor from './RichTextEditor';
 import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { thumbUrl } from '@/lib/media';
 
 // Determine the display type of a schema property using custom hints (format / relation)
 function fieldKind(prop) {
@@ -333,7 +334,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
   if (kind === 'media') {
     return (
       <div className="flex items-center gap-3">
-        {value ? <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" /> : <div className="w-20 h-20 rounded-lg border border-dashed flex items-center justify-center text-neutral-300"><ImageIcon className="w-6 h-6" /></div>}
+        {value ? <img src={thumbUrl(value, 200)} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-lg border" /> : <div className="w-20 h-20 rounded-lg border border-dashed flex items-center justify-center text-neutral-300"><ImageIcon className="w-6 h-6" /></div>}
         <div className="flex gap-2">
           <Button type="button" variant="outline" size="sm" onClick={onPickMedia}>{t('admin.choose')}</Button>
            {value && <Button type="button" variant="ghost" size="sm" onClick={() => onChange('')}>{t('admin.clear')}</Button>}
@@ -357,7 +358,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
                   <Draggable key={url + '-' + idx} draggableId={url + '-' + idx} index={idx}>
                     {(prov) => (
                       <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="relative group cursor-grab active:cursor-grabbing">
-                        <img src={url} alt="" className="w-20 h-20 object-cover rounded-lg border" />
+                        <img src={thumbUrl(url, 200)} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-lg border" />
                         <button type="button" onClick={(e) => { e.stopPropagation(); onRemoveMediaItem?.(idx); }} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><X className="w-3 h-3" /></button>
                       </div>
                     )}

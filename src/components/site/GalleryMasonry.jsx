@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { thumbUrl } from '@/lib/media';
 
 // True Pinterest masonry via CSS multi-column layout: each image flows at its
 // natural aspect ratio (width = column width, height auto), so heights vary
@@ -53,7 +54,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
                 </>
               ) : (
                 <img
-                  src={src}
+                  src={thumbUrl(src, 700)}
                   alt={alt}
                   loading="lazy"
                   className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
