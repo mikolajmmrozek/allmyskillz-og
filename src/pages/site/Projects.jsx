@@ -2,30 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchPublished } from '@/lib/siteData';
-import { Image } from '@/components/ui/image';
 import { Reveal } from '@/components/site/Motion';
 import { ArrowUpRight } from 'lucide-react';
 
-// Each card keeps its cover image's natural aspect ratio so the masonry
-// columns stack with genuinely varying heights (Pinterest-style) instead of
-// aligned rows. A default ratio avoids a 0-height box before first measure.
-const DEFAULT_RATIO = 4 / 5;
-
-// Cover image that keeps its natural aspect ratio so the masonry columns
-// stack with varying heights instead of aligned rows.
+// Cover image rendered at its natural aspect ratio so the masonry columns
+// stagger with varying heights (Pinterest-style) instead of aligned rows.
 function ProjectCover({ src, featured }) {
-  const [ratio, setRatio] = useState(DEFAULT_RATIO);
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-neutral-100" style={{ aspectRatio: ratio }}>
+    <div className="relative overflow-hidden rounded-2xl bg-neutral-100">
       {src && (
-        <Image
+        <img
           src={src}
-          fittingType="fill"
-          className="w-full h-full transition-transform duration-[900ms] group-hover:scale-105"
-          onLoad={(e) => {
-            const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
-            if (w && h) setRatio(w / h);
-          }}
+          alt=""
+          className="w-full h-auto transition-transform duration-[900ms] group-hover:scale-105"
         />
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-500" />
