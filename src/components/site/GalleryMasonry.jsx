@@ -1,61 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 
-// Organic masonry: each image's row-span is computed from its natural aspect
-// ratio, so portrait images become tall in varying heights (not lined up),
-// while landscape images span two columns. A dense auto-flow fills gaps.
-// Click any item to open a fullscreen lightbox with prev/next + keyboard nav.
-// Supports images (incl. HEIC via CDN conversion) and direct video files (mp4…).
-const ROW_PX = 120;
-const GAP_PX = 12;
-
+// True Pinterest masonry via CSS multi-column layout: each image flows at its
+// natural aspect ratio (width = column width, height auto), so heights vary
+// organically with no JS measurement. Click any item for a fullscreen lightbox.
+// Supports images and direct video files (mp4…).
 const VIDEO_EXT = /\.(mp4|webm|mov|m4v|ogg|ogv)$/i;
 export const isVideoUrl = (url = '') => VIDEO_EXT.test(url);
 
 export default function GalleryMasonry({ images = [], alt = '', className = '' }) {
-  const [ratios, setRatios] = useState({});
-  const [spans, setSpans] = useState({});
-  const [colWidth, setColWidth] = useState(0);
   const [active, setActive] = useState(null);
-  const gridRef = useRef(null);
-
-  const onLoad = (i, e) => {
-    const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
-    if (w && h) setRatios((p) => (p[i] == null ? { ...p, [i]: w / h } : p));
-  };
-
-  // Measure one column's pixel width so we can size row-spans to natural ratios.
-  useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) return;
-    const compute = () => {
-      const cols = window.getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
-      if (!cols) return;
-      setColWidth((grid.clientWidth - GAP_PX * (cols - 1)) / cols);
-    };
-    compute();
-    const ro = new ResizeObserver(compute);
-    ro.observe(grid);
-    return () => ro.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!colWidth) return;
-    const next = {};
-    images.forEach((src, i) => {
-      const r = isVideoUrl(src) ? 16 / 9 : ratios[i];
-      if (r == null) { next[i] = { col: 1, row: 3 }; return; }
-      const col = r >= 1.4 ? 2 : 1;                       // landscape → wider
-      const cellW = colWidth * col + GAP_PX * (col - 1);
-      const naturalH = cellW / r;
-      let row = Math.round((naturalH + GAP_PX) / (ROW_PX + GAP_PX));
-      row = Math.max(2, Math.min(row, 6));
-      next[i] = { col, row };
-    });
-    setSpans(next);
-  }, [ratios, colWidth, images]);
 
   useEffect(() => {
     if (active == null) return;
@@ -70,21 +26,15 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
 
   return (
     <>
-      <div
-        ref={gridRef}
-        style={{ gridAutoRows: ROW_PX }}
-        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 [grid-auto-flow:dense] ${className}`}
-      >
+      <div className={`columns-2 md:columns-3 lg:columns-4 gap-3 ${className}`}>
         {images.map((src, i) => {
-          const s = spans[i] || { col: 1, row: 3 };
           const video = isVideoUrl(src);
           return (
             <button
               key={i}
               type="button"
               onClick={() => setActive(i)}
-              style={{ gridColumn: `span ${s.col}`, gridRow: `span ${s.row}` }}
-              className="group relative overflow-hidden rounded-2xl bg-neutral-100"
+              className="group relative mb-3 block w-full overflow-hidden rounded-2xl bg-neutral-100 break-inside-avoid"
             >
               {video ? (
                 <>
@@ -95,7 +45,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
                     muted
                     playsInline
                     preload="metadata"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
                   <span className="absolute bottom-2 left-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm">
                     <Play className="h-4 w-4 translate-x-0.5 fill-current" />
@@ -106,8 +56,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
                   src={src}
                   alt={alt}
                   loading="lazy"
-                  onLoad={(e) => onLoad(i, e)}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               )}
             </button>
