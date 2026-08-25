@@ -1,0 +1,24 @@
+# Mikołaj Mrozek
+
+> Tattoo artist & creative entrepreneur. Living portfolio — projects, experience, education, skills, awards, workshops and news.
+
+## Full portfolio (auto-generated, always current)
+- Portfolio data (semantic HTML): https://mikolajmrozek.base44.app/portfolio-data
+- Full text portfolio: https://mikolajmrozek.base44.app/functions/llms-txt
+
+## Sitemap
+- https://mikolajmrozek.base44.app/sitemap.xml
+
+## Public sections
+- Home: https://mikolajmrozek.base44.app/
+- About: https://mikolajmrozek.base44.app/about
+- Projects: https://mikolajmrozek.base44.app/projects
+- Workshops & offers: https://mikolajmrozek.base44.app/offers
+- News: https://mikolajmrozek.base44.app/news
+- Shop: https://mikolajmrozek.base44.app/shop
+- Contact: https://mikolajmrozek.base44.app/contact
+
+## Notes
+This file is a stable index per the llms.txt specification.
+The linked /portfolio-data and /functions/llms-txt resources are generated live
+from the content management system and always reflect the current portfolio state.
