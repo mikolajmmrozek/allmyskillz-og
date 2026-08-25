@@ -79,7 +79,7 @@ export default function Home() {
           </video>
         ) : heroPoster ? (
           <div className="absolute inset-0">
-            <Image src={heroPoster} fittingType="fill" className="h-full w-full" alt={`${ARTIST_NAME} — tattoo artist and creative entrepreneur`} />
+            <Image src={heroPoster} fittingType="fill" className="h-full w-full" alt={ARTIST_NAME + ' — tattoo artist and creative entrepreneur'} />
           </div>
         ) : (
           <div className="absolute inset-0 mesh-bg-dark bg-neutral-900" />
@@ -109,7 +109,7 @@ export default function Home() {
                     </motion.span>
                   </span>
                 ))}
-                <span className="sr-only">, Tattoo Artist &amp; Creative Entrepreneur</span>
+                <span className="sr-only">, Tattoo Artist and Creative Entrepreneur</span>
               </h1>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
