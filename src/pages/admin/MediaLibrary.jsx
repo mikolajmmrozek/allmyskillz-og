@@ -47,7 +47,7 @@ export default function MediaLibrary() {
       return;
     }
     setUploading(true);
-    setUploadStatus(files.map((f) => ({ name: f.name, status: 'uploading' })));
+    setUploadStatus(files.map((f) => ({ name: f.name, status: 'uploading', size: f.size || 0 })));
 
     const uploadOne = async (file, idx) => {
       try {
@@ -123,11 +123,17 @@ export default function MediaLibrary() {
             const done = uploadStatus.filter((s) => s.status === 'done').length;
             const failed = uploadStatus.filter((s) => s.status === 'error').length;
             const active = uploadStatus.filter((s) => s.status === 'uploading' || s.status === 'saving').length;
-            const pct = total ? Math.round((done / total) * 100) : 0;
+            const totalBytes = uploadStatus.reduce((a, s) => a + (s.size || 0), 0);
+            const doneBytes = uploadStatus.filter((s) => s.status === 'done').reduce((a, s) => a + (s.size || 0), 0);
+            const pct = totalBytes ? Math.round((doneBytes / totalBytes) * 100) : (total ? Math.round((done / total) * 100) : 0);
             const sec = Math.round(elapsed / 1000);
+            const mb = (b) => (b / 1048576).toFixed(1);
+            const rate = sec > 0 ? doneBytes / 1048576 / sec : 0; // MB/s
+            const remainBytes = Math.max(0, totalBytes - doneBytes);
+            const eta = rate > 0.01 ? Math.round(remainBytes / 1048576 / rate) : null;
             return (
               <>
-                <div className="flex items-center justify-between mb-2 text-xs">
+                <div className="flex items-center justify-between mb-1.5 text-xs">
                   <span className="font-medium text-neutral-700">
                     {uploading ? (
                       <>
@@ -145,6 +151,10 @@ export default function MediaLibrary() {
                   </span>
                   <span className="tabular-nums text-neutral-400">{sec}s</span>
                 </div>
+                <div className="flex items-center justify-between mb-2 text-[11px] text-neutral-500 tabular-nums">
+                  <span>{mb(doneBytes)} / {mb(totalBytes)} MB · {pct}%</span>
+                  <span>{uploading && rate > 0.01 ? <>{rate.toFixed(1)} MB/s{eta != null ? ` · ~${eta}s` : ''}</> : (totalBytes ? `${mb(totalBytes)} MB` : '')}</span>
+                </div>
                 <div className="h-2 w-full rounded-full bg-neutral-200 overflow-hidden mb-3">
                   <div
                     className={`h-full rounded-full transition-all duration-300 ${uploading ? 'bg-[#CBFF00]' : (failed > 0 ? 'bg-red-400' : 'bg-emerald-400')}`}
@@ -159,6 +169,7 @@ export default function MediaLibrary() {
                       {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px] shrink-0">✓</span>}
                       {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white shrink-0">✕</span>}
                       <span className={`truncate flex-1 ${s.status === 'error' ? 'text-red-500' : 'text-neutral-600'}`}>{s.name}</span>
+                      {s.size ? <span className="text-[10px] text-neutral-300 shrink-0 tabular-nums">{(s.size/1048576).toFixed(1)} MB</span> : null}
                       <span className="text-[10px] text-neutral-400 shrink-0">
                         {s.status === 'uploading' && (t('admin.upload_phase_sending') || 'wysyłanie...')}
                         {s.status === 'saving' && (t('admin.upload_phase_saving') || 'zapis do biblioteki...')}
