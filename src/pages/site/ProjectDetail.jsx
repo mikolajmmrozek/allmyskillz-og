@@ -8,6 +8,7 @@ import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
 import AwardGallery from '@/components/site/AwardGallery';
 import VideoEmbed from '@/components/site/VideoEmbed';
+import PartnerLogos from '@/components/site/PartnerLogos';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
 import { creativeWorkJsonLd } from '@/lib/seo';
@@ -99,6 +100,9 @@ export default function ProjectDetail() {
         </div>
       )}
 
+      {/* Partner logos — credit band below the cover */}
+      <PartnerLogos partners={related.partners} label={t('site.collaboration')} />
+
       {/* Story + sticky sidebar */}
       {(story || related.partners.length > 0 || related.experience.length > 0) && (
         <div className="px-5 md:px-10 py-16 md:py-24 grid md:grid-cols-[1fr_2.2fr] gap-8 md:gap-16">
@@ -106,12 +110,20 @@ export default function ProjectDetail() {
             {related.partners.length > 0 && (
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-neutral-400 mb-3">{t('site.partners')}</p>
-                <ul className="space-y-1.5">
+                <ul className="space-y-3">
                   {related.partners.map((pa) => (
                     <li key={pa.id} className="text-sm">
                       {pa.website ? (
-                        <a href={pa.website} target="_blank" rel="noreferrer" className="hover:underline inline-flex items-center gap-1">{tr(pa, 'name')} <ArrowUpRight className="w-3 h-3" /></a>
-                      ) : tr(pa, 'name')}
+                        <a href={pa.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-black transition">
+                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 w-auto object-contain grayscale opacity-60" />}
+                          <span>{tr(pa, 'name')}</span> <ArrowUpRight className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-2">
+                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 w-auto object-contain grayscale opacity-60" />}
+                          {tr(pa, 'name')}
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
