@@ -131,7 +131,7 @@ export default function Home() {
               </motion.div>
               <div className="flex flex-wrap gap-3 md:justify-end">
                 {home?.cta_primary_link && (
-                  <Link to={home.cta_primary_link} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--accent,#CBFF00)] text-black font-medium text-sm hover:scale-[1.03] transition">
+                  <Link to={home.cta_primary_link} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] font-medium text-sm hover:scale-[1.03] transition">
                     {tr(home, 'cta_primary_text') || t('site.viewAll')}
                     <ArrowUpRight className="w-4 h-4 transition group-hover:translate-x-0.5" />
                   </Link>

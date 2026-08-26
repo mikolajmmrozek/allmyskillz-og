@@ -62,6 +62,14 @@ export function contrastForeground(hex) {
   return L > 0.45 ? '#000000' : '#ffffff';
 }
 
+// Accent CSS variables for surfaces outside the public shell (e.g. the admin
+// layout) that still want var(--accent) / var(--accent-ink) to track the
+// chosen accent color. Pure function — call on every render.
+export function buildAccentStyle(settings) {
+  const accent = settings?.accent_color || '#CBFF00';
+  return { '--accent': accent, '--accent-ink': contrastForeground(accent) };
+}
+
 function ensureFontLink(pkg) {
   if (typeof document === 'undefined') return;
   const id = 'site-font-package';

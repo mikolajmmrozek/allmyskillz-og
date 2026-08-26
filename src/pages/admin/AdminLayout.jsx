@@ -4,7 +4,8 @@ import { useAuth } from '@/lib/AuthContext';
 import { useLang } from '@/lib/i18n';
 import { collections, collectionGroups, getCollection } from '@/lib/entityRegistry';
 import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight, X } from 'lucide-react';
-import { SiteLogo } from '@/components/site/SiteLogo';
+import { SiteLogo, useBranding } from '@/components/site/SiteLogo';
+import { buildAccentStyle } from '@/lib/siteTheme';
 import { ARTIST_NAME } from '@/lib/brand';
 
 const ICON_MAP = { LayoutDashboard, Image, Settings, Mail, Menu };
@@ -15,11 +16,13 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const settings = useBranding();
+  const accentStyle = buildAccentStyle(settings);
 
   const handleLogout = () => { logout(); };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-neutral-200 flex">
+    <div className="min-h-screen bg-[#0A0A0A] text-neutral-200 flex" style={accentStyle}>
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-[#0C0C0C] border-b border-neutral-800">
         <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Menu className="w-5 h-5" /></button>
@@ -59,7 +62,7 @@ export default function AdminLayout() {
                     <NavLink
                       key={c.key}
                       to={c.singleton ? `/admin/${c.key === 'SiteSetting' ? 'settings' : c.key === 'HomepageConfig' ? 'homepage' : c.key.toLowerCase()}` : `/admin/collection/${c.key}`}
-                      className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[#CBFF00] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+                      className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
                       {!collapsed && <span className="truncate">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</span>}
@@ -112,7 +115,7 @@ function SidebarLink({ to, icon: Icon, label, collapsed, end }) {
     <NavLink
       to={to}
       end={end}
-      className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[#CBFF00] text-black font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
+      className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
     >
       <Icon className="w-4 h-4 shrink-0" />
       {!collapsed && <span>{label}</span>}

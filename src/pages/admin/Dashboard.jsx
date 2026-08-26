@@ -69,15 +69,15 @@ export default function Dashboard() {
               const Icon = c.icon;
               const count = stats[c.key] ?? 0;
               return (
-                <div key={c.key} className="group relative p-5 bg-[#CBFF00] text-black border border-black rounded-2xl">
-                  <button onClick={() => togglePin(c.key)} className="absolute top-3 right-3 text-black/50 hover:text-black"><Pin className="w-4 h-4 fill-current" /></button>
+                <div key={c.key} className="group relative p-5 bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] border border-[var(--accent-ink,#000)] rounded-2xl">
+                  <button onClick={() => togglePin(c.key)} className="absolute top-3 right-3 text-[var(--accent-ink,#000)]/50 hover:text-[var(--accent-ink,#000)]"><Pin className="w-4 h-4 fill-current" /></button>
                   <Link to={`/admin/collection/${c.key}`}>
                     <div className="flex items-center justify-between mb-3">
                       <Icon className="w-5 h-5" />
                       <ArrowUpRight className="w-4 h-4" />
                     </div>
                     <p className="text-3xl font-semibold tracking-tight">{count}</p>
-                    <p className="text-xs text-black/70 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
+                    <p className="text-xs text-[var(--accent-ink,#000)]/70 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
                   </Link>
                 </div>
               );
@@ -104,7 +104,7 @@ export default function Dashboard() {
                 <button
                   key={c.key}
                   onClick={() => togglePin(c.key)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition ${isPinned ? 'bg-[#CBFF00] border-black text-black' : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900 hover:text-black'}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition ${isPinned ? 'bg-[var(--accent,#CBFF00)] border-[var(--accent-ink,#000)] text-[var(--accent-ink,#000)]' : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900 hover:text-black'}`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {lang === 'pl' ? (c.label_pl || c.key) : c.key}
@@ -132,7 +132,7 @@ export default function Dashboard() {
                     <p className="text-sm font-medium truncate">{m.name}</p>
                     <p className="text-xs text-neutral-500 truncate">{m.subject || m.message}</p>
                   </div>
-                  {!m.is_read && <span className="w-2 h-2 rounded-full bg-[#CBFF00] shrink-0 mt-2" />}
+                  {!m.is_read && <span className="w-2 h-2 rounded-full bg-[var(--accent,#CBFF00)] shrink-0 mt-2" />}
                 </div>
               ))}
             </div>
@@ -146,7 +146,7 @@ export default function Dashboard() {
             <Link to="/admin/collection/Project/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.add_project')}</Link>
             <Link to="/admin/collection/Post/new" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.add_post')}</Link>
             <Link to="/admin/homepage" className="block px-4 py-3 bg-neutral-800 rounded-lg text-sm hover:bg-neutral-700 transition">{t('admin.edit_homepage')}</Link>
-            <Link to="/admin/settings" className="block px-4 py-3 bg-[#CBFF00] text-black rounded-lg text-sm font-medium hover:opacity-90 transition">{t('admin.site_settings_link')}</Link>
+            <Link to="/admin/settings" className="block px-4 py-3 bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] rounded-lg text-sm font-medium hover:opacity-90 transition">{t('admin.site_settings_link')}</Link>
           </div>
         </div>
       </div>

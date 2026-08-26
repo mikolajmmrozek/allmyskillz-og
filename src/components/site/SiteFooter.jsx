@@ -22,7 +22,7 @@ export default function SiteFooter() {
   ].filter((s) => s.url);
 
   return (
-    <footer className="bg-black text-neutral-300 mt-24">
+    <footer className="site-footer bg-black text-neutral-300 mt-24">
       <div className="px-5 md:px-10 py-16 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <SiteBrand size={40} tone="light" nameClassName="text-3xl text-neutral-200" />

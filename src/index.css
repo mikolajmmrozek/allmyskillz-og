@@ -158,3 +158,14 @@
 .dark .border-neutral-100,
 .dark .border-neutral-200,
 .dark .border-neutral-300 { border-color: hsl(var(--border)); }
+
+/* Dark-theme footer: accent background with contrast (accent-ink) text.
+   Scoped to .site-footer so it overrides the general neutral flip above via
+   higher specificity. */
+.dark .site-footer { background-color: var(--accent); color: var(--accent-ink); }
+.dark .site-footer .text-neutral-300,
+.dark .site-footer .text-neutral-400,
+.dark .site-footer .text-neutral-500 { color: var(--accent-ink); opacity: 0.85; }
+.dark .site-footer .border-neutral-700,
+.dark .site-footer .border-neutral-800 { border-color: var(--accent-ink); }
+.dark .site-footer a:hover { color: var(--accent-ink); opacity: 1; }

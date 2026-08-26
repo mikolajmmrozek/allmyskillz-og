@@ -109,7 +109,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
           {tab === 'library' && (
             <label className="cursor-pointer">
               <input type="file" className="hidden" onChange={handleUpload} />
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] text-sm font-medium rounded-lg hover:opacity-90">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                 {t('admin.upload')}
               </span>
@@ -154,7 +154,7 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
                   <button
                     key={it.id}
                     onClick={() => allowMultiple ? setSelected((s) => { const arr = Array.isArray(s) ? s : []; return isSel ? arr.filter((u) => u !== it.url) : [...arr, it.url]; }) : (onPick(it.url, it), onClose())}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 bg-neutral-100 transition ${isSel ? 'border-[#CBFF00]' : 'border-transparent hover:border-neutral-300'}`}
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 bg-neutral-100 transition ${isSel ? 'border-[var(--accent,#CBFF00)]' : 'border-transparent hover:border-neutral-300'}`}
                   >
                     {it.type === 'image' ? (
                       <img src={thumbUrl(it.url, 300)} alt={it.title} loading="lazy" className="w-full h-full object-cover" />
@@ -165,8 +165,8 @@ export default function MediaPicker({ open, onClose, onPick, allowMultiple = fal
                       </div>
                     )}
                     {isSel && (
-                      <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[#CBFF00] flex items-center justify-center">
-                        <Check className="w-3 h-3 text-black" />
+                      <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[var(--accent,#CBFF00)] flex items-center justify-center">
+                        <Check className="w-3 h-3 text-[var(--accent-ink,#000)]" />
                       </div>
                     )}
                   </button>

@@ -78,7 +78,7 @@ export default function GenerateMedia({ onSaved, onInsert, compact = false }) {
         </div>
       )}
 
-      <Button type="button" onClick={generate} disabled={busy || !prompt.trim()} className="w-full bg-[#CBFF00] text-black hover:opacity-90">
+      <Button type="button" onClick={generate} disabled={busy || !prompt.trim()} className="w-full bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:opacity-90">
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
         {busy ? (mode === 'video' ? t('admin.generating_video') : t('admin.generating')) : t('admin.generate')}
       </Button>

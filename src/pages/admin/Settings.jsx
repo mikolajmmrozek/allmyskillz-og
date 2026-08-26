@@ -27,7 +27,7 @@ export default function Settings() {
     <div className="p-4 md:p-8 max-w-4xl">
       <h1 className="text-3xl font-semibold tracking-tight mb-1">{t('admin.settings_title')}</h1>
       <p className="text-sm text-neutral-500 mb-8">{t('admin.settings_desc')}</p>
-      <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} />
+      <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} hiddenFields={['accent_color', 'theme', 'font_package']} />
       <AppearancePanel />
     </div>
   );

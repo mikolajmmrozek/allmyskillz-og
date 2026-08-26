@@ -135,7 +135,7 @@ export default function AppearancePanel() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button onClick={save} disabled={saving} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90">
+            <Button onClick={save} disabled={saving} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90">
               {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null}
               {t('admin.save_appearance')}
             </Button>

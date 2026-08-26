@@ -61,7 +61,7 @@ function buildGroups(properties) {
   return groups;
 }
 
-export default function CollectionEditor({ entityName, recordId, onSaved }) {
+export default function CollectionEditor({ entityName, recordId, onSaved, hiddenFields = [] }) {
   const navigate = useNavigate();
   const params = useParams();
   const id = recordId || params.id;
@@ -76,7 +76,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
   const [mediaPicker, setMediaPicker] = useState({ open: false, field: null, multiple: false });
   const [mobileLang, setMobileLang] = useState('pl');
 
-  const groups = useMemo(() => (schema ? buildGroups(schema.properties) : []), [schema]);
+  const groups = useMemo(() => (schema ? buildGroups(schema.properties).filter((g) => !(g.field && hiddenFields.includes(g.field))) : []), [schema, hiddenFields]);
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -230,7 +230,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved }) {
             <button onClick={() => setMobileLang('en')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'en' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>EN</button>
           </div>
           <Button variant="outline" onClick={() => navigate(`/admin/collection/${entityName}`)}>{t('action.cancel')}</Button>
-          <Button onClick={save} disabled={saving} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90">
+          <Button onClick={save} disabled={saving} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90">
             {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} {t('action.save')}
           </Button>
         </div>
@@ -322,7 +322,7 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
           const sel = selected.includes(o.id);
           const label = o.title_en || o.name_en || o.label_en || o.company_en || o.company_pl || o.school_en || o.title || o.name || o.id;
           return (
-            <button key={o.id} type="button" onClick={() => toggle(o.id)} className={`px-2.5 py-1 text-xs rounded-full transition ${sel ? 'bg-[#CBFF00] text-black' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'}`}>
+            <button key={o.id} type="button" onClick={() => toggle(o.id)} className={`px-2.5 py-1 text-xs rounded-full transition ${sel ? 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)]' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'}`}>
               {label}
             </button>
           );

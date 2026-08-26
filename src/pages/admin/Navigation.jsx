@@ -66,7 +66,7 @@ export default function Navigation() {
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('admin.navigation_title')}</h1>
           <p className="text-sm text-neutral-500 mt-1">{t('admin.navigation_desc')}</p>
         </div>
-        <Button onClick={add} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto"><Plus className="w-4 h-4 mr-1" /> {t('admin.add_link')}</Button>
+        <Button onClick={add} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90 w-full sm:w-auto"><Plus className="w-4 h-4 mr-1" /> {t('admin.add_link')}</Button>
       </div>
 
       {loading ? (

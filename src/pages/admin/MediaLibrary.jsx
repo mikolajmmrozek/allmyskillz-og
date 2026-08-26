@@ -139,7 +139,7 @@ export default function MediaLibrary() {
           </button>
           <label className="cursor-pointer">
             <input type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.mp4" className="hidden" onChange={handleUpload} />
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] text-sm font-medium rounded-lg hover:opacity-90">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} {t('admin.upload')}
             </span>
           </label>
@@ -173,7 +173,7 @@ export default function MediaLibrary() {
                       </>
                     ) : (
                       <>
-                        <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] inline-block text-center text-[8px] leading-[14px] mr-1.5">✓</span>
+                        <span className="w-3.5 h-3.5 rounded-full bg-[var(--accent,#CBFF00)] inline-block text-center text-[8px] leading-[14px] mr-1.5">✓</span>
                         {done}/{total} {t('admin.upload_done_label') || 'gotowe'}
                         {failed > 0 && <span className="text-red-500 ml-2">· {failed} błędów</span>}
                       </>
@@ -192,7 +192,7 @@ export default function MediaLibrary() {
                 </div>
                 <div className="h-2 w-full rounded-full bg-neutral-200 overflow-hidden mb-3">
                   <div
-                    className={`h-full rounded-full transition-all duration-300 ${uploading ? 'bg-[#CBFF00]' : (failed > 0 ? 'bg-red-400' : 'bg-emerald-400')}`}
+                    className={`h-full rounded-full transition-all duration-300 ${uploading ? 'bg-[var(--accent,#CBFF00)]' : (failed > 0 ? 'bg-red-400' : 'bg-emerald-400')}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -200,8 +200,8 @@ export default function MediaLibrary() {
                   {uploadStatus.map((s, i) => (
                     <div key={i} className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-lg bg-white border ${s.status === 'error' ? 'border-red-200' : 'border-neutral-200'}`}>
                       {s.status === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400 shrink-0" />}
-                      {s.status === 'saving' && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#CBFF00] shrink-0" />}
-                      {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px] shrink-0">✓</span>}
+                      {s.status === 'saving' && <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--accent,#CBFF00)] shrink-0" />}
+                      {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[var(--accent,#CBFF00)] flex items-center justify-center text-[8px] shrink-0">✓</span>}
                       {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white shrink-0">✕</span>}
                       <span className={`truncate flex-1 ${s.status === 'error' ? 'text-red-500' : 'text-neutral-600'}`}>{s.name}</span>
                       {s.size ? <span className="text-[10px] text-neutral-300 shrink-0 tabular-nums">{(s.size/1048576).toFixed(1)} MB</span> : null}

@@ -10,10 +10,10 @@ import { Search, Plus, Pencil, Copy, Trash2, Archive, Send, EyeOff, Loader2, Sta
 
 const statusColors = {
   draft: 'bg-neutral-200 text-neutral-600',
-  published: 'bg-[#CBFF00] text-black',
+  published: 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)]',
   archived: 'bg-neutral-300 text-neutral-500',
   scheduled: 'bg-amber-200 text-amber-700',
-  new: 'bg-[#CBFF00] text-black',
+  new: 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)]',
   read: 'bg-neutral-200 text-neutral-600',
 };
 
@@ -78,7 +78,7 @@ export default function CollectionList({ entityName }) {
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{lang === 'pl' ? (col.label_pl || col.key) : col.key}</h1>
           <p className="text-sm text-neutral-500 mt-1">{filtered.length} {filtered.length === 1 ? t('records.one') : t('records.many')}</p>
         </div>
-        <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[#CBFF00] text-black hover:bg-[#CBFF00]/90 w-full sm:w-auto">
+        <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90 w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-1" /> {t('action.new')}
         </Button>
       </div>
@@ -128,8 +128,8 @@ export default function CollectionList({ entityName }) {
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <div className="flex items-center gap-0.5">
                       {hasFeatured && (
-                        <button onClick={() => toggleFeatured(r)} className={`p-1.5 rounded hover:bg-neutral-200 ${r.featured ? 'text-[#CBFF00]' : 'text-neutral-300'}`} title="Featured">
-                          <Star className={`w-4 h-4 ${r.featured ? 'fill-[#CBFF00]' : ''}`} />
+                        <button onClick={() => toggleFeatured(r)} className={`p-1.5 rounded hover:bg-neutral-200 ${r.featured ? 'text-[var(--accent,#CBFF00)]' : 'text-neutral-300'}`} title="Featured">
+                          <Star className={`w-4 h-4 ${r.featured ? 'fill-[var(--accent,#CBFF00)]' : ''}`} />
                         </button>
                       )}
                       <button onClick={() => navigate(`/admin/collection/${entityName}/${r.id}`)} className="p-1.5 rounded hover:bg-neutral-200 text-neutral-500" title={t('action.edit')}><Pencil className="w-4 h-4" /></button>
@@ -164,7 +164,7 @@ export default function CollectionList({ entityName }) {
                         {f === 'status' ? (
                           <span className={`inline-flex px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColors[r[f]] || 'bg-neutral-200'}`}>{t(`status.${r[f]}`)}</span>
                         ) : f === 'featured' || f === 'is_digital' ? (
-                          r[f] ? <Star className="w-3.5 h-3.5 fill-[#CBFF00] text-[#CBFF00]" /> : <span className="text-neutral-300">○</span>
+                          r[f] ? <Star className="w-3.5 h-3.5 fill-[var(--accent,#CBFF00)] text-[var(--accent,#CBFF00)]" /> : <span className="text-neutral-300">○</span>
                         ) : f === 'price' ? (
                           r[f] != null ? `${r[f]} ${r.currency || ''}`.trim() : '—'
                         ) : f === 'cover_image' || f === 'image' || f === 'logo_url' ? (
