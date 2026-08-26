@@ -115,7 +115,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
-                className="block shrink-0 order-first mt-16 md:mt-0 lg:order-none lg:mb-5"
+                className="block shrink-0 order-first mt-16 md:mt-16 lg:mt-0 lg:order-none lg:mb-5"
               >
                 <SiteLogo tone="light" size={150} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]" />
               </motion.div>
