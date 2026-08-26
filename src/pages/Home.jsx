@@ -95,7 +95,7 @@ export default function Home() {
           </div>
 
           <div>
-            <div className="flex flex-col items-start md:flex-row md:items-end gap-6 md:gap-10">
+            <div className="flex flex-col items-start lg:flex-row lg:items-end gap-6 lg:gap-10">
               <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.9] text-[16vw] md:text-[11vw] lg:text-[9rem] max-w-[14ch]">
                 {lines.map((ln, i) => (
                   <span key={i} className="block overflow-hidden">
@@ -115,7 +115,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
-                className="block shrink-0 order-first md:order-none mb-2 md:mb-3 lg:mb-5"
+                className="block shrink-0 order-first lg:order-none lg:mb-5"
               >
                 <SiteLogo tone="light" size={150} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]" />
               </motion.div>
