@@ -24,6 +24,11 @@
       "title": "Open in New Tab",
       "default": false
     },
+    "hidden": {
+      "type": "boolean",
+      "title": "Hidden on site",
+      "default": false
+    },
     "status": {
       "type": "string",
       "enum": [

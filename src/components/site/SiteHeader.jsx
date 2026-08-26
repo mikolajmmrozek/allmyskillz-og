@@ -20,7 +20,7 @@ export default function SiteHeader() {
     { to: '/contact', label: t('site.contact') },
   ];
   const links = (nav && nav.length > 0)
-    ? nav.map((n) => ({ to: n.href, label: tr(n, 'label'), openInNewTab: n.open_in_new_tab }))
+    ? nav.filter((n) => !n.hidden).map((n) => ({ to: n.href, label: tr(n, 'label'), openInNewTab: n.open_in_new_tab }))
     : defaultLinks;
 
   const isActive = (p) => loc.pathname === p || (p !== '/' && loc.pathname.startsWith(p));
