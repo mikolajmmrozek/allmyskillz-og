@@ -111,12 +111,12 @@ export default function ProjectDetail() {
                     <li key={pa.id} className="text-sm">
                       {pa.website ? (
                         <a href={pa.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-black transition">
-                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 max-w-[140px] w-auto object-contain shrink-0 grayscale opacity-60" />}
+                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 max-w-[70px] w-auto object-contain shrink-0 grayscale opacity-60" />}
                           <span>{tr(pa, 'name')}</span> <ArrowUpRight className="w-3 h-3 shrink-0" />
                         </a>
                       ) : (
                         <span className="inline-flex items-center gap-2">
-                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 max-w-[140px] w-auto object-contain shrink-0 grayscale opacity-60" />}
+                          {pa.logo_url && <img src={pa.logo_url} alt={tr(pa, 'name')} className="h-7 max-w-[70px] w-auto object-contain shrink-0 grayscale opacity-60" />}
                           {tr(pa, 'name')}
                         </span>
                       )}
