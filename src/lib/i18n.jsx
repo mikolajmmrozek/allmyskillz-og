@@ -197,6 +197,11 @@ const dictionaries = {
     'records.many': 'records',
     'admin.upload_failed': 'Failed',
     'admin.upload_retry': 'Retry',
+    'admin.uploading_progress': 'Uploading',
+    'admin.upload_done_label': 'done',
+    'admin.upload_phase_sending': 'sending…',
+    'admin.upload_phase_saving': 'saving to library…',
+    'admin.upload_phase_done': 'in library',
     'admin.heic_not_supported': 'HEIC/HEIF images are not supported. Please convert them to JPG or PNG before uploading.',
   },
   pl: {
@@ -391,6 +396,11 @@ const dictionaries = {
     'records.many': 'rekordów',
     'admin.upload_failed': 'Błąd',
     'admin.upload_retry': 'Spróbuj ponownie',
+    'admin.uploading_progress': 'Wgrywanie',
+    'admin.upload_done_label': 'gotowe',
+    'admin.upload_phase_sending': 'wysyłanie…',
+    'admin.upload_phase_saving': 'zapis do biblioteki…',
+    'admin.upload_phase_done': 'w bibliotece',
     'admin.heic_not_supported': 'Obrazy HEIC/HEIF nie są obsługiwane. Przekonwertuj je na JPG lub PNG przed przesłaniem.',
   }
 };

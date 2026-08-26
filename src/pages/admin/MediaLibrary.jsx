@@ -14,8 +14,17 @@ export default function MediaLibrary() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState('');
   const [showGen, setShowGen] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState([]); // {name, status: 'uploading'|'done'|'error', msg?}
+  const [uploadStatus, setUploadStatus] = useState([]); // {name, status: 'uploading'|'saving'|'done'|'error', msg?}
+  const [elapsed, setElapsed] = useState(0);
   const { t } = useLang();
+
+  // Live elapsed timer while uploading — so a stalled upload is obvious.
+  useEffect(() => {
+    if (!uploading) { setElapsed(0); return; }
+    const start = Date.now();
+    const id = setInterval(() => setElapsed(Date.now() - start), 500);
+    return () => clearInterval(id);
+  }, [uploading]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -43,6 +52,8 @@ export default function MediaLibrary() {
     const uploadOne = async (file, idx) => {
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        // Bytes uploaded — now saving the library record (distinct phase).
+        setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'saving' } : s)));
         const ext = file.name.split('.').pop()?.toLowerCase();
         const type = ['jpg','jpeg','png','webp','gif','svg'].includes(ext) ? 'image'
           : ['mp4','webm','mov'].includes(ext) ? 'video'
@@ -106,16 +117,60 @@ export default function MediaLibrary() {
       </div>
 
       {uploadStatus.length > 0 && (
-        <div className="mb-5 space-y-1.5">
-          {uploadStatus.map((s, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-neutral-50 border border-neutral-200">
-              {s.status === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400 shrink-0" />}
-              {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px] shrink-0">✓</span>}
-              {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white shrink-0">✕</span>}
-              <span className={`truncate flex-1 ${s.status === 'error' ? 'text-red-500' : 'text-neutral-600'}`}>{s.name}</span>
-              {s.status === 'error' && <span className="text-red-400 text-[10px] truncate max-w-[40%]">{s.msg || t('admin.upload_failed')}</span>}
-            </div>
-          ))}
+        <div className="mb-5 rounded-2xl border border-neutral-200 bg-neutral-50/70 p-4">
+          {(() => {
+            const total = uploadStatus.length;
+            const done = uploadStatus.filter((s) => s.status === 'done').length;
+            const failed = uploadStatus.filter((s) => s.status === 'error').length;
+            const active = uploadStatus.filter((s) => s.status === 'uploading' || s.status === 'saving').length;
+            const pct = total ? Math.round((done / total) * 100) : 0;
+            const sec = Math.round(elapsed / 1000);
+            return (
+              <>
+                <div className="flex items-center justify-between mb-2 text-xs">
+                  <span className="font-medium text-neutral-700">
+                    {uploading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin inline -mt-0.5 mr-1.5 text-neutral-500" />
+                        {t('admin.uploading_progress') || 'Wgrywanie'}: {done}/{total}
+                        {active > 0 && <span className="text-neutral-400"> · {active} aktywnych</span>}
+                      </>
+                    ) : (
+                      <>
+                        <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] inline-block text-center text-[8px] leading-[14px] mr-1.5">✓</span>
+                        {done}/{total} {t('admin.upload_done_label') || 'gotowe'}
+                        {failed > 0 && <span className="text-red-500 ml-2">· {failed} błędów</span>}
+                      </>
+                    )}
+                  </span>
+                  <span className="tabular-nums text-neutral-400">{sec}s</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-neutral-200 overflow-hidden mb-3">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${uploading ? 'bg-[#CBFF00]' : (failed > 0 ? 'bg-red-400' : 'bg-emerald-400')}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  {uploadStatus.map((s, i) => (
+                    <div key={i} className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-lg bg-white border ${s.status === 'error' ? 'border-red-200' : 'border-neutral-200'}`}>
+                      {s.status === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400 shrink-0" />}
+                      {s.status === 'saving' && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#CBFF00] shrink-0" />}
+                      {s.status === 'done' && <span className="w-3.5 h-3.5 rounded-full bg-[#CBFF00] flex items-center justify-center text-[8px] shrink-0">✓</span>}
+                      {s.status === 'error' && <span className="w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white shrink-0">✕</span>}
+                      <span className={`truncate flex-1 ${s.status === 'error' ? 'text-red-500' : 'text-neutral-600'}`}>{s.name}</span>
+                      <span className="text-[10px] text-neutral-400 shrink-0">
+                        {s.status === 'uploading' && (t('admin.upload_phase_sending') || 'wysyłanie...')}
+                        {s.status === 'saving' && (t('admin.upload_phase_saving') || 'zapis do biblioteki...')}
+                        {s.status === 'done' && (t('admin.upload_phase_done') || 'w bibliotece')}
+                        {s.status === 'error' && (s.msg || t('admin.upload_failed'))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 
