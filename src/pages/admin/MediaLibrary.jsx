@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
-import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles } from 'lucide-react';
+import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles, X } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { thumbUrl } from '@/lib/media';
 
@@ -16,6 +16,8 @@ export default function MediaLibrary() {
   const [showGen, setShowGen] = useState(false);
   const [uploadStatus, setUploadStatus] = useState([]); // {name, status: 'uploading'|'saving'|'done'|'error', msg?}
   const [elapsed, setElapsed] = useState(0);
+  const [usageBytes, setUsageBytes] = useState(0);
+  const cancelRef = useRef(false);
   const { t } = useLang();
 
   // Live elapsed timer while uploading — so a stalled upload is obvious.
@@ -31,6 +33,7 @@ export default function MediaLibrary() {
     try {
       const data = await base44.entities.MediaItem.list('-created_date', 200);
       setItems(data);
+      setUsageBytes(data.reduce((a, i) => a + (i.file_size || 0), 0));
     } catch (e) { console.error(e); } finally { setLoading(false); }
   }, []);
 
@@ -39,27 +42,48 @@ export default function MediaLibrary() {
   const handleUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
-    // HEIC/HEIF are not supported — block them outright with a clear error.
-    const blocked = files.some((f) => /\.(heic|heif)$/i.test(f.name) || f.type === 'image/heic' || f.type === 'image/heif');
-    if (blocked) {
-      alert(t('admin.heic_not_supported'));
+    // Only JPG, JPEG, PNG, PDF, MP4 — block anything else up front.
+    const ALLOWED = ['jpg', 'jpeg', 'png', 'pdf', 'mp4'];
+    const MAX_SIZE = 100 * 1024 * 1024; // 100 MB per file
+    const extOf = (name) => (name.split('.').pop() || '').toLowerCase();
+    const badFormat = files.filter((f) => !ALLOWED.includes(extOf(f.name)));
+    const tooLarge = files.filter((f) => f.size > MAX_SIZE);
+    if (badFormat.length || tooLarge.length) {
+      const parts = [];
+      if (badFormat.length) parts.push(t('admin.format_not_supported'));
+      if (tooLarge.length) parts.push(`${tooLarge.length}× ${t('admin.file_too_large')}`);
+      alert(parts.join('\n'));
       e.target.value = '';
       return;
     }
+
+    cancelRef.current = false;
     setUploading(true);
     setUploadStatus(files.map((f) => ({ name: f.name, status: 'uploading', size: f.size || 0 })));
 
+    const typeFor = (ext) => (ext === 'mp4' ? 'video' : ext === 'pdf' ? 'pdf' : 'image');
+
     const uploadOne = async (file, idx) => {
       try {
+        if (cancelRef.current) {
+          setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'error', msg: t('admin.upload_cancelled') } : s)));
+          return;
+        }
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        if (cancelRef.current) {
+          setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'error', msg: t('admin.upload_cancelled') } : s)));
+          return;
+        }
         // Bytes uploaded — now saving the library record (distinct phase).
         setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'saving' } : s)));
-        const ext = file.name.split('.').pop()?.toLowerCase();
-        const type = ['jpg','jpeg','png','webp','gif','svg'].includes(ext) ? 'image'
-          : ['mp4','webm','mov'].includes(ext) ? 'video'
-          : ['pdf'].includes(ext) ? 'pdf' : 'document';
-        const created = await base44.entities.MediaItem.create({ title: file.name.replace(/\.[^.]+$/, ''), type, url: file_url });
+        const created = await base44.entities.MediaItem.create({
+          title: file.name.replace(/\.[^.]+$/, ''),
+          type: typeFor(extOf(file.name)),
+          url: file_url,
+          file_size: file.size || 0,
+        });
         setItems((prev) => [created, ...prev]);
+        setUsageBytes((u) => u + (file.size || 0));
         setUploadStatus((prev) => prev.map((s, i) => (i === idx ? { ...s, status: 'done' } : s)));
       } catch (err) {
         console.error(`Upload failed for ${file.name}:`, err);
@@ -68,12 +92,13 @@ export default function MediaLibrary() {
       }
     };
 
-    // Limited concurrency — uploading 10+ large iPhone photos at once overwhelms
-    // the upload service and causes silent failures. Process 3 at a time.
+    // Limited concurrency — uploading many large files at once overwhelms the
+    // upload service and causes silent failures. Process 3 at a time.
     const CONCURRENCY = 3;
     const queue = files.map((f, i) => ({ file: f, idx: i }));
     const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
       while (queue.length) {
+        if (cancelRef.current) break;
         const next = queue.shift();
         if (!next) break;
         await uploadOne(next.file, next.idx);
@@ -81,9 +106,13 @@ export default function MediaLibrary() {
     });
     await Promise.all(workers);
 
+    // Any file the queue never reached counts as cancelled.
+    setUploadStatus((prev) => prev.map((s) => (s.status === 'uploading' ? { ...s, status: 'error', msg: t('admin.upload_cancelled') } : s)));
     setUploading(false);
     e.target.value = '';
   };
+
+  const cancelUpload = () => { cancelRef.current = true; };
 
   const remove = async (id) => {
     if (!confirm(t('admin.confirm_remove_media'))) return;
@@ -98,7 +127,8 @@ export default function MediaLibrary() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('admin.media_library')}</h1>
-          <p className="text-sm text-neutral-500 mt-1">{items.length} {t('admin.media_count_suffix')}</p>
+          <p className="text-sm text-neutral-500 mt-1">{items.length} {t('admin.media_count_suffix')} · {(usageBytes / 1048576).toFixed(1)} MB</p>
+          <p className="text-[11px] text-neutral-400 mt-0.5">JPG · PNG · PDF · MP4 · max 100 MB</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -108,7 +138,7 @@ export default function MediaLibrary() {
             <Sparkles className="w-4 h-4" /> {t('admin.generate')}
           </button>
           <label className="cursor-pointer">
-            <input type="file" multiple accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg,video/*,application/pdf" className="hidden" onChange={handleUpload} />
+            <input type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.mp4" className="hidden" onChange={handleUpload} />
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#CBFF00] text-black text-sm font-medium rounded-lg hover:opacity-90">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} {t('admin.upload')}
             </span>
@@ -150,6 +180,11 @@ export default function MediaLibrary() {
                     )}
                   </span>
                   <span className="tabular-nums text-neutral-400">{sec}s</span>
+                  {uploading && (
+                    <button onClick={cancelUpload} className="ml-2 inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium">
+                      <X className="w-3.5 h-3.5" /> {t('admin.cancel_upload')}
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center justify-between mb-2 text-[11px] text-neutral-500 tabular-nums">
                   <span>{mb(doneBytes)} / {mb(totalBytes)} MB · {pct}%</span>

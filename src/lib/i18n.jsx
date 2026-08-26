@@ -203,6 +203,10 @@ const dictionaries = {
     'admin.upload_phase_saving': 'saving to library…',
     'admin.upload_phase_done': 'in library',
     'admin.heic_not_supported': 'HEIC/HEIF images are not supported. Please convert them to JPG or PNG before uploading.',
+    'admin.format_not_supported': 'Only JPG, PNG, PDF and MP4 files are allowed.',
+    'admin.file_too_large': 'File exceeds the 100 MB limit.',
+    'admin.upload_cancelled': 'Cancelled',
+    'admin.cancel_upload': 'Cancel',
   },
   pl: {
     'site.home': 'Start',
@@ -402,6 +406,10 @@ const dictionaries = {
     'admin.upload_phase_saving': 'zapis do biblioteki…',
     'admin.upload_phase_done': 'w bibliotece',
     'admin.heic_not_supported': 'Obrazy HEIC/HEIF nie są obsługiwane. Przekonwertuj je na JPG lub PNG przed przesłaniem.',
+    'admin.format_not_supported': 'Dozwolone tylko pliki JPG, PNG, PDF i MP4.',
+    'admin.file_too_large': 'Plik przekracza limit 100 MB.',
+    'admin.upload_cancelled': 'Anulowano',
+    'admin.cancel_upload': 'Anuluj',
   }
 };
 
