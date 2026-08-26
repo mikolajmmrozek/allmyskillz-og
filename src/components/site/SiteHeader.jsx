@@ -26,14 +26,14 @@ export default function SiteHeader() {
   const isActive = (p) => loc.pathname === p || (p !== '/' && loc.pathname.startsWith(p));
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDFDFD]/80 backdrop-blur-xl border-b border-neutral-200/70">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/70">
       <div className="px-5 md:px-10 h-16 flex items-center justify-between">
         <SiteBrand size={34} nameClassName="text-lg" />
 
         <nav className="hidden md:flex items-center gap-7 text-sm">
           {links.map((l, i) => {
             const external = /^https?:\/\//.test(l.to);
-            const cls = `transition relative ${isActive(l.to) ? 'text-black font-medium' : 'text-neutral-500 hover:text-black'}`;
+            const cls = `transition relative ${isActive(l.to) ? 'text-foreground font-medium' : 'text-neutral-500 hover:text-foreground'}`;
             const inner = (
               <>
                 {l.label}
@@ -51,7 +51,7 @@ export default function SiteHeader() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setLang(lang === 'en' ? 'pl' : 'en')}
-            className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-black px-2.5 py-1.5 rounded-full border border-neutral-200"
+            className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-foreground px-2.5 py-1.5 rounded-full border border-neutral-200"
           >
             <Globe className="w-3.5 h-3.5" />
             <span className="uppercase tracking-wider">{lang}</span>
@@ -64,11 +64,11 @@ export default function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-neutral-200 bg-[#FDFDFD]">
+        <div className="md:hidden border-t border-border bg-background">
           <nav className="flex flex-col px-5 py-3">
             {links.map((l, i) => {
               const external = /^https?:\/\//.test(l.to);
-              const cls = `py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-black' : 'text-neutral-600'}`;
+              const cls = `py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-foreground' : 'text-neutral-600'}`;
               return external ? (
                 <a key={i} href={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} onClick={() => setOpen(false)} className={cls}>{l.label}</a>
               ) : (

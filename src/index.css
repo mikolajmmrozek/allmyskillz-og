@@ -140,3 +140,21 @@
   .mesh-bg { background-image: radial-gradient(60% 50% at 15% 10%, rgba(203,255,0,0.10), transparent 60%), radial-gradient(50% 50% at 85% 0%, rgba(99,102,241,0.07), transparent 60%), radial-gradient(50% 50% at 50% 100%, rgba(236,72,153,0.05), transparent 60%); }
   .mesh-bg-dark { background-image: radial-gradient(60% 50% at 15% 10%, rgba(203,255,0,0.16), transparent 60%), radial-gradient(50% 50% at 85% 20%, rgba(99,102,241,0.14), transparent 60%), radial-gradient(50% 50% at 50% 100%, rgba(236,72,153,0.12), transparent 60%); }
 }
+
+/* Public-site dark theme: flip the neutral palette inside the .dark shell only.
+   Admin has no .dark ancestor, so it stays light regardless. Unlayered so it
+   wins over Tailwind's @layer utilities; specificity .dark .x beats .x. */
+.dark .bg-white { background-color: hsl(var(--card)); }
+.dark .bg-neutral-50,
+.dark .bg-neutral-100,
+.dark .bg-neutral-200 { background-color: hsl(var(--muted)); }
+.dark .text-black { color: hsl(var(--foreground)); }
+.dark .text-neutral-400,
+.dark .text-neutral-500,
+.dark .text-neutral-600,
+.dark .text-neutral-700 { color: hsl(var(--muted-foreground)); }
+.dark .text-neutral-800,
+.dark .text-neutral-900 { color: hsl(var(--foreground)); }
+.dark .border-neutral-100,
+.dark .border-neutral-200,
+.dark .border-neutral-300 { border-color: hsl(var(--border)); }

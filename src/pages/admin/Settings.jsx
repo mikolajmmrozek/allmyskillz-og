@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import CollectionEditor from '@/components/admin/CollectionEditor';
+import AppearancePanel from '@/components/admin/AppearancePanel';
 import { Loader2 } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 
@@ -27,6 +28,7 @@ export default function Settings() {
       <h1 className="text-3xl font-semibold tracking-tight mb-1">{t('admin.settings_title')}</h1>
       <p className="text-sm text-neutral-500 mb-8">{t('admin.settings_desc')}</p>
       <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} />
+      <AppearancePanel />
     </div>
   );
 }

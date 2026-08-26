@@ -37,26 +37,26 @@ export default function SiteFooter() {
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-neutral-500 mb-4">{t('site.explore')}</p>
           <ul className="space-y-2.5 text-sm">
-            <li><Link to="/about" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.about')}</Link></li>
-            <li><Link to="/projects" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.projects')}</Link></li>
-            <li><Link to="/offers" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.offers')}</Link></li>
-            <li><Link to="/news" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.news')}</Link></li>
-            <li><Link to="/shop" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.shop')}</Link></li>
-            <li><Link to="/contact" className="text-neutral-400 hover:text-[#CBFF00] transition">{t('site.contact')}</Link></li>
+            <li><Link to="/about" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.about')}</Link></li>
+            <li><Link to="/projects" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.projects')}</Link></li>
+            <li><Link to="/offers" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.offers')}</Link></li>
+            <li><Link to="/news" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.news')}</Link></li>
+            <li><Link to="/shop" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.shop')}</Link></li>
+            <li><Link to="/contact" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.contact')}</Link></li>
           </ul>
         </div>
 
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-neutral-500 mb-4">{t('site.contact')}</p>
           <ul className="space-y-2.5 text-sm">
-            {settings.email && <li><a href={`mailto:${settings.email}`} className="text-neutral-400 hover:text-[#CBFF00] transition">{settings.email}</a></li>}
-            {settings.phone && <li><a href={`tel:${settings.phone}`} className="text-neutral-400 hover:text-[#CBFF00] transition">{settings.phone}</a></li>}
+            {settings.email && <li><a href={`mailto:${settings.email}`} className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{settings.email}</a></li>}
+            {settings.phone && <li><a href={`tel:${settings.phone}`} className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{settings.phone}</a></li>}
             {settings.address_en && <li className="text-neutral-400">{lang === 'pl' ? settings.address_pl : settings.address_en}</li>}
           </ul>
           {socials.length > 0 && (
             <div className="flex gap-3 mt-5">
               {socials.map((s, i) => (
-                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 hover:text-black hover:bg-[#CBFF00] hover:border-[#CBFF00] transition">
+                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 hover:text-black hover:bg-[var(--accent,#CBFF00)] hover:border-[var(--accent,#CBFF00)] transition">
                   <s.icon className="w-4 h-4" />
                 </a>
               ))}
@@ -68,7 +68,7 @@ export default function SiteFooter() {
         <span>© {year} {ARTIST_NAME}</span>
         <div className="flex items-center gap-4">
           <span>{t('site.rights')}</span>
-          <Link to="/admin" className="hover:text-[#CBFF00] transition">Panel</Link>
+          <Link to="/admin" className="hover:text-[var(--accent,#CBFF00)] transition">Panel</Link>
         </div>
       </div>
     </footer>

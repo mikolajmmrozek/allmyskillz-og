@@ -33,6 +33,26 @@
       "title": "Accent Color",
       "default": "#CBFF00"
     },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark"
+      ],
+      "default": "light",
+      "title": "Site Theme"
+    },
+    "font_package": {
+      "type": "string",
+      "enum": [
+        "editorial",
+        "modern",
+        "elegant",
+        "technical"
+      ],
+      "default": "editorial",
+      "title": "Font Package"
+    },
     "default_seo_title_pl": {
       "type": "string",
       "title": "Default SEO Title (PL)"
