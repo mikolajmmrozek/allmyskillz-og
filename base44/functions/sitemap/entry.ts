@@ -33,7 +33,6 @@ export default async function (req: Request): Promise<Response> {
     add(`${SITE_URL}/news`, '0.9', 'weekly');
     add(`${SITE_URL}/shop`, '0.9', 'weekly');
     add(`${SITE_URL}/contact`, '0.6', 'monthly');
-    add(`${SITE_URL}/portfolio-data`, '0.5', 'weekly');
 
     // Dynamic detail URLs
     d.projects.forEach((p) => p.slug && add(`${SITE_URL}/projects/${esc(p.slug)}`, '0.8', 'weekly'));
