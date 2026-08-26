@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Check, Trash2, AlertTriangle } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { ACCENT_PRESETS, FONT_PACKAGES } from '@/lib/siteTheme';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 
 // Appearance controls for the single SiteSetting record: accent color
 // (12 presets + custom hex), site theme (light/dark), font package (4), and a
@@ -15,7 +16,7 @@ export default function AppearancePanel() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [confirmText, setConfirmText] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [resetMsg, setResetMsg] = useState('');
   const [resetErr, setResetErr] = useState(false);
@@ -49,12 +50,10 @@ export default function AppearancePanel() {
   };
 
   const doReset = async () => {
-    if (confirmText !== 'USUŃ') return;
-    setResetting(true); setResetMsg(''); setResetErr(false);
+    setResetting(true); setResetMsg(''); setResetErr(false); setDialogOpen(false);
     try {
       await base44.functions.invoke('factoryReset', { confirm: 'USUŃ' });
       setResetMsg(t('admin.reset_done'));
-      setConfirmText('');
     } catch (e) {
       setResetErr(true);
       setResetMsg(e?.response?.data?.error || e?.message || 'Error');
@@ -151,13 +150,24 @@ export default function AppearancePanel() {
           <h3 className="text-sm font-semibold text-red-700">{t('admin.danger_zone')}</h3>
         </div>
         <p className="text-sm text-red-600/80 mb-4 max-w-xl">{t('admin.danger_desc')}</p>
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-          <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="USUŃ" className="sm:w-40 uppercase font-mono" />
-          <Button onClick={doReset} disabled={resetting || confirmText !== 'USUŃ'} className="bg-red-600 text-white hover:bg-red-700">
-            {resetting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Trash2 className="w-4 h-4 mr-1" />}
-            {t('admin.reset_btn')}
-          </Button>
-        </div>
+        <Button onClick={() => setDialogOpen(true)} disabled={resetting} className="bg-red-600 text-white hover:bg-red-700">
+          {resetting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Trash2 className="w-4 h-4 mr-1" />}
+          {t('admin.reset_btn')}
+        </Button>
+        <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{lang === 'pl' ? 'Usunąć wszystkie treści?' : 'Delete all content?'}</AlertDialogTitle>
+              <AlertDialogDescription>{t('admin.danger_desc')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('action.cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={doReset} className="bg-red-600 text-white hover:bg-red-700">
+                {t('admin.reset_btn')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         {resetMsg && <p className={`text-sm mt-3 ${resetErr ? 'text-red-700' : 'text-green-700'}`}>{resetMsg}</p>}
       </div>
     </div>
