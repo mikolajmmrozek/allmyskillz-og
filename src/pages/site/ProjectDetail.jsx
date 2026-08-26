@@ -8,7 +8,6 @@ import { Reveal } from '@/components/site/Motion';
 import GalleryMasonry from '@/components/site/GalleryMasonry';
 import AwardGallery from '@/components/site/AwardGallery';
 import VideoEmbed from '@/components/site/VideoEmbed';
-import PartnerLogos from '@/components/site/PartnerLogos';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
 import { creativeWorkJsonLd } from '@/lib/seo';
@@ -99,9 +98,6 @@ export default function ProjectDetail() {
           </div>
         </div>
       )}
-
-      {/* Partner logos — credit band below the cover */}
-      <PartnerLogos partners={related.partners} label={t('site.collaboration')} />
 
       {/* Story + sticky sidebar */}
       {(story || related.partners.length > 0 || related.experience.length > 0) && (
