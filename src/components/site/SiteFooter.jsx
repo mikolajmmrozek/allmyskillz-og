@@ -4,6 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
 import { ARTIST_NAME } from '@/lib/brand';
+import { contrastForeground } from '@/lib/siteTheme';
 import { Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
 import TikTokIcon from '@/components/site/TikTokIcon';
 
@@ -11,6 +12,10 @@ export default function SiteFooter() {
   const { lang, t } = useLang();
   const { settings } = useSite();
   if (!settings) return null;
+
+  const dark = settings?.theme === 'dark';
+  const ink = contrastForeground(settings?.accent_color || '#CBFF00');
+  const logoTone = ink === '#ffffff' ? 'light' : 'dark';
 
   const year = new Date().getFullYear();
   const socials = [
@@ -22,10 +27,10 @@ export default function SiteFooter() {
   ].filter((s) => s.url);
 
   return (
-    <footer className="site-footer bg-black text-neutral-300 mt-24">
+    <footer className={`site-footer mt-24 ${dark ? 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)]' : 'bg-black text-neutral-300'}`}>
       <div className="px-5 md:px-10 py-16 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
-          <SiteBrand size={40} tone="light" nameClassName="text-3xl text-neutral-200" />
+          <SiteBrand size={40} tone={dark ? logoTone : 'light'} nameClassName={`text-3xl ${dark ? 'text-[var(--accent-ink,#000)]' : 'text-neutral-200'}`} />
           <div className="h-3" />
           {settings.tagline_en && (
             <p className="mt-3 text-neutral-400 max-w-sm">
