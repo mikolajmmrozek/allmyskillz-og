@@ -86,7 +86,7 @@ export default function Home() {
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/75" />
 
-        <div className="relative z-10 h-full flex flex-col justify-between px-5 md:px-10 pt-24 pb-12 md:pb-16 text-white">
+        <div className="relative z-10 h-full flex flex-col px-5 md:px-10 pt-24 pb-10 md:pb-12 text-white">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[var(--accent,#CBFF00)]" />
             <span className="text-[11px] uppercase tracking-[0.26em] text-white/70">
@@ -94,7 +94,7 @@ export default function Home() {
             </span>
           </div>
 
-          <div>
+          <div className="mt-auto">
             <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-end lg:gap-10">
               <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.9] text-[16vw] md:text-[11vw] lg:text-[9rem] max-w-[14ch]">
                 {lines.map((ln, i) => (
@@ -143,16 +143,15 @@ export default function Home() {
                 )}
               </div>
             </div>
+            <motion.div
+              className="mt-10 flex justify-center text-[var(--accent,#CBFF00)]"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <MoveDown className="w-6 h-6" />
+            </motion.div>
           </div>
         </div>
-
-        <motion.div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <MoveDown className="w-5 h-5" />
-        </motion.div>
       </section>
 
       {/* Artist statement — current creative focus */}
