@@ -98,7 +98,7 @@ export default function Home() {
             <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-end lg:gap-10">
               <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.9] text-[16vw] md:text-[11vw] lg:text-[9rem] max-w-[14ch]">
                 {lines.map((ln, i) => (
-                  <span key={i} className="block overflow-hidden">
+                  <span key={i} className="block overflow-hidden pb-[0.14em] -mb-[0.14em]">
                     <motion.span
                       className="block"
                       initial={{ y: '110%' }}
