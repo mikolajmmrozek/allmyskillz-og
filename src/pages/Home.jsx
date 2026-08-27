@@ -86,7 +86,7 @@ export default function Home() {
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/75" />
 
-        <div className="relative z-10 h-full flex flex-col px-5 md:px-10 pt-24 pb-10 md:pb-12 text-white">
+        <div className="absolute inset-0 z-10 flex flex-col px-5 md:px-10 pt-24 pb-10 md:pb-12 text-white">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[var(--accent,#CBFF00)]" />
             <span className="text-[11px] uppercase tracking-[0.26em] text-white/70">
