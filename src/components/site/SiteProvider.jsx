@@ -16,6 +16,21 @@ export const SiteProvider = ({ children }) => {
     return () => { alive = false; };
   }, []);
 
+  // Google Search Console verification (meta-tag method). Injected globally so
+  // it is present on the homepage when Googlebot fetches; platform prerenders
+  // capture client-injected tags for crawlers.
+  useEffect(() => {
+    const code = site?.settings?.google_site_verification;
+    if (!code) return;
+    let el = document.head.querySelector('meta[name="google-site-verification"]');
+    if (!el) {
+      el = document.createElement('meta');
+      el.setAttribute('name', 'google-site-verification');
+      document.head.appendChild(el);
+    }
+    el.setAttribute('content', code);
+  }, [site]);
+
   return (
     <SiteContext.Provider value={{ ...site, loading }}>
       {children}

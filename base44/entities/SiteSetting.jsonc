@@ -73,6 +73,11 @@
       "type": "string",
       "title": "Default SEO Keywords"
     },
+    "google_site_verification": {
+      "type": "string",
+      "title": "Google Site Verification",
+      "description": "Content of the <meta name=\"google-site-verification\"> tag from Google Search Console (meta-tag method)."
+    },
     "email": {
       "type": "string",
       "title": "Contact Email"
