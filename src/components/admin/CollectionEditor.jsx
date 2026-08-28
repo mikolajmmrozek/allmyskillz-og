@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MediaPicker from './MediaPicker';
+import { useVideoCovers } from '@/components/site/useVideoCovers';
 import RichTextEditor from './RichTextEditor';
 import { getEntitySchema } from '@/lib/entitySchemas';
-import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon, Film } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { thumbUrl } from '@/lib/media';
 
@@ -293,6 +294,8 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
 
 function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMultiple, onRemoveMediaItem, onReorderMedia, relationEntity, relationCache, loadRelation, form, setForm, field }) {
   const { t, lang } = useLang();
+  const videoCovers = useVideoCovers();
+  const VIDEO_RE = /\.(mp4|webm|mov|m4v|ogg|ogv)$/i;
   // Always-safe effect: load related entity options when this is a relation field
   useEffect(() => {
     if ((kind === 'relation-single' || kind === 'relation-multi') && relationEntity) {
@@ -354,16 +357,28 @@ function FieldRenderer({ kind, prop, value, onChange, onPickMedia, onPickMediaMu
           <Droppable droppableId="media-list" direction="horizontal">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-wrap gap-2 mb-2">
-                {arr.map((url, idx) => (
+                {arr.map((url, idx) => {
+                  const isVideo = VIDEO_RE.test(url);
+                  const cover = isVideo ? videoCovers[url] : null;
+                  return (
                   <Draggable key={url + '-' + idx} draggableId={url + '-' + idx} index={idx}>
                     {(prov) => (
                       <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="relative group cursor-grab active:cursor-grabbing">
-                        <img src={thumbUrl(url, 200)} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-lg border" />
+                        {isVideo ? (
+                          cover ? (
+                            <img src={thumbUrl(cover, 200)} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-lg border" />
+                          ) : (
+                            <div className="w-20 h-20 rounded-lg border bg-neutral-100 flex items-center justify-center text-neutral-400"><Film className="w-6 h-6" /></div>
+                          )
+                        ) : (
+                          <img src={thumbUrl(url, 200)} alt="" loading="lazy" className="w-20 h-20 object-cover rounded-lg border" />
+                        )}
                         <button type="button" onClick={(e) => { e.stopPropagation(); onRemoveMediaItem?.(idx); }} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><X className="w-3 h-3" /></button>
                       </div>
                     )}
                   </Draggable>
-                ))}
+                  );
+                })}
                 {provided.placeholder}
                 <button type="button" onClick={() => onPickMediaMultiple?.()} className="w-20 h-20 rounded-lg border border-dashed flex flex-col items-center justify-center text-neutral-400 hover:border-neutral-400">
                   <Plus className="w-5 h-5" />
