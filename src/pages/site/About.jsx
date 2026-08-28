@@ -8,7 +8,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
 import Timeline from '@/components/site/Timeline';
-import VideoEmbed from '@/components/site/VideoEmbed';
+import GalleryMasonry from '@/components/site/GalleryMasonry';
 import AwardGallery from '@/components/site/AwardGallery';
 import { ArrowUpRight } from 'lucide-react';
 import SectionNav from '@/components/site/SectionNav';
@@ -151,17 +151,8 @@ export default function About() {
               body: (it) => tr(it, 'description'),
               media: (it) => (
                 <div className="mt-5 space-y-4">
-                  {(it.videos || []).map((v, i) => (
-                    <VideoEmbed key={i} url={v} />
-                  ))}
-                  {(it.gallery || []).length > 0 && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {it.gallery.map((g, i) => (
-                        <div key={i} className="rounded-xl overflow-hidden bg-neutral-100">
-                          <Image src={g} fittingType="fill" className="w-full h-full aspect-[4/3]" />
-                        </div>
-                      ))}
-                    </div>
+                  {([...(it.videos || []), ...(it.gallery || [])]).length > 0 && (
+                    <GalleryMasonry images={[...(it.videos || []), ...(it.gallery || [])]} alt={tr(it, 'company') || tr(it, 'position')} />
                   )}
                   {(projectsByExp[it.id] || []).length > 0 && (
                     <div className="mt-5">
@@ -227,19 +218,8 @@ export default function About() {
               body: (it) => tr(it, 'description'),
               media: (it) => (
                 <div className="mt-5 space-y-4">
-                  {it.background_image && (
-                    <div className="rounded-xl overflow-hidden bg-neutral-100">
-                      <Image src={it.background_image} fittingType="fill" className="w-full aspect-[16/9]" />
-                    </div>
-                  )}
-                  {(it.gallery || []).length > 0 && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {it.gallery.map((g, i) => (
-                        <div key={i} className="rounded-xl overflow-hidden bg-neutral-100">
-                          <Image src={g} fittingType="fill" className="w-full h-full aspect-[4/3]" />
-                        </div>
-                      ))}
-                    </div>
+                  {[it.background_image, ...(it.gallery || [])].filter(Boolean).length > 0 && (
+                    <GalleryMasonry images={[it.background_image, ...(it.gallery || [])].filter(Boolean)} alt={tr(it, 'school') || tr(it, 'degree')} />
                   )}
                   {(it.attachments || []).length > 0 && (
                     <div className="flex flex-wrap gap-2">
