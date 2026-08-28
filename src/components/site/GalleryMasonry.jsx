@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { thumbUrl } from '@/lib/media';
+import { useVideoCovers } from './useVideoCovers';
 
 // True Pinterest masonry via CSS multi-column layout: each image flows at its
 // natural aspect ratio (width = column width, height auto), so heights vary
@@ -12,6 +13,7 @@ const VIDEO_EXT = /\.(mp4|webm|mov|m4v|ogg|ogv)$/i;
 export const isVideoUrl = (url = '') => VIDEO_EXT.test(url);
 
 export default function GalleryMasonry({ images = [], alt = '', className = '' }) {
+  const covers = useVideoCovers();
   const [active, setActive] = useState(null);
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
       <div className={`columns-2 md:columns-3 lg:columns-4 gap-3 ${className}`}>
         {images.map((src, i) => {
           const video = isVideoUrl(src);
+          const cover = covers[src];
           return (
             <button
               key={i}
@@ -39,15 +42,24 @@ export default function GalleryMasonry({ images = [], alt = '', className = '' }
             >
               {video ? (
                 <>
-                  {/* #t=0.1 forces the browser to decode & show a real frame
-                      instead of a black square before the first paint. */}
-                  <video
-                    src={`${src}#t=0.1`}
-                    muted
-                    playsInline
-                    preload="metadata"
-                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
+                  {cover ? (
+                    <img
+                      src={thumbUrl(cover, 700)}
+                      alt={alt}
+                      loading="lazy"
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    /* #t=0.1 forces the browser to decode & show a real frame
+                       instead of a black square before the first paint. */
+                    <video
+                      src={`${src}#t=0.1`}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    />
+                  )}
                   <span className="absolute bottom-2 left-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm">
                     <Play className="h-4 w-4 translate-x-0.5 fill-current" />
                   </span>

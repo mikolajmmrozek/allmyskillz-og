@@ -1,4 +1,5 @@
 import React from 'react';
+import { useVideoCovers } from './useVideoCovers';
 
 // Extracts the YouTube video ID from common URL formats:
 //   https://www.youtube.com/watch?v=ID
@@ -28,6 +29,7 @@ function getVimeoId(url) {
  * iframes; everything else falls back to a native <video> element.
  */
 export default function VideoEmbed({ url, className = '' }) {
+  const covers = useVideoCovers();
   if (!url) return null;
 
   const ytId = getYouTubeId(url);
@@ -67,5 +69,5 @@ export default function VideoEmbed({ url, className = '' }) {
     );
   }
 
-  return <video src={url} controls className={`w-full rounded-2xl bg-black ${className}`} />;
+  return <video src={url} poster={covers[url]} controls className={`w-full rounded-2xl bg-black ${className}`} />;
 }
