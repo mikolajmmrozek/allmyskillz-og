@@ -43,7 +43,7 @@ export default function MediaLibrary() {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     // Only JPG, JPEG, PNG, PDF, MP4 — block anything else up front.
-    const ALLOWED = ['jpg', 'jpeg', 'png', 'pdf', 'mp4'];
+    const ALLOWED = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'pdf', 'mp4', 'webm', 'mov'];
     const MAX_SIZE = 100 * 1024 * 1024; // 100 MB per file
     const extOf = (name) => (name.split('.').pop() || '').toLowerCase();
     const badFormat = files.filter((f) => !ALLOWED.includes(extOf(f.name)));
@@ -61,7 +61,7 @@ export default function MediaLibrary() {
     setUploading(true);
     setUploadStatus(files.map((f) => ({ name: f.name, status: 'uploading', size: f.size || 0 })));
 
-    const typeFor = (ext) => (ext === 'mp4' ? 'video' : ext === 'pdf' ? 'pdf' : 'image');
+    const typeFor = (ext) => (['mp4', 'webm', 'mov'].includes(ext) ? 'video' : ext === 'pdf' ? 'pdf' : 'image');
 
     const uploadOne = async (file, idx) => {
       try {
@@ -128,7 +128,7 @@ export default function MediaLibrary() {
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('admin.media_library')}</h1>
           <p className="text-sm text-neutral-500 mt-1">{items.length} {t('admin.media_count_suffix')} · {(usageBytes / 1048576).toFixed(1)} MB</p>
-          <p className="text-[11px] text-neutral-400 mt-0.5">JPG · PNG · PDF · MP4 · max 100 MB</p>
+          <p className="text-[11px] text-neutral-400 mt-0.5">JPG · PNG · WEBP · GIF · SVG · PDF · MP4 · WEBM · MOV · max 100 MB</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -138,7 +138,7 @@ export default function MediaLibrary() {
             <Sparkles className="w-4 h-4" /> {t('admin.generate')}
           </button>
           <label className="cursor-pointer">
-            <input type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.mp4" className="hidden" onChange={handleUpload} />
+            <input type="file" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.pdf,.mp4,.webm,.mov" className="hidden" onChange={handleUpload} />
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] text-sm font-medium rounded-lg hover:opacity-90">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} {t('admin.upload')}
             </span>
