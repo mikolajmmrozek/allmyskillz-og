@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import GenerateMedia from '@/components/admin/GenerateMedia';
-import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles, X } from 'lucide-react';
+import VideoCoverEditor from '@/components/admin/VideoCoverEditor';
+import { Upload, Loader2, Image as ImageIcon, Trash2, Search, Sparkles, X, Film } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { thumbUrl } from '@/lib/media';
 
@@ -249,9 +250,11 @@ export default function MediaLibrary() {
               <div className="aspect-square">
                 {it.type === 'image' ? (
                   <img src={thumbUrl(it.url, 300)} alt={it.title} loading="lazy" className="w-full h-full object-cover" />
+                ) : it.type === 'video' && it.thumbnail_url ? (
+                  <img src={thumbUrl(it.thumbnail_url, 300)} alt={it.title} loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-neutral-300 mb-1" />
+                    {it.type === 'video' ? <Film className="w-8 h-8 text-neutral-300 mb-1" /> : <ImageIcon className="w-8 h-8 text-neutral-300 mb-1" />}
                     <span className="text-[10px] text-neutral-400 uppercase">{it.type}</span>
                   </div>
                 )}
@@ -259,6 +262,11 @@ export default function MediaLibrary() {
               <div className="p-2">
                 <p className="text-xs font-medium truncate">{it.title}</p>
               </div>
+              {it.type === 'video' && (
+                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition">
+                  <VideoCoverEditor videoUrl={it.url} mediaItemId={it.id} currentCover={it.thumbnail_url} onSaved={(url) => setItems((prev) => prev.map((p) => p.id === it.id ? { ...p, thumbnail_url: url } : p))} />
+                </div>
+              )}
               <button onClick={() => remove(it.id)} className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-white/90 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-red-500 hover:bg-red-50">
                 <Trash2 className="w-4 h-4" />
               </button>
