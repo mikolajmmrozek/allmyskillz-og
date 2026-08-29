@@ -64,7 +64,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero — fullscreen profile video / poster */}
-      <section className="relative min-h-[100svh] w-full bg-neutral-900">
+      <section className="relative min-h-[100svh] w-full overflow-x-clip bg-neutral-900">
         {heroVideo ? (
           <video
             key={heroVideo}
