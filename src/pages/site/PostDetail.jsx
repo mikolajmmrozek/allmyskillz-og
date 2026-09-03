@@ -9,7 +9,7 @@ import GalleryMasonry from '@/components/site/GalleryMasonry';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
-import { articleJsonLd } from '@/lib/seo';
+import { articleJsonLd, absUrl } from '@/lib/seo';
 
 export default function PostDetail() {
   const { slug } = useParams();
@@ -24,7 +24,8 @@ export default function PostDetail() {
     title: post && (tr(post, 'seo_title') || tr(post, 'title')),
     description: post && (tr(post, 'seo_description') || tr(post, 'excerpt')),
     image: post?.featured_image,
-    url: typeof window !== 'undefined' ? window.location.href : undefined,
+    canonical: absUrl('/news/' + slug),
+    type: 'article',
     jsonLd: post ? articleJsonLd(post, '/news/' + slug) : undefined,
   });
 

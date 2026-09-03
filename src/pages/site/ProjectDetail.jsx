@@ -10,7 +10,7 @@ import AwardGallery from '@/components/site/AwardGallery';
 import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
-import { creativeWorkJsonLd } from '@/lib/seo';
+import { creativeWorkJsonLd, absUrl } from '@/lib/seo';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -23,7 +23,8 @@ export default function ProjectDetail() {
     title: project && (tr(project, 'seo_title') || tr(project, 'title')),
     description: project && (tr(project, 'seo_description') || tr(project, 'excerpt')),
     image: project?.cover_image,
-    url: typeof window !== 'undefined' ? window.location.href : undefined,
+    canonical: absUrl('/projects/' + slug),
+    type: 'article',
     jsonLd: project ? creativeWorkJsonLd(project, '/projects/' + slug) : undefined,
   });
 

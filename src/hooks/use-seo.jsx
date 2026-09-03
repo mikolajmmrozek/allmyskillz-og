@@ -9,7 +9,7 @@ import { SITE_URL } from '@/lib/seo';
 //
 // Base44 prerenders each page for crawlers, so these client-injected tags are
 // captured automatically — no SSR needed.
-export function useSEO({ title, description, image, url, canonical, lang = 'pl', robots = 'index,follow', jsonLd } = {}) {
+export function useSEO({ title, description, image, url, canonical, lang = 'pl', robots = 'index,follow', jsonLd, type = 'website' } = {}) {
   useEffect(() => {
     const prevTitle = document.title;
     if (title) document.title = title;
@@ -34,7 +34,7 @@ export function useSEO({ title, description, image, url, canonical, lang = 'pl',
     created.push(upsertMeta('meta[name="description"]', 'name', description));
     created.push(upsertMeta('meta[property="og:title"]', 'property', title));
     created.push(upsertMeta('meta[property="og:description"]', 'property', description));
-    created.push(upsertMeta('meta[property="og:type"]', 'property', 'website'));
+    created.push(upsertMeta('meta[property="og:type"]', 'property', type));
     created.push(upsertMeta('meta[property="og:image"]', 'property', image));
     created.push(upsertMeta('meta[property="og:url"]', 'property', canonical || url));
     created.push(upsertMeta('meta[name="twitter:card"]', 'name', image ? 'summary_large_image' : 'summary'));
@@ -86,5 +86,5 @@ export function useSEO({ title, description, image, url, canonical, lang = 'pl',
         }
       });
     };
-  }, [title, description, image, url, canonical, lang, robots, JSON.stringify(jsonLd)]);
+  }, [title, description, image, url, canonical, lang, robots, type, JSON.stringify(jsonLd)]);
 }
