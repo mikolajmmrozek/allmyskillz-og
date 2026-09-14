@@ -8,7 +8,7 @@ import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
 import { ARTIST_NAME } from '@/lib/brand';
 
-export default function News() {
+export default function Journal() {
   const { lang, tr, t } = useLang();
   useSEO({
     title: lang === 'pl' ? `${ARTIST_NAME} — Dziennik` : `${ARTIST_NAME} — Journal`,

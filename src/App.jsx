@@ -17,7 +17,7 @@ import Projects from '@/pages/site/Projects';
 import ProjectDetail from '@/pages/site/ProjectDetail';
 import Offers from '@/pages/site/Offers';
 import OfferDetail from '@/pages/site/OfferDetail';
-import News from '@/pages/site/News';
+import Journal from '@/pages/site/Journal';
 import PostDetail from '@/pages/site/PostDetail';
 import Shop from '@/pages/site/Shop';
 import ProductDetail from '@/pages/site/ProductDetail';
@@ -83,7 +83,7 @@ const AuthenticatedApp = () => {
         <Route path="/projects/:slug" element={<ProjectDetail />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/offers/:slug" element={<OfferDetail />} />
-        <Route path="/news" element={<News />} />
+        <Route path="/news" element={<Journal />} />
         <Route path="/news/:slug" element={<PostDetail />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/:slug" element={<ProductDetail />} />
