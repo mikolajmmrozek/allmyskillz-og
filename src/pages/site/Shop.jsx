@@ -4,9 +4,19 @@ import { useLang } from '@/lib/i18n';
 import { fetchPublished } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { ArrowUpRight } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
+import { SITE_URL } from '@/lib/seo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 export default function Shop() {
-  const { tr, t } = useLang();
+  const { lang, tr, t } = useLang();
+  useSEO({
+    title: lang === 'pl' ? `${ARTIST_NAME} — Sklep` : `${ARTIST_NAME} — Shop`,
+    description: lang === 'pl'
+      ? 'Produkty, grafiki i digital goods Mikołaja Mrozka.'
+      : 'Products, prints and digital goods by Mikołaj Mrozek.',
+    canonical: `${SITE_URL}/shop`,
+  });
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 

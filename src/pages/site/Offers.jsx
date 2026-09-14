@@ -4,9 +4,19 @@ import { useLang } from '@/lib/i18n';
 import { fetchPublished } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { ArrowUpRight } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
+import { SITE_URL } from '@/lib/seo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 export default function Offers() {
-  const { tr, t } = useLang();
+  const { lang, tr, t } = useLang();
+  useSEO({
+    title: lang === 'pl' ? `${ARTIST_NAME} — Warsztaty i oferty` : `${ARTIST_NAME} — Workshops & Offers`,
+    description: lang === 'pl'
+      ? 'Warsztaty tatuażu, mentoring i współprace tworzone przez Mikołaja Mrozka.'
+      : 'Tattoo workshops, mentoring and collaborations by Mikołaj Mrozek.',
+    canonical: `${SITE_URL}/offers`,
+  });
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
 

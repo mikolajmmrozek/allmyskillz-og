@@ -7,9 +7,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
 import TikTokIcon from '@/components/site/TikTokIcon';
+import { useSEO } from '@/hooks/use-seo';
+import { SITE_URL } from '@/lib/seo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 export default function Contact() {
   const { lang, tr, t } = useLang();
+  useSEO({
+    title: lang === 'pl' ? `${ARTIST_NAME} — Kontakt` : `${ARTIST_NAME} — Contact`,
+    description: lang === 'pl'
+      ? 'Skontaktuj się z Mikołajem Mrozkiem — tatuaż, współprace, warsztaty.'
+      : 'Get in touch with Mikołaj Mrozek — tattoo, collaborations, workshops.',
+    canonical: `${SITE_URL}/contact`,
+  });
   const { settings } = useSite();
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);

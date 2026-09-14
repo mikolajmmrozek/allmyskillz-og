@@ -4,9 +4,19 @@ import { useLang } from '@/lib/i18n';
 import { fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
+import { useSEO } from '@/hooks/use-seo';
+import { SITE_URL } from '@/lib/seo';
+import { ARTIST_NAME } from '@/lib/brand';
 
 export default function News() {
   const { lang, tr, t } = useLang();
+  useSEO({
+    title: lang === 'pl' ? `${ARTIST_NAME} — Dziennik` : `${ARTIST_NAME} — Journal`,
+    description: lang === 'pl'
+      ? 'Aktualności, proces twórczy i relacje z warsztatów Mikołaja Mrozka.'
+      : 'News, creative process and workshop reports from Mikołaj Mrozek.',
+    canonical: `${SITE_URL}/news`,
+  });
   const [posts, setPosts] = useState([]);
   const [cats, setCats] = useState({});
   const [loading, setLoading] = useState(true);
