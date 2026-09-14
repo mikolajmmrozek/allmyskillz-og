@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchByIds } from '@/lib/siteData';
+import { useSuspense } from '@/lib/suspenseCache';
+import CenterSpinner from '@/components/site/CenterSpinner';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
@@ -14,10 +16,29 @@ import { creativeWorkJsonLd, absUrl } from '@/lib/seo';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
+  return (
+    <Suspense fallback={<CenterSpinner />}>
+      <ProjectDetailContent slug={slug} />
+    </Suspense>
+  );
+}
+
+function ProjectDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const [project, setProject] = useState(null);
-  const [related, setRelated] = useState({ achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] });
-  const [loading, setLoading] = useState(true);
+  const { project, related } = useSuspense(`project:${slug}`, async () => {
+    const project = await fetchBySlug('Project', slug);
+    if (!project) return { project: null, related: { achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] } };
+    const [achievements, awards, experience, partners, news, categories, tags] = await Promise.all([
+      fetchByIds('Achievement', project.achievement_ids || []),
+      fetchByIds('Award', project.award_ids || []),
+      fetchByIds('Experience', project.experience_ids || []),
+      fetchByIds('Partner', project.partner_ids || []),
+      fetchByIds('Post', project.post_ids || []),
+      fetchByIds('Category', project.category_ids || []),
+      fetchByIds('Tag', project.tag_ids || []),
+    ]);
+    return { project, related: { achievements, awards, experience, partners, news, categories, tags } };
+  });
 
   useSEO({
     title: project ? (tr(project, 'seo_title') || tr(project, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Projekt' : 'Mikołaj Mrozek — Project'),
@@ -28,27 +49,6 @@ export default function ProjectDetail() {
     jsonLd: project ? creativeWorkJsonLd(project, '/projects/' + slug) : undefined,
   });
 
-  useEffect(() => {
-    setLoading(true);
-    fetchBySlug('Project', slug).then(async (p) => {
-      setProject(p);
-      if (p) {
-        const [achievements, awards, experience, partners, news, categories, tags] = await Promise.all([
-          fetchByIds('Achievement', p.achievement_ids || []),
-          fetchByIds('Award', p.award_ids || []),
-          fetchByIds('Experience', p.experience_ids || []),
-          fetchByIds('Partner', p.partner_ids || []),
-          fetchByIds('Post', p.post_ids || []),
-          fetchByIds('Category', p.category_ids || []),
-          fetchByIds('Tag', p.tag_ids || []),
-        ]);
-        setRelated({ achievements, awards, experience, partners, news, categories, tags });
-      }
-      setLoading(false);
-    });
-  }, [slug]);
-
-  if (loading) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">…</div>;
   if (!project) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
   const gallery = project.gallery || [];

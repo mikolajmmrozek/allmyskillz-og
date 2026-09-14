@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug } from '@/lib/siteData';
+import { useSuspense } from '@/lib/suspenseCache';
+import CenterSpinner from '@/components/site/CenterSpinner';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
@@ -10,10 +12,17 @@ import { productJsonLd, absUrl } from '@/lib/seo';
 
 export default function ProductDetail() {
   const { slug } = useParams();
+  return (
+    <Suspense fallback={<CenterSpinner />}>
+      <ProductDetailContent slug={slug} />
+    </Suspense>
+  );
+}
+
+function ProductDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(0);
+  const product = useSuspense(`product:${slug}`, () => fetchBySlug('Product', slug));
 
   useSEO({
     title: product ? (tr(product, 'seo_title') || tr(product, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Produkt' : 'Mikołaj Mrozek — Product'),
@@ -24,12 +33,6 @@ export default function ProductDetail() {
     jsonLd: product ? productJsonLd(product, '/shop/' + slug) : undefined,
   });
 
-  useEffect(() => {
-    setLoading(true);
-    fetchBySlug('Product', slug).then((p) => { setProduct(p); setLoading(false); });
-  }, [slug]);
-
-  if (loading) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">…</div>;
   if (!product) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
   const images = product.images || [];

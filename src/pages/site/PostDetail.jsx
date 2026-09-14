@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchPublished, fetchByIds } from '@/lib/siteData';
+import { useSuspense } from '@/lib/suspenseCache';
+import CenterSpinner from '@/components/site/CenterSpinner';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
@@ -13,12 +15,30 @@ import { articleJsonLd, absUrl } from '@/lib/seo';
 
 export default function PostDetail() {
   const { slug } = useParams();
+  return (
+    <Suspense fallback={<CenterSpinner />}>
+      <PostDetailContent slug={slug} />
+    </Suspense>
+  );
+}
+
+function PostDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const [post, setPost] = useState(null);
-  const [category, setCategory] = useState(null);
-  const [tags, setTags] = useState([]);
-  const [more, setMore] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { post, category, tags, more } = useSuspense(`post:${slug}`, async () => {
+    const post = await fetchBySlug('Post', slug);
+    if (!post) return { post: null, category: null, tags: [], more: [] };
+    const [all, tagRecs] = await Promise.all([
+      fetchPublished('Post', '-published_date', 100).catch(() => []),
+      fetchByIds('Tag', post.tag_ids || []),
+    ]);
+    let category = null;
+    if (post.category_id) {
+      const cat = await fetchByIds('Category', [post.category_id]);
+      category = cat[0] || null;
+    }
+    const more = all.filter((x) => x.id !== post.id).slice(0, 3);
+    return { post, category, tags: tagRecs, more };
+  });
 
   useSEO({
     title: post ? (tr(post, 'seo_title') || tr(post, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Aktualność' : 'Mikołaj Mrozek — Article'),
@@ -29,27 +49,6 @@ export default function PostDetail() {
     jsonLd: post ? articleJsonLd(post, '/news/' + slug) : undefined,
   });
 
-  useEffect(() => {
-    setLoading(true);
-    fetchBySlug('Post', slug).then(async (p) => {
-      setPost(p);
-      if (p) {
-        const [all, tagRecs] = await Promise.all([
-          fetchPublished('Post', '-published_date', 100).catch(() => []),
-          fetchByIds('Tag', p.tag_ids || []),
-        ]);
-        if (p.category_id) {
-          const cat = await fetchByIds('Category', [p.category_id]);
-          setCategory(cat[0] || null);
-        } else setCategory(null);
-        setTags(tagRecs);
-        setMore(all.filter((x) => x.id !== p.id).slice(0, 3));
-      }
-      setLoading(false);
-    });
-  }, [slug]);
-
-  if (loading) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">…</div>;
   if (!post) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';

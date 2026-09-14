@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug } from '@/lib/siteData';
+import { useSuspense } from '@/lib/suspenseCache';
+import CenterSpinner from '@/components/site/CenterSpinner';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { useSEO } from '@/hooks/use-seo';
+import { creativeWorkJsonLd, absUrl, stripHtml } from '@/lib/seo';
 
 function Block({ title, children }) {
   if (!children) return null;
@@ -18,16 +22,26 @@ function Block({ title, children }) {
 
 export default function OfferDetail() {
   const { slug } = useParams();
+  return (
+    <Suspense fallback={<CenterSpinner />}>
+      <OfferDetailContent slug={slug} />
+    </Suspense>
+  );
+}
+
+function OfferDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const [offer, setOffer] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const offer = useSuspense(`offer:${slug}`, () => fetchBySlug('Offer', slug));
 
-  useEffect(() => {
-    setLoading(true);
-    fetchBySlug('Offer', slug).then((o) => { setOffer(o); setLoading(false); });
-  }, [slug]);
+  useSEO({
+    title: offer ? tr(offer, 'title') : (lang === 'pl' ? 'Mikołaj Mrozek — Oferta' : 'Mikołaj Mrozek — Offer'),
+    description: offer ? stripHtml(tr(offer, 'description')) : 'Portfolio Mikołaja Mrózka — tattoo artist i creative entrepreneur.',
+    image: offer?.gallery?.[0],
+    canonical: absUrl('/offers/' + slug),
+    type: 'article',
+    jsonLd: offer ? creativeWorkJsonLd(offer, '/offers/' + slug) : undefined,
+  });
 
-  if (loading) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">…</div>;
   if (!offer) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
   const gallery = offer.gallery || [];

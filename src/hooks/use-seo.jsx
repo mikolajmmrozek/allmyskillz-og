@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { SITE_URL } from '@/lib/seo';
 
 // Sets document title + meta description + Open Graph / Twitter tags, a
@@ -10,7 +10,11 @@ import { SITE_URL } from '@/lib/seo';
 // Base44 prerenders each page for crawlers, so these client-injected tags are
 // captured automatically — no SSR needed.
 export function useSEO({ title, description, image, url, canonical, lang = 'pl', robots = 'index,follow', jsonLd, type = 'website' } = {}) {
-  useEffect(() => {
+  // useLayoutEffect (not useEffect) so tags are written to <head> synchronously
+  // at commit time, before the browser paints — which is also before the
+  // platform prerenderer snapshots the page. This makes per-entity og:image /
+  // title land in the captured HTML instead of arriving a frame too late.
+  useLayoutEffect(() => {
     const prevTitle = document.title;
     if (title) document.title = title;
     if (lang) document.documentElement.lang = lang;
