@@ -1,33 +1,32 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
-import { fetchBySlug, fetchByIds } from '@/lib/siteData';
-import { useSuspense } from '@/lib/suspenseCache';
+import { fetchByIds } from '@/lib/siteData';
+import ProjectRecord from '@/components/site/ProjectRecord';
 import CenterSpinner from '@/components/site/CenterSpinner';
 import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal } from '@/components/site/Motion';
-import GalleryMasonry from '@/components/site/GalleryMasonry';
-import AwardGallery from '@/components/site/AwardGallery';
-import VideoEmbed from '@/components/site/VideoEmbed';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
-import { useSEO } from '@/hooks/use-seo';
-import { creativeWorkJsonLd, absUrl } from '@/lib/seo';
+
+const GalleryMasonry = lazy(() => import('@/components/site/GalleryMasonry'));
+const AwardGallery = lazy(() => import('@/components/site/AwardGallery'));
+const VideoEmbed = lazy(() => import('@/components/site/VideoEmbed'));
 
 export default function ProjectDetail() {
   const { slug } = useParams();
   return (
     <Suspense fallback={<CenterSpinner />}>
-      <ProjectDetailContent slug={slug} />
+      <ProjectRecord key={slug} slug={slug}>
+        {(project) => <ProjectDetailContent project={project} />}
+      </ProjectRecord>
     </Suspense>
   );
 }
 
-function ProjectDetailContent({ slug }) {
+function ProjectDetailContent({ project }) {
   const { lang, tr, t } = useLang();
-  // Suspend only on the primary record so useSEO lands before the prerenderer
-  // snapshots. Related records load in the background useEffect below.
-  const project = useSuspense(`project:${slug}`, () => fetchBySlug('Project', slug));
+  // Metadata commits in ProjectRecord, independently of media and related data.
   const [related, setRelated] = useState({ achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] });
 
   useEffect(() => {
@@ -47,15 +46,6 @@ function ProjectDetailContent({ slug }) {
     })();
     return () => { cancelled = true; };
   }, [project]);
-
-  useSEO({
-    title: project ? (tr(project, 'seo_title') || tr(project, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Projekt' : 'Mikołaj Mrozek — Project'),
-    description: project ? (tr(project, 'seo_description') || tr(project, 'excerpt')) : 'Portfolio Mikołaja Mrózka — tattoo artist i creative entrepreneur.',
-    image: project?.cover_image,
-    canonical: absUrl('/projects/' + slug),
-    type: 'article',
-    jsonLd: project ? creativeWorkJsonLd(project, '/projects/' + slug) : undefined,
-  });
 
   if (!project) return <div className="px-5 md:px-10 py-32 text-center text-neutral-400">Not found.</div>;
 
@@ -161,7 +151,9 @@ function ProjectDetailContent({ slug }) {
       {/* Gallery — dynamic masonry + lightbox */}
       {gallery.length > 0 && (
         <div className="px-5 md:px-10 pb-16">
-          <GalleryMasonry images={gallery} alt={tr(project, 'title')} />
+          <Suspense fallback={<CenterSpinner />}>
+            <GalleryMasonry images={gallery} alt={tr(project, 'title')} />
+          </Suspense>
         </div>
       )}
 
@@ -169,7 +161,7 @@ function ProjectDetailContent({ slug }) {
       {videos.length > 0 && (
         <div className="px-5 md:px-10 pb-16 grid gap-4">
           {videos.map((v, i) => (
-            <VideoEmbed key={i} url={v} />
+            <Suspense key={i} fallback={<CenterSpinner />}><VideoEmbed url={v} /></Suspense>
           ))}
         </div>
       )}
@@ -200,7 +192,9 @@ function ProjectDetailContent({ slug }) {
             {related.awards.map((a, i) => (
               <Reveal key={a.id} delay={i * 0.08}>
                 <div className="p-6 rounded-2xl border border-neutral-200">
-                  <AwardGallery image={a.image} gallery={a.gallery} alt={tr(a, 'title')} />
+                  <Suspense fallback={<CenterSpinner />}>
+                    <AwardGallery image={a.image} gallery={a.gallery} alt={tr(a, 'title')} />
+                  </Suspense>
                   <h3 className="font-medium">{tr(a, 'title')}</h3>
                   <p className="text-sm text-neutral-500">{a.issuer}{a.date ? ' · ' + new Date(a.date).getFullYear() : ''}</p>
                   <RichContent html={tr(a, 'description')} className="text-sm text-neutral-600 mt-2" />

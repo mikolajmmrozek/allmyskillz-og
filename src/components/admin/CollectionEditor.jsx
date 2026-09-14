@@ -15,6 +15,7 @@ import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon, Film } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { thumbUrl } from '@/lib/media';
+import { clearSuspenseCache } from '@/lib/suspenseCache';
 
 // Determine the display type of a schema property using custom hints (format / relation)
 function fieldKind(prop) {
@@ -166,10 +167,12 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
       }
       if (isNew) {
         const created = await base44.entities[entityName].create(payload);
+        if (entityName === 'Project') clearSuspenseCache('project:');
         if (onSaved) { onSaved(created); setForm(created); }
         else navigate(`/admin/collection/${entityName}/${created.id}`);
       } else {
         const updated = await base44.entities[entityName].update(id, payload);
+        if (entityName === 'Project') clearSuspenseCache('project:');
         setForm((prev) => ({ ...prev, ...payload, ...updated }));
         if (onSaved) onSaved(updated);
       }
@@ -204,6 +207,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
     setSaving(true);
     try {
       const updated = await base44.entities[entityName].update(id, nextForm);
+      if (entityName === 'Project') clearSuspenseCache('project:');
       setForm((prev) => ({ ...prev, ...updated }));
       if (onSaved) onSaved(updated);
     } catch (e) {
