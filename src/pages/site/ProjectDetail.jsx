@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchByIds } from '@/lib/siteData';
@@ -25,20 +25,28 @@ export default function ProjectDetail() {
 
 function ProjectDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const { project, related } = useSuspense(`project:${slug}`, async () => {
-    const project = await fetchBySlug('Project', slug);
-    if (!project) return { project: null, related: { achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] } };
-    const [achievements, awards, experience, partners, news, categories, tags] = await Promise.all([
-      fetchByIds('Achievement', project.achievement_ids || []),
-      fetchByIds('Award', project.award_ids || []),
-      fetchByIds('Experience', project.experience_ids || []),
-      fetchByIds('Partner', project.partner_ids || []),
-      fetchByIds('Post', project.post_ids || []),
-      fetchByIds('Category', project.category_ids || []),
-      fetchByIds('Tag', project.tag_ids || []),
-    ]);
-    return { project, related: { achievements, awards, experience, partners, news, categories, tags } };
-  });
+  // Suspend only on the primary record so useSEO lands before the prerenderer
+  // snapshots. Related records load in the background useEffect below.
+  const project = useSuspense(`project:${slug}`, () => fetchBySlug('Project', slug));
+  const [related, setRelated] = useState({ achievements: [], awards: [], experience: [], partners: [], news: [], categories: [], tags: [] });
+
+  useEffect(() => {
+    if (!project) return;
+    let cancelled = false;
+    (async () => {
+      const [achievements, awards, experience, partners, news, categories, tags] = await Promise.all([
+        fetchByIds('Achievement', project.achievement_ids || []),
+        fetchByIds('Award', project.award_ids || []),
+        fetchByIds('Experience', project.experience_ids || []),
+        fetchByIds('Partner', project.partner_ids || []),
+        fetchByIds('Post', project.post_ids || []),
+        fetchByIds('Category', project.category_ids || []),
+        fetchByIds('Tag', project.tag_ids || []),
+      ]);
+      if (!cancelled) setRelated({ achievements, awards, experience, partners, news, categories, tags });
+    })();
+    return () => { cancelled = true; };
+  }, [project]);
 
   useSEO({
     title: project ? (tr(project, 'seo_title') || tr(project, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Projekt' : 'Mikołaj Mrozek — Project'),

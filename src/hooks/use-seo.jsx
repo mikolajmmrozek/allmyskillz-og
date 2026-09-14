@@ -21,13 +21,15 @@ export function useSEO({ title, description, image, url, canonical, lang = 'pl',
 
     const created = [];
 
-    const upsertMeta = (selector, attr, content, extraAttrs = {}) => {
+    // attrValue is the real meta name/property (e.g. 'og:image'); setting it on
+    // create (not '') is what makes the tag visible to crawlers.
+    const upsertMeta = (selector, attr, attrValue, content, extraAttrs = {}) => {
       if (!content) return null;
       let el = document.head.querySelector(selector);
       const isNew = !el;
       if (isNew) {
         el = document.createElement('meta');
-        el.setAttribute(attr, '');
+        el.setAttribute(attr, attrValue);
         document.head.appendChild(el);
       }
       el.setAttribute('content', String(content));
@@ -35,17 +37,17 @@ export function useSEO({ title, description, image, url, canonical, lang = 'pl',
       return isNew ? { el } : null;
     };
 
-    created.push(upsertMeta('meta[name="description"]', 'name', description));
-    created.push(upsertMeta('meta[property="og:title"]', 'property', title));
-    created.push(upsertMeta('meta[property="og:description"]', 'property', description));
-    created.push(upsertMeta('meta[property="og:type"]', 'property', type));
-    created.push(upsertMeta('meta[property="og:image"]', 'property', image));
-    created.push(upsertMeta('meta[property="og:url"]', 'property', canonical || url));
-    created.push(upsertMeta('meta[name="twitter:card"]', 'name', image ? 'summary_large_image' : 'summary'));
-    created.push(upsertMeta('meta[name="twitter:title"]', 'name', title));
-    created.push(upsertMeta('meta[name="twitter:description"]', 'name', description));
-    created.push(upsertMeta('meta[name="twitter:image"]', 'name', image));
-    created.push(upsertMeta('meta[name="robots"]', 'name', robots));
+    created.push(upsertMeta('meta[name="description"]', 'name', 'description', description));
+    created.push(upsertMeta('meta[property="og:title"]', 'property', 'og:title', title));
+    created.push(upsertMeta('meta[property="og:description"]', 'property', 'og:description', description));
+    created.push(upsertMeta('meta[property="og:type"]', 'property', 'og:type', type));
+    created.push(upsertMeta('meta[property="og:image"]', 'property', 'og:image', image));
+    created.push(upsertMeta('meta[property="og:url"]', 'property', 'og:url', canonical || url));
+    created.push(upsertMeta('meta[name="twitter:card"]', 'name', 'twitter:card', image ? 'summary_large_image' : 'summary'));
+    created.push(upsertMeta('meta[name="twitter:title"]', 'name', 'twitter:title', title));
+    created.push(upsertMeta('meta[name="twitter:description"]', 'name', 'twitter:description', description));
+    created.push(upsertMeta('meta[name="twitter:image"]', 'name', 'twitter:image', image));
+    created.push(upsertMeta('meta[name="robots"]', 'name', 'robots', robots));
 
     // Canonical link — derive from SITE_URL + current path if not provided.
     const canonicalHref = canonical || url || (SITE_URL + window.location.pathname + window.location.search);

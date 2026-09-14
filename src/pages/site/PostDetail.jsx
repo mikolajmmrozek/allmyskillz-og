@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { fetchBySlug, fetchPublished, fetchByIds } from '@/lib/siteData';
@@ -24,21 +24,33 @@ export default function PostDetail() {
 
 function PostDetailContent({ slug }) {
   const { lang, tr, t } = useLang();
-  const { post, category, tags, more } = useSuspense(`post:${slug}`, async () => {
-    const post = await fetchBySlug('Post', slug);
-    if (!post) return { post: null, category: null, tags: [], more: [] };
-    const [all, tagRecs] = await Promise.all([
-      fetchPublished('Post', '-published_date', 100).catch(() => []),
-      fetchByIds('Tag', post.tag_ids || []),
-    ]);
-    let category = null;
-    if (post.category_id) {
-      const cat = await fetchByIds('Category', [post.category_id]);
-      category = cat[0] || null;
-    }
-    const more = all.filter((x) => x.id !== post.id).slice(0, 3);
-    return { post, category, tags: tagRecs, more };
-  });
+  // Suspend only on the primary record so useSEO lands before the prerenderer
+  // snapshots. Category/tags/more load in the background useEffect below.
+  const post = useSuspense(`post:${slug}`, () => fetchBySlug('Post', slug));
+  const [category, setCategory] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [more, setMore] = useState([]);
+
+  useEffect(() => {
+    if (!post) return;
+    let cancelled = false;
+    (async () => {
+      const [all, tagRecs] = await Promise.all([
+        fetchPublished('Post', '-published_date', 100).catch(() => []),
+        fetchByIds('Tag', post.tag_ids || []),
+      ]);
+      let cat = null;
+      if (post.category_id) {
+        const catRecs = await fetchByIds('Category', [post.category_id]);
+        cat = catRecs[0] || null;
+      }
+      if (cancelled) return;
+      setCategory(cat);
+      setTags(tagRecs);
+      setMore(all.filter((x) => x.id !== post.id).slice(0, 3));
+    })();
+    return () => { cancelled = true; };
+  }, [post]);
 
   useSEO({
     title: post ? (tr(post, 'seo_title') || tr(post, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Aktualność' : 'Mikołaj Mrozek — Article'),
