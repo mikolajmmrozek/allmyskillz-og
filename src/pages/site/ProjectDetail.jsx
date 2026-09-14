@@ -20,8 +20,8 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
 
   useSEO({
-    title: project && (tr(project, 'seo_title') || tr(project, 'title')),
-    description: project && (tr(project, 'seo_description') || tr(project, 'excerpt')),
+    title: project ? (tr(project, 'seo_title') || tr(project, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Projekt' : 'Mikołaj Mrozek — Project'),
+    description: project ? (tr(project, 'seo_description') || tr(project, 'excerpt')) : 'Portfolio Mikołaja Mrózka — tattoo artist i creative entrepreneur.',
     image: project?.cover_image,
     canonical: absUrl('/projects/' + slug),
     type: 'article',

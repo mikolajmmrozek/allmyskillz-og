@@ -16,8 +16,8 @@ export default function ProductDetail() {
   const [active, setActive] = useState(0);
 
   useSEO({
-    title: product && (tr(product, 'seo_title') || tr(product, 'title')),
-    description: product && (tr(product, 'seo_description') || tr(product, 'title')),
+    title: product ? (tr(product, 'seo_title') || tr(product, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Produkt' : 'Mikołaj Mrozek — Product'),
+    description: product ? (tr(product, 'seo_description') || tr(product, 'title')) : 'Portfolio Mikołaja Mrózka — tattoo artist i creative entrepreneur.',
     image: product?.images?.[0],
     canonical: absUrl('/shop/' + slug),
     type: 'product',

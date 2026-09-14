@@ -21,8 +21,8 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(true);
 
   useSEO({
-    title: post && (tr(post, 'seo_title') || tr(post, 'title')),
-    description: post && (tr(post, 'seo_description') || tr(post, 'excerpt')),
+    title: post ? (tr(post, 'seo_title') || tr(post, 'title')) : (lang === 'pl' ? 'Mikołaj Mrozek — Aktualność' : 'Mikołaj Mrozek — Article'),
+    description: post ? (tr(post, 'seo_description') || tr(post, 'excerpt')) : 'Portfolio Mikołaja Mrózka — tattoo artist i creative entrepreneur.',
     image: post?.featured_image,
     canonical: absUrl('/news/' + slug),
     type: 'article',
