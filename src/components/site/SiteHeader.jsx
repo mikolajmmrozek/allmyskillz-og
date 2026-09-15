@@ -13,7 +13,7 @@ export default function SiteHeader() {
   const loc = useLocation();
 
   const defaultLinks = [
-    { to: '/about', label: t('site.about') },
+    { to: '/experience', label: t('site.about') },
     { to: '/projects', label: t('site.projects') },
     { to: '/offers', label: t('site.offers') },
     { to: '/news', label: t('site.news') },

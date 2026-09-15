@@ -42,7 +42,7 @@ export default function SiteFooter() {
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-neutral-500 mb-4">{t('site.explore')}</p>
           <ul className="space-y-2.5 text-sm">
-            <li><Link to="/about" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.about')}</Link></li>
+            <li><Link to="/experience" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.about')}</Link></li>
             <li><Link to="/projects" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.projects')}</Link></li>
             <li><Link to="/offers" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.offers')}</Link></li>
             <li><Link to="/news" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.news')}</Link></li>

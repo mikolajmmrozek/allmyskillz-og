@@ -27,7 +27,7 @@ export default async function (req: Request): Promise<Response> {
 
     // Static public routes
     add(`${SITE_URL}/`, '1.0', 'weekly');
-    add(`${SITE_URL}/about`, '0.9', 'monthly');
+    add(`${SITE_URL}/experience`, '0.9', 'monthly');
     add(`${SITE_URL}/projects`, '0.9', 'weekly');
     add(`${SITE_URL}/offers`, '0.9', 'weekly');
     add(`${SITE_URL}/news`, '0.9', 'weekly');
