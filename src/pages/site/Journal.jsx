@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
+import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished, fetchByIds } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
 import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 export default function Journal() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
+  const { settings } = useSite();
   useSEO({
-    title: lang === 'pl' ? `${ARTIST_NAME} — Dziennik` : `${ARTIST_NAME} — Journal`,
+    title: lang === 'pl' ? `${displayName(settings, lang, primaryLang)} — Dziennik` : `${displayName(settings, lang, primaryLang)} — Journal`,
     description: lang === 'pl'
       ? 'Aktualności, proces twórczy i relacje z warsztatów Mikołaja Mrozka.'
       : 'News, creative process and workshop reports from Mikołaj Mrozek.',

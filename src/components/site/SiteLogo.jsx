@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { SiteContext } from './SiteProvider';
+import { useLang } from '@/lib/i18n';
 import { fetchSite } from '@/lib/siteData';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 // Module-level cache so auth/admin pages (outside SiteProvider) share the
 // same fetch as the public site and don't refetch on every mount.
@@ -16,6 +17,13 @@ function loadSettings() {
       .catch(() => null);
   }
   return pending;
+}
+
+// Invalidate the module-level cache so useBranding() re-fetches after settings
+// are saved (e.g. primary language changed in LanguageSettingsPanel).
+export function invalidateBrandingCache() {
+  cached = null;
+  pending = null;
 }
 
 let lastFaviconUrl = null;
@@ -104,8 +112,9 @@ export { SiteLogo };
 
 // Logo + wordmark, language-aware. Used across header/footer/auth/admin.
 export function SiteBrand({ to = '/', size = 36, tone = 'dark', nameClassName = '', logoClassName = '', showName = true }) {
-  useBranding();
-  const name = ARTIST_NAME;
+  const { lang, primaryLang } = useLang();
+  const settings = useBranding();
+  const name = displayName(settings, lang, primaryLang);
   return (
     <Link to={to} className="inline-flex items-center gap-2.5">
       <SiteLogo size={size} tone={tone} className={logoClassName} />

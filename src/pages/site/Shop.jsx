@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
+import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 export default function Shop() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
+  const { settings } = useSite();
   useSEO({
-    title: lang === 'pl' ? `${ARTIST_NAME} — Sklep` : `${ARTIST_NAME} — Shop`,
+    title: lang === 'pl' ? `${displayName(settings, lang, primaryLang)} — Sklep` : `${displayName(settings, lang, primaryLang)} — Shop`,
     description: lang === 'pl'
       ? 'Produkty, grafiki i digital goods Mikołaja Mrozka.'
       : 'Products, prints and digital goods by Mikołaj Mrozek.',

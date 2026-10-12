@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import CollectionEditor from '@/components/admin/CollectionEditor';
 import AppearancePanel from '@/components/admin/AppearancePanel';
+import LanguageSettingsPanel from '@/components/admin/LanguageSettingsPanel';
 import { Loader2 } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 
@@ -27,7 +28,8 @@ export default function Settings() {
     <div className="p-4 md:p-8 max-w-4xl">
       <h1 className="text-3xl font-semibold tracking-tight mb-1">{t('admin.settings_title')}</h1>
       <p className="text-sm text-neutral-500 mb-8">{t('admin.settings_desc')}</p>
-      <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} hiddenFields={['accent_color', 'theme', 'font_package']} />
+      <LanguageSettingsPanel recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} />
+      <CollectionEditor entityName="SiteSetting" recordId={recordId} onSaved={(rec) => setRecordId(rec.id)} hiddenFields={['accent_color', 'theme', 'font_package', 'primary_language', 'enabled_languages']} />
       <AppearancePanel />
     </div>
   );

@@ -8,7 +8,7 @@ import { Image } from '@/components/ui/image';
 import RichContent from '@/components/site/RichContent';
 import { Reveal, ParallaxImage } from '@/components/site/Motion';
 import SiteLogo from '@/components/site/SiteLogo';
-import { ARTIST_NAME, ARTIST_NAME_LINES } from '@/lib/brand';
+import { displayName, displayNameLines } from '@/lib/brand';
 import { useSEO } from '@/hooks/use-seo';
 import { personJsonLd, websiteJsonLd } from '@/lib/seo';
 import { ArrowUpRight, ArrowRight, MoveDown } from 'lucide-react';
@@ -16,11 +16,12 @@ import { ArrowUpRight, ArrowRight, MoveDown } from 'lucide-react';
 const EASE = [0.22, 1, 0.36, 1];
 
 export default function Home() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
   const { home, settings, loading } = useSite();
   useSEO({
-    title: settings ? `${ARTIST_NAME} — ${settings.tagline_en || 'Tattoo Artist & Creative Entrepreneur'}` : `${ARTIST_NAME} — Tattoo Artist & Creative Entrepreneur`,
-    description: settings?.default_seo_description_en || undefined,
+    lang,
+    title: settings ? `${displayName(settings, lang, primaryLang)} — ${tr(settings, 'tagline') || 'Tattoo Artist & Creative Entrepreneur'}` : 'Tattoo Artist & Creative Entrepreneur',
+    description: tr(settings, 'default_seo_description') || undefined,
     image: home?.hero_poster_url,
     jsonLd: [websiteJsonLd(settings), personJsonLd(settings, home)],
   });
@@ -51,8 +52,9 @@ export default function Home() {
     })();
   }, [home]);
 
-  // The name is a constant proper noun — never translated.
-  const lines = ARTIST_NAME_LINES;
+  // The hero name follows the `site_name` set in Site Settings (with a fallback),
+  // so a new user only sets it once and it propagates everywhere.
+  const lines = displayNameLines(settings, lang, primaryLang);
   const heroVideo = home?.hero_video_url;
   const heroPoster = home?.hero_poster_url;
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -79,7 +81,7 @@ export default function Home() {
           </video>
         ) : heroPoster ? (
           <div className="absolute inset-0">
-            <Image src={heroPoster} fittingType="fill" className="h-full w-full" alt={ARTIST_NAME + ' — tattoo artist and creative entrepreneur'} />
+            <Image src={heroPoster} fittingType="fill" className="h-full w-full" alt={displayName(settings, lang, primaryLang) || 'Tattoo artist and creative entrepreneur'} />
           </div>
         ) : (
           <div className="absolute inset-0 mesh-bg-dark bg-neutral-900" />

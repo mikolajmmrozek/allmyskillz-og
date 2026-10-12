@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
+import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished } from '@/lib/siteData';
 import { Reveal } from '@/components/site/Motion';
 import { ArrowUpRight } from 'lucide-react';
 import { thumbUrl } from '@/lib/media';
 import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 // Each card renders its cover at the image's natural aspect ratio so the
 // masonry columns stagger organically (Pinterest-style) instead of aligning.
@@ -37,9 +38,10 @@ function ProjectCover({ src, alt }) {
 }
 
 export default function Projects() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
+  const { settings } = useSite();
   useSEO({
-    title: lang === 'pl' ? `${ARTIST_NAME} — Projekty tatuażu` : `${ARTIST_NAME} — Tattoo Projects`,
+    title: lang === 'pl' ? `${displayName(settings, lang, primaryLang)} — Projekty tatuażu` : `${displayName(settings, lang, primaryLang)} — Tattoo Projects`,
     description: lang === 'pl'
       ? 'Galeria projektów tatuażu Mikołaja Mrozka — neotradycyjny, cover-up i custom design.'
       : 'Gallery of tattoo projects by Mikołaj Mrozek — neotraditional, cover-up and custom design.',

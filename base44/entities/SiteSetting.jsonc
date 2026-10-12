@@ -4,19 +4,129 @@
   "properties": {
     "site_name_pl": {
       "type": "string",
-      "title": "Site Name (PL)"
+      "title": "Site Name (Primary Language)"
     },
     "site_name_en": {
       "type": "string",
-      "title": "Site Name (EN)"
+      "title": "Site Name (English)"
+    },
+    "primary_language": {
+      "type": "string",
+      "enum": [
+        "pl",
+        "en",
+        "bg",
+        "hr",
+        "cs",
+        "da",
+        "nl",
+        "et",
+        "fi",
+        "fr",
+        "de",
+        "el",
+        "hu",
+        "ga",
+        "it",
+        "lv",
+        "lt",
+        "mt",
+        "pt",
+        "ro",
+        "sk",
+        "sl",
+        "es",
+        "sv",
+        "ar",
+        "bn",
+        "zh",
+        "hi",
+        "id",
+        "ja",
+        "ko",
+        "ms",
+        "fa",
+        "pa",
+        "ru",
+        "sw",
+        "ta",
+        "th",
+        "tr",
+        "ur",
+        "vi",
+        "ha",
+        "yo",
+        "te"
+      ],
+      "default": "pl",
+      "title": "Primary Language",
+      "description": "The site's main language. Content is authored in this language (stored in the _pl fields) and auto-translated to English on save."
+    },
+    "enabled_languages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "pl",
+          "en",
+          "bg",
+          "hr",
+          "cs",
+          "da",
+          "nl",
+          "et",
+          "fi",
+          "fr",
+          "de",
+          "el",
+          "hu",
+          "ga",
+          "it",
+          "lv",
+          "lt",
+          "mt",
+          "pt",
+          "ro",
+          "sk",
+          "sl",
+          "es",
+          "sv",
+          "ar",
+          "bn",
+          "zh",
+          "hi",
+          "id",
+          "ja",
+          "ko",
+          "ms",
+          "fa",
+          "pa",
+          "ru",
+          "sw",
+          "ta",
+          "th",
+          "tr",
+          "ur",
+          "vi",
+          "ha",
+          "yo",
+          "te"
+        ]
+      },
+      "title": "Enabled Languages",
+      "description": "Languages available in the public language switcher. The primary language and English are always included.",
+      "default": [
+        "pl",
+        "en"
+      ]
     },
     "tagline_pl": {
       "type": "string",
-      "title": "Tagline (PL)"
+      "title": "Tagline (Primary Language)"
     },
     "tagline_en": {
       "type": "string",
-      "title": "Tagline (EN)"
+      "title": "Tagline (English)"
     },
     "logo_url": {
       "type": "string",
@@ -55,19 +165,19 @@
     },
     "default_seo_title_pl": {
       "type": "string",
-      "title": "Default SEO Title (PL)"
+      "title": "Default SEO Title (Primary Language)"
     },
     "default_seo_title_en": {
       "type": "string",
-      "title": "Default SEO Title (EN)"
+      "title": "Default SEO Title (English)"
     },
     "default_seo_description_pl": {
       "type": "string",
-      "title": "Default SEO Description (PL)"
+      "title": "Default SEO Description (Primary Language)"
     },
     "default_seo_description_en": {
       "type": "string",
-      "title": "Default SEO Description (EN)"
+      "title": "Default SEO Description (English)"
     },
     "default_seo_keywords": {
       "type": "string",
@@ -88,11 +198,11 @@
     },
     "address_pl": {
       "type": "string",
-      "title": "Address (PL)"
+      "title": "Address (Primary Language)"
     },
     "address_en": {
       "type": "string",
-      "title": "Address (EN)"
+      "title": "Address (English)"
     },
     "maps_embed_url": {
       "type": "string",
@@ -119,7 +229,5 @@
       "title": "TikTok"
     }
   },
-  "required": [
-    "site_name_en"
-  ]
+  "required": []
 }

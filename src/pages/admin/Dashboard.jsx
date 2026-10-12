@@ -8,7 +8,7 @@ import { Loader2, ArrowUpRight, Mail, Pin, Pencil } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 export default function Dashboard() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const { user } = useAuth();
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -57,10 +57,10 @@ export default function Dashboard() {
 
       <div className="mb-12">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{lang === 'pl' ? 'Przypięte' : 'Pinned'}</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">{t('admin.pinned')}</p>
           <button onClick={() => setEditOpen(true)} className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-black transition">
             <Pencil className="w-3.5 h-3.5" />
-            {lang === 'pl' ? 'Edytuj' : 'Edit'}
+            {t('admin.edit')}
           </button>
         </div>
         {pinned.length > 0 ? (
@@ -77,7 +77,7 @@ export default function Dashboard() {
                       <ArrowUpRight className="w-4 h-4" />
                     </div>
                     <p className="text-3xl font-semibold tracking-tight">{count}</p>
-                    <p className="text-xs text-[var(--accent-ink,#000)]/70 mt-1">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</p>
+                    <p className="text-xs text-[var(--accent-ink,#000)]/70 mt-1">{t('collection.' + c.key)}</p>
                   </Link>
                 </div>
               );
@@ -85,7 +85,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <button onClick={() => setEditOpen(true)} className="w-full p-8 bg-white border border-dashed border-neutral-300 rounded-2xl text-sm text-neutral-500 hover:border-neutral-900 hover:text-black transition">
-            {lang === 'pl' ? 'Brak przypiętych kolekcji — kliknij, aby wybrać.' : 'No pinned collections — click to choose.'}
+            {t('admin.no_pinned')}
           </button>
         )}
       </div>
@@ -93,8 +93,8 @@ export default function Dashboard() {
       <Sheet open={editOpen} onOpenChange={setEditOpen}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>{lang === 'pl' ? 'Edytuj pulpit' : 'Edit dashboard'}</SheetTitle>
-            <SheetDescription>{lang === 'pl' ? 'Wybierz kolekcje do przypięcia na górze pulpitu.' : 'Choose collections to pin at the top of the dashboard.'}</SheetDescription>
+            <SheetTitle>{t('admin.edit_dashboard')}</SheetTitle>
+            <SheetDescription>{t('admin.edit_dashboard_desc')}</SheetDescription>
           </SheetHeader>
           <div className="flex flex-wrap gap-2 mt-6">
             {collections.filter((c) => !c.singleton).map((c) => {
@@ -107,7 +107,7 @@ export default function Dashboard() {
                   className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition ${isPinned ? 'bg-[var(--accent,#CBFF00)] border-[var(--accent-ink,#000)] text-[var(--accent-ink,#000)]' : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900 hover:text-black'}`}
                 >
                   <Icon className="w-3.5 h-3.5" />
-                  {lang === 'pl' ? (c.label_pl || c.key) : c.key}
+                  {t('collection.' + c.key)}
                 </button>
               );
             })}

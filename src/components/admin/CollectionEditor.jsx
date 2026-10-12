@@ -11,8 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import MediaPicker from './MediaPicker';
 import { useVideoCovers } from '@/components/site/useVideoCovers';
 import RichTextEditor from './RichTextEditor';
+import SeoCollapsible from './SeoCollapsible';
 import { getEntitySchema } from '@/lib/entitySchemas';
 import { ArrowLeft, Save, Loader2, Plus, X, Image as ImageIcon, Film } from 'lucide-react';
+import { langNative } from '@/lib/languages';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { thumbUrl } from '@/lib/media';
 import { clearSuspenseCache } from '@/lib/suspenseCache';
@@ -35,6 +37,14 @@ function fieldKind(prop) {
   if (prop.format === 'date') return 'date';
   if (prop.format === 'date-time') return 'datetime';
   return 'text';
+}
+
+// A group is "SEO" when its field key is SEO-related. These fields are
+// invisible to site visitors (they only feed search engines / social cards),
+// so the editor collapses them behind the "Ustawienia SEO" button.
+function isSeoGroup(g) {
+  const key = g.type === 'bilingual' ? g.base : g.field;
+  return key === 'google_site_verification' || key.startsWith('seo_') || key.startsWith('default_seo_');
 }
 
 // Group bilingual _pl/_en fields together
@@ -67,18 +77,26 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
   const navigate = useNavigate();
   const params = useParams();
   const id = recordId || params.id;
-  const { lang, t } = useLang();
+  const { lang, t, primaryLang } = useLang();
   const isNew = !id || id === 'new';
 
   const [schema, setSchema] = useState(null);
   const [form, setForm] = useState({});
+  const [originalPlValues, setOriginalPlValues] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [relationCache, setRelationCache] = useState({});
   const [mediaPicker, setMediaPicker] = useState({ open: false, field: null, multiple: false });
   const [mobileLang, setMobileLang] = useState('pl');
 
-  const groups = useMemo(() => (schema ? buildGroups(schema.properties).filter((g) => !(g.field && hiddenFields.includes(g.field))) : []), [schema, hiddenFields]);
+  const { regularGroups, seoGroups } = useMemo(() => {
+    if (!schema) return { regularGroups: [], seoGroups: [] };
+    const all = buildGroups(schema.properties).filter((g) => !(g.field && hiddenFields.includes(g.field)));
+    return {
+      regularGroups: all.filter((g) => !isSeoGroup(g)),
+      seoGroups: all.filter(isSeoGroup),
+    };
+  }, [schema, hiddenFields]);
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -92,6 +110,13 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
         if (!isNew) {
           const rec = await base44.entities[entityName].get(id);
           setForm(rec || {});
+          // Snapshot the original _pl values so we can detect changes and
+          // force re-translation when the primary-language content is edited.
+          const plSnap = {};
+          for (const [k] of Object.entries(rec || {})) {
+            if (k.endsWith('_pl')) plSnap[k] = rec[k];
+          }
+          setOriginalPlValues(plSnap);
         } else {
           // defaults
           const defaults = {};
@@ -141,7 +166,7 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
       // Treat Quill's <p><br></p> and HTML-only-whitespace as empty
       const stripHtml = (s) => String(s || '').replace(/<[^>]*>/g, '').trim();
       const forTranslation = {};
-      for (const g of groups) {
+      for (const g of [...regularGroups, ...seoGroups]) {
         if (g.type !== 'bilingual') continue;
         const kind = fieldKind(g.prop);
         if (kind !== 'text' && kind !== 'richtext') continue;
@@ -149,13 +174,17 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
         const en = payload[g.enKey];
         const plText = stripHtml(pl);
         const enText = stripHtml(en);
-        if (plText && (!enText || enText === plText)) {
+        // Re-translate when: English is empty, English equals primary (not yet
+        // translated), OR the primary content was edited since the record was
+        // loaded (so the English translation is stale).
+        const plChanged = payload[g.plKey] !== originalPlValues[g.plKey];
+        if (plText && (!enText || enText === plText || plChanged)) {
           forTranslation[g.enKey] = String(pl);
         }
       }
-      if (Object.keys(forTranslation).length > 0) {
+      if (Object.keys(forTranslation).length > 0 && primaryLang !== 'en') {
         try {
-          const res = await base44.functions.invoke('translateContent', { fields: forTranslation });
+          const res = await base44.functions.invoke('translateContent', { fields: forTranslation, source_language: primaryLang });
           const translations = res?.data?.translations || res?.translations || {};
           if (Object.keys(translations).length > 0) {
             payload = { ...payload, ...translations };
@@ -218,6 +247,63 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
     }
   };
 
+  const renderGroup = (group) => {
+    if (group.type === 'bilingual') {
+      const kind = fieldKind(group.prop);
+      const isEnPrimary = primaryLang === 'en';
+      // When the primary language is English, there's no auto-translation to
+      // English needed — the _pl slot IS English. Show a single column only.
+      if (isEnPrimary) {
+        return (
+          <div key={group.base}>
+            <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-3 block">{group.base.replace(/_/g, ' ')}</Label>
+            <div>
+              <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">ENGLISH</span>
+              <FieldRenderer kind={kind} prop={group.prop} value={form[group.plKey]} onChange={(v) => set(group.plKey, v)} onPickMedia={() => openMediaPicker(group.plKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
+            </div>
+          </div>
+        );
+      }
+      return (
+        <div key={group.base}>
+          <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-3 block">{group.base.replace(/_/g, ' ')}</Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={mobileLang === 'en' ? 'hidden md:block' : ''}>
+              <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">{langNative(primaryLang).toUpperCase()}</span>
+              <FieldRenderer kind={kind} prop={group.prop} value={form[group.plKey]} onChange={(v) => set(group.plKey, v)} onPickMedia={() => openMediaPicker(group.plKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
+            </div>
+            <div className={mobileLang === 'pl' ? 'hidden md:block' : ''}>
+              <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">ENGLISH</span>
+              <FieldRenderer kind={kind} prop={group.prop} value={form[group.enKey]} onChange={(v) => set(group.enKey, v)} onPickMedia={() => openMediaPicker(group.enKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    const kind = fieldKind(group.prop);
+    return (
+      <div key={group.field}>
+        <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 block">{group.field.replace(/_en$/, '').replace(/_/g, ' ')}</Label>
+        <FieldRenderer
+          kind={kind}
+          prop={group.prop}
+          value={form[group.field]}
+          onChange={(v) => set(group.field, v)}
+          onPickMedia={() => openMediaPicker(group.field, false)}
+          onPickMediaMultiple={() => openMediaPicker(group.field, true)}
+          onRemoveMediaItem={(idx) => set(group.field, (form[group.field] || []).filter((_, i) => i !== idx))}
+          onReorderMedia={(from, to) => reorderAndSave(group.field, from, to)}
+          relationEntity={group.prop?.relation}
+          relationCache={relationCache}
+          loadRelation={loadRelation}
+          form={form}
+          setForm={set}
+          field={group.field}
+        />
+      </div>
+    );
+  };
+
   if (loading || !schema) {
     return <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>;
   }
@@ -230,10 +316,12 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
           <h1 className="text-xl font-semibold">{isNew ? `${t('admin.new_entity')} ${entityName}` : `${t('admin.edit_entity')} ${entityName}`}</h1>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex md:hidden gap-1">
-            <button onClick={() => setMobileLang('pl')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'pl' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>PL</button>
-            <button onClick={() => setMobileLang('en')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'en' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>EN</button>
-          </div>
+          {primaryLang !== 'en' && (
+            <div className="flex md:hidden gap-1">
+              <button onClick={() => setMobileLang('pl')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'pl' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>{primaryLang.toUpperCase()}</button>
+              <button onClick={() => setMobileLang('en')} className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${mobileLang === 'en' ? 'bg-neutral-900 text-white' : 'text-neutral-500 bg-neutral-100'}`}>EN</button>
+            </div>
+          )}
           <Button variant="outline" onClick={() => navigate(`/admin/collection/${entityName}`)}>{t('action.cancel')}</Button>
           <Button onClick={save} disabled={saving} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90">
             {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} {t('action.save')}
@@ -242,48 +330,10 @@ export default function CollectionEditor({ entityName, recordId, onSaved, hidden
       </div>
 
       <div className="space-y-8">
-        {groups.map((group) => {
-          if (group.type === 'bilingual') {
-            const kind = fieldKind(group.prop);
-            return (
-              <div key={group.base}>
-                <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-3 block">{group.base.replace(/_/g, ' ')}</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className={mobileLang === 'en' ? 'hidden md:block' : ''}>
-                    <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">POLSKI</span>
-                    <FieldRenderer kind={kind} prop={group.prop} value={form[group.plKey]} onChange={(v) => set(group.plKey, v)} onPickMedia={() => openMediaPicker(group.plKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
-                  </div>
-                  <div className={mobileLang === 'pl' ? 'hidden md:block' : ''}>
-                    <span className="text-[10px] font-semibold text-neutral-400 mb-1 block">ENGLISH</span>
-                    <FieldRenderer kind={kind} prop={group.prop} value={form[group.enKey]} onChange={(v) => set(group.enKey, v)} onPickMedia={() => openMediaPicker(group.enKey, false)} relationEntity={group.prop?.relation} relationCache={relationCache} loadRelation={loadRelation} />
-                  </div>
-                </div>
-              </div>
-            );
-          }
-          const kind = fieldKind(group.prop);
-          return (
-            <div key={group.field}>
-              <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 block">{group.field.replace(/_en$/, '').replace(/_/g, ' ')}</Label>
-              <FieldRenderer
-                kind={kind}
-                prop={group.prop}
-                value={form[group.field]}
-                onChange={(v) => set(group.field, v)}
-                onPickMedia={() => openMediaPicker(group.field, false)}
-                onPickMediaMultiple={() => openMediaPicker(group.field, true)}
-                onRemoveMediaItem={(idx) => set(group.field, (form[group.field] || []).filter((_, i) => i !== idx))}
-                onReorderMedia={(from, to) => reorderAndSave(group.field, from, to)}
-                relationEntity={group.prop?.relation}
-                relationCache={relationCache}
-                loadRelation={loadRelation}
-                form={form}
-                setForm={set}
-                field={group.field}
-              />
-            </div>
-          );
-        })}
+        {regularGroups.map(renderGroup)}
+        <SeoCollapsible hasContent={seoGroups.length > 0}>
+          {seoGroups.map(renderGroup)}
+        </SeoCollapsible>
       </div>
 
       <MediaPicker
