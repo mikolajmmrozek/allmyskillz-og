@@ -44,7 +44,7 @@ export function personJsonLd(settings, home) {
   const obj = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: ARTIST_NAME,
+    name: settings?.site_name_en || ARTIST_NAME,
     url: SITE_URL,
     jobTitle: settings?.tagline_en || home?.focus_en || 'Tattoo Artist & Creative Entrepreneur',
   };

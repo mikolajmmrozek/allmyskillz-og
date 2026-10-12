@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { isRtl, langName } from '@/lib/languages';
 
 const LanguageContext = createContext();
 
@@ -94,6 +96,11 @@ const dictionaries = {
     'admin.no_messages': 'No messages yet.',
     'admin.quick_start': 'Quick start',
     'admin.quick_start_desc': 'Manage every piece of content from here. No code required.',
+    'admin.pinned': 'Pinned',
+    'admin.edit': 'Edit',
+    'admin.no_pinned': 'No pinned collections — click to choose.',
+    'admin.edit_dashboard': 'Edit dashboard',
+    'admin.edit_dashboard_desc': 'Choose collections to pin at the top of the dashboard.',
     'admin.add_project': '+ Add a project',
     'admin.add_post': '+ Write a news post',
     'admin.edit_homepage': '+ Edit homepage',
@@ -127,6 +134,18 @@ const dictionaries = {
     'admin.no_nav_items': 'No navigation items yet.',
     'admin.settings_title': 'Site Settings',
     'admin.settings_desc': 'Global configuration, SEO defaults & social links.',
+    'admin.languages_title': 'Languages',
+    'admin.languages_desc': 'The admin panel and content are in two languages: the primary language and auto-translated English. The enabled languages below are only for visitor display.',
+    'admin.primary_language': 'Primary Language',
+    'admin.language_changed': 'Interface language changed',
+    'admin.translating_ui': 'Translating interface…',
+    'admin.primary_language_hint': 'Content is authored in this language. English is auto-translated on save.',
+    'admin.enabled_languages': 'Visitor Languages',
+    'admin.enabled_languages_hint': 'Languages available in the public language switcher. Primary and English are always included. Other languages fall back to the primary language content.',
+    'admin.search_languages': 'Search languages…',
+    'admin.no_results': 'No results',
+    'admin.seo_settings': 'SEO settings',
+    'admin.seo_settings_desc': 'These fields control how the page appears in search engines and social media. They are not shown on the site itself.',
     'admin.new_entity': 'New',
     'admin.edit_entity': 'Edit',
     'admin.select_placeholder': 'Select…',
@@ -219,6 +238,31 @@ const dictionaries = {
     'admin.danger_desc': 'Permanently delete ALL content (projects, posts, media, navigation, offers…) but keeps site settings. This cannot be undone.',
     'admin.reset_btn': 'Delete all content',
     'admin.reset_done': 'All content deleted.',
+    'group.biography': 'Biography',
+    'group.work': 'Creative Work',
+    'group.content': 'Content',
+    'group.commerce': 'Commerce',
+    'group.communication': 'Communication',
+    'group.system': 'System',
+    'collection.Education': 'Education',
+    'collection.Experience': 'Experience',
+    'collection.Skill': 'Skills',
+    'collection.Certificate': 'Certificates',
+    'collection.Language': 'Languages',
+    'collection.Project': 'Projects',
+    'collection.Achievement': 'Achievements',
+    'collection.Award': 'Awards',
+    'collection.Partner': 'Partners',
+    'collection.Offer': 'Offers',
+    'collection.Post': 'News',
+    'collection.Category': 'Categories',
+    'collection.Tag': 'Tags',
+    'collection.Product': 'Products',
+    'collection.ContactMessage': 'Messages',
+    'collection.MediaItem': 'Media Library',
+    'collection.SiteSetting': 'Site Settings',
+    'collection.HomepageConfig': 'Homepage',
+    'collection.NavigationItem': 'Navigation',
   },
   pl: {
     'site.home': 'Start',
@@ -309,6 +353,11 @@ const dictionaries = {
     'admin.no_messages': 'Brak wiadomości.',
     'admin.quick_start': 'Szybki start',
     'admin.quick_start_desc': 'Zarządzaj całą treścią stąd. Bez kodu.',
+    'admin.pinned': 'Przypięte',
+    'admin.edit': 'Edytuj',
+    'admin.no_pinned': 'Brak przypiętych kolekcji — kliknij, aby wybrać.',
+    'admin.edit_dashboard': 'Edytuj pulpit',
+    'admin.edit_dashboard_desc': 'Wybierz kolekcje do przypięcia na górze pulpitu.',
     'admin.add_project': '+ Dodaj projekt',
     'admin.add_post': '+ Napisz wpis',
     'admin.edit_homepage': '+ Edytuj stronę główną',
@@ -342,6 +391,18 @@ const dictionaries = {
     'admin.no_nav_items': 'Brak elementów nawigacji.',
     'admin.settings_title': 'Ustawienia strony',
     'admin.settings_desc': 'Globalna konfiguracja, SEO i linki społecznościowe.',
+    'admin.languages_title': 'Języki',
+    'admin.languages_desc': 'Panel admina i treści są w dwóch językach: głównym i auto-tłumaczonym na angielski. Aktywne języki poniżej służą tylko do wyświetlania dla odwiedzających.',
+    'admin.primary_language': 'Język główny',
+    'admin.language_changed': 'Język interfejsu został zmieniony',
+    'admin.translating_ui': 'Tłumaczenie interfejsu…',
+    'admin.primary_language_hint': 'Treść jest tworzona w tym języku. Angielski jest tłumaczony automatycznie przy zapisie.',
+    'admin.enabled_languages': 'Języki dla odwiedzających',
+    'admin.enabled_languages_hint': 'Języki dostępne w publicznym przełączniku. Główny język i angielski są zawsze włączone. Pozostałe języki korzystają z treści w języku głównym.',
+    'admin.search_languages': 'Szukaj języków…',
+    'admin.no_results': 'Brak wyników',
+    'admin.seo_settings': 'Ustawienia SEO',
+    'admin.seo_settings_desc': 'Te pola sterują tym, jak strona pojawia się w wyszukiwarkach i mediach społecznościowych. Nie są widoczne na samej stronie.',
     'admin.new_entity': 'Nowy',
     'admin.edit_entity': 'Edytuj',
     'admin.select_placeholder': 'Wybierz…',
@@ -434,27 +495,156 @@ const dictionaries = {
     'admin.danger_desc': 'Trwale usuwa WSZYSTKIE treści (projekty, posty, media, nawigacja, oferty…), ale zachowuje ustawienia strony. Tej operacji nie można cofnąć.',
     'admin.reset_btn': 'Usuń wszystkie treści',
     'admin.reset_done': 'Wszystkie treści zostały usunięte.',
+    'group.biography': 'Biografia',
+    'group.work': 'Praca twórcza',
+    'group.content': 'Treść',
+    'group.commerce': 'Sklep',
+    'group.communication': 'Komunikacja',
+    'group.system': 'System',
+    'collection.Education': 'Edukacja',
+    'collection.Experience': 'Doświadczenie',
+    'collection.Skill': 'Umiejętności',
+    'collection.Certificate': 'Certyfikaty',
+    'collection.Language': 'Języki',
+    'collection.Project': 'Projekty',
+    'collection.Achievement': 'Osiągnięcia',
+    'collection.Award': 'Nagrody',
+    'collection.Partner': 'Partnerzy',
+    'collection.Offer': 'Oferty',
+    'collection.Post': 'Aktualności',
+    'collection.Category': 'Kategorie',
+    'collection.Tag': 'Tagi',
+    'collection.Product': 'Produkty',
+    'collection.ContactMessage': 'Wiadomości',
+    'collection.MediaItem': 'Biblioteka mediów',
+    'collection.SiteSetting': 'Ustawienia strony',
+    'collection.HomepageConfig': 'Strona główna',
+    'collection.NavigationItem': 'Nawigacja',
   }
+};
+
+const DICT_CACHE_PREFIX = 'i18n_dict_v3_';
+const CHUNK_SIZE = 90;
+const inflight = {};
+
+// sessionStorage flag: set before the post-language-change reload so the admin
+// can show a "language changed" notice (in the new language) after it.
+export const LANG_NOTICE_KEY = 'admin_lang_changed_notice';
+
+const readCachedDict = (code) => {
+  try {
+    const raw = localStorage.getItem(DICT_CACHE_PREFIX + code);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const parseJsonObject = (res) => {
+  if (res && typeof res === 'object') return res;
+  if (typeof res !== 'string') return null;
+  const match = res.match(/\{[\s\S]*\}/);
+  if (!match) return null;
+  try { return JSON.parse(match[0]); } catch { return null; }
+};
+
+const translateChunk = async (code, chunk) => {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt:
+          `You are a professional UI translator. Translate the following JSON object of user-interface strings from English to ${langName(code)}. ` +
+          `Return ONLY a valid JSON object with the exact same keys and translated string values. ` +
+          `Do not add any explanation, markdown, or code fences — just the raw JSON.\n\n` +
+          JSON.stringify(chunk),
+      });
+      const parsed = parseJsonObject(res);
+      if (parsed) return parsed;
+    } catch {}
+  }
+  return null;
+};
+
+// Translates the English UI dictionary into `code` in parallel chunks (much
+// faster than one huge request) and caches it. Resolves instantly for built-in
+// or already-cached languages.
+export const loadDictionary = (code) => {
+  if (dictionaries[code]) return Promise.resolve(dictionaries[code]);
+  const cached = readCachedDict(code);
+  if (cached) return Promise.resolve(cached);
+  if (!inflight[code]) {
+    const entries = Object.entries(dictionaries.en);
+    const chunks = [];
+    for (let i = 0; i < entries.length; i += CHUNK_SIZE) {
+      chunks.push(Object.fromEntries(entries.slice(i, i + CHUNK_SIZE)));
+    }
+    inflight[code] = Promise.all(chunks.map((c) => translateChunk(code, c)))
+      .then((parts) => {
+        const merged = Object.assign({}, ...parts.filter(Boolean));
+        if (parts.every(Boolean)) {
+          try { localStorage.setItem(DICT_CACHE_PREFIX + code, JSON.stringify(merged)); } catch {}
+        }
+        return merged;
+      })
+      .finally(() => { delete inflight[code]; });
+  }
+  return inflight[code];
 };
 
 export const LanguageProvider = ({ children }) => {
   const [lang, setLangState] = useState(() => localStorage.getItem(STORAGE_KEY) || 'pl');
+  const [primaryLang, setPrimaryLang] = useState('pl');
+  // Dictionary for languages without a hardcoded one (not en/pl). Tagged with
+  // its language so a stale dictionary is never used after switching language.
+  const [extra, setExtra] = useState(() => ({ lang, dict: dictionaries[lang] ? null : readCachedDict(lang) }));
+  const [dictLoading, setDictLoading] = useState(() => !dictionaries[lang] && !readCachedDict(lang));
+
+  useEffect(() => {
+    if (dictionaries[lang]) { setDictLoading(false); return; }
+    const cached = readCachedDict(lang);
+    if (cached) { setExtra({ lang, dict: cached }); setDictLoading(false); return; }
+    let cancelled = false;
+    setDictLoading(true);
+    loadDictionary(lang).then((dict) => {
+      if (cancelled) return;
+      setExtra({ lang, dict });
+      setDictLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [lang]);
 
   const setLang = useCallback((next) => {
     localStorage.setItem(STORAGE_KEY, next);
     setLangState(next);
   }, []);
 
-  const t = useCallback((key) => (dictionaries[lang] && dictionaries[lang][key]) || dictionaries.en[key] || key, [lang]);
+  const t = useCallback((key) => {
+    const dict = extra.lang === lang ? extra.dict : null;
+    if (dict && dict[key]) return dict[key];
+    return (dictionaries[lang] && dictionaries[lang][key]) || dictionaries.en[key] || key;
+  }, [lang, extra]);
 
-  // Translate a record field: tries field_<lang>, falls back to _en, then field itself
+  // Translate a record field. The _pl slot holds the primary-language content,
+  // _en holds the English auto-translation. Other languages live in a
+  // `translations` JSON object keyed by language code. Fallback chain:
+  //   current lang is primary → _pl slot
+  //   English → _en slot, then _pl
+  //   other lang → translations[lang][field], then _pl (primary)
   const tr = useCallback((record, baseField) => {
     if (!record) return '';
-    return record[`${baseField}_${lang}`] ?? record[`${baseField}_en`] ?? record[baseField] ?? '';
-  }, [lang]);
+    const primaryContent = record[`${baseField}_pl`];
+    const enContent = record[`${baseField}_en`];
+    if (lang === primaryLang) return primaryContent ?? record[baseField] ?? '';
+    if (lang === 'en') return enContent ?? primaryContent ?? record[baseField] ?? '';
+    const translated = record.translations?.[lang]?.[baseField];
+    if (translated) return translated;
+    return primaryContent ?? record[baseField] ?? '';
+  }, [lang, primaryLang]);
+
+  const dir = isRtl(lang) ? 'rtl' : 'ltr';
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t, tr }}>
+    <LanguageContext.Provider value={{ lang, setLang, t, tr, primaryLang, setPrimaryLang, dir, dictLoading }}>
       {children}
     </LanguageContext.Provider>
   );

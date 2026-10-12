@@ -4,7 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished } from '@/lib/siteData';
 import RichContent from '@/components/site/RichContent';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 import { SITE_URL, stripHtml, personJsonLd, websiteJsonLd } from '@/lib/seo';
 import { useSEO } from '@/hooks/use-seo';
 import { Loader2 } from 'lucide-react';
@@ -14,13 +14,13 @@ import { Loader2 } from 'lucide-react';
 // — no manual maintenance. Not linked in main navigation, but reachable and
 // referenced from /functions/llms-txt and the sitemap. PL primary.
 export default function PortfolioData() {
-  const { lang, tr } = useLang();
+  const { lang, tr, primaryLang } = useLang();
   const { home, settings } = useSite();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useSEO({
-    title: `${ARTIST_NAME} — Portfolio Data`,
+    title: `${displayName(settings, lang, primaryLang)} — Portfolio Data`,
     description: 'Machine-readable, semantic summary of the full portfolio: projects, experience, education, skills, awards, workshops and news.',
     canonical: `${SITE_URL}/portfolio-data`,
     jsonLd: [websiteJsonLd(settings), personJsonLd(settings, home)],
@@ -60,7 +60,7 @@ export default function PortfolioData() {
     <div className="px-5 md:px-10 py-16 max-w-3xl mx-auto text-neutral-800">
       <header className="mb-12">
         <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 mb-2">Portfolio data · for crawlers & AI</p>
-        <h1 className="font-display text-3xl md:text-4xl tracking-tight">{ARTIST_NAME}</h1>
+        <h1 className="font-display text-3xl md:text-4xl tracking-tight">{displayName(settings, lang, primaryLang)}</h1>
         <p className="mt-2 text-neutral-600">{fld(settings, 'tagline') || 'Tattoo Artist & Creative Entrepreneur'}</p>
         {fld(home, 'intro') && <div className="mt-4 text-neutral-700"><RichContent html={fld(home, 'intro')} /></div>}
         {fld(home, 'focus') && <p className="mt-3 text-sm text-neutral-500">{lang === 'pl' ? 'Aktualny kierunek:' : 'Current focus:'} {fld(home, 'focus')}</p>}

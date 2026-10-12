@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useLang } from '@/lib/i18n';
@@ -6,18 +6,29 @@ import { collections, collectionGroups, getCollection } from '@/lib/entityRegist
 import { LayoutDashboard, Image, Settings, Mail, Menu, LogOut, Globe, ExternalLink, ChevronRight, X } from 'lucide-react';
 import { SiteLogo, useBranding } from '@/components/site/SiteLogo';
 import { buildAccentStyle } from '@/lib/siteTheme';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 const ICON_MAP = { LayoutDashboard, Image, Settings, Mail, Menu };
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
-  const { lang, setLang, t } = useLang();
+  const { lang, setLang, t, primaryLang, setPrimaryLang, dir } = useLang();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const settings = useBranding();
   const accentStyle = buildAccentStyle(settings);
+
+  // Sync the i18n primary language + text direction with site settings.
+  useEffect(() => {
+    const primary = settings?.primary_language;
+    if (primary) {
+      setPrimaryLang(primary);
+      // Admin UI is only ever in the primary language or English.
+      if (lang !== 'en' && lang !== primary) setLang(primary);
+    }
+    document.documentElement.dir = dir;
+  }, [settings?.primary_language, lang, setLang, setPrimaryLang, dir]);
 
   const handleLogout = () => { logout(); };
 
@@ -26,8 +37,8 @@ export default function AdminLayout() {
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-[#0C0C0C] border-b border-neutral-800">
         <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Menu className="w-5 h-5" /></button>
-        <span className="font-semibold text-white text-sm tracking-tight">{ARTIST_NAME}</span>
-        <button onClick={() => setLang(lang === 'en' ? 'pl' : 'en')} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Globe className="w-4 h-4" /></button>
+        <span className="font-semibold text-white text-sm tracking-tight">{displayName(settings, lang, primaryLang)}</span>
+        <button onClick={() => setLang(lang === 'en' ? primaryLang : 'en')} className="p-1.5 rounded hover:bg-neutral-800 text-neutral-300"><Globe className="w-4 h-4" /></button>
       </div>
       {/* Mobile backdrop */}
       {mobileOpen && <div className="lg:hidden fixed inset-0 z-40 bg-black/60" onClick={() => setMobileOpen(false)} />}
@@ -35,7 +46,7 @@ export default function AdminLayout() {
       <aside className={`${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${collapsed ? 'lg:w-16' : 'lg:w-64'} w-64 shrink-0 border-r border-neutral-800/80 flex flex-col transition-all duration-300 bg-[#0C0C0C] fixed lg:sticky top-0 h-screen z-50 lg:z-auto`}>
         <div className="p-4 flex items-center gap-2 border-b border-neutral-800/80">
           <SiteLogo size={32} tone="light" className="shrink-0" />
-          {!collapsed && <span className="font-semibold text-white tracking-tight">{ARTIST_NAME}</span>}
+          {!collapsed && <span className="font-semibold text-white tracking-tight">{displayName(settings, lang, primaryLang)}</span>}
           <button onClick={() => setMobileOpen(false)} className="lg:hidden ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500"><X className="w-4 h-4" /></button>
           <button onClick={() => setCollapsed(!collapsed)} className="hidden lg:block ml-auto p-1 rounded hover:bg-neutral-800 text-neutral-500">
             <ChevronRight className={`w-4 h-4 transition ${collapsed ? '' : 'rotate-180'}`} />
@@ -55,7 +66,7 @@ export default function AdminLayout() {
             if (cols.length === 0) return null;
             return (
               <div key={group.id} className="mt-4">
-                {!collapsed && <p className="px-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-600">{group[`label_${lang}`] || group.label_en}</p>}
+                {!collapsed && <p className="px-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-600">{t('group.' + group.id)}</p>}
                 {cols.map((c) => {
                   const Icon = c.icon;
                   return (
@@ -65,7 +76,7 @@ export default function AdminLayout() {
                       className={({ isActive }) => `flex items-center gap-3 ${collapsed ? 'justify-center px-2' : 'px-4'} py-2 text-sm transition ${isActive ? 'bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] font-medium' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
-                      {!collapsed && <span className="truncate">{lang === 'pl' ? (c.label_pl || c.key) : c.key}</span>}
+                      {!collapsed && <span className="truncate">{t('collection.' + c.key)}</span>}
                     </NavLink>
                   );
                 })}
@@ -76,7 +87,7 @@ export default function AdminLayout() {
 
         <div className="p-3 border-t border-neutral-800/80 space-y-2">
           <div className={`flex items-center gap-2 ${collapsed ? 'flex-col' : ''}`}>
-            <button onClick={() => setLang(lang === 'en' ? 'pl' : 'en')} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-neutral-900 hover:bg-neutral-800 text-neutral-300">
+            <button onClick={() => setLang(lang === 'en' ? primaryLang : 'en')} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs bg-neutral-900 hover:bg-neutral-800 text-neutral-300">
               <Globe className="w-3.5 h-3.5" />
               {!collapsed && <span className="uppercase">{lang}</span>}
             </button>

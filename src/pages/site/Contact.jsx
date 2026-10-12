@@ -9,18 +9,18 @@ import { Loader2, Send, Instagram, Linkedin, Youtube, Facebook } from 'lucide-re
 import TikTokIcon from '@/components/site/TikTokIcon';
 import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 export default function Contact() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
+  const { settings } = useSite();
   useSEO({
-    title: lang === 'pl' ? `${ARTIST_NAME} — Kontakt` : `${ARTIST_NAME} — Contact`,
+    title: lang === 'pl' ? `${displayName(settings, lang, primaryLang)} — Kontakt` : `${displayName(settings, lang, primaryLang)} — Contact`,
     description: lang === 'pl'
       ? 'Skontaktuj się z Mikołajem Mrozkiem — tatuaż, współprace, warsztaty.'
       : 'Get in touch with Mikołaj Mrozek — tattoo, collaborations, workshops.',
     canonical: `${SITE_URL}/contact`,
   });
-  const { settings } = useSite();
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -58,16 +58,16 @@ export default function Contact() {
         <h1 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[12vw] md:text-[7vw] lg:text-[6.5rem]">
           {t('site.getInTouch')}
         </h1>
-        <div className="mt-10 rounded-2xl bg-[#CBFF00] p-6 md:p-8 text-black">
+        <div className="mt-10 rounded-2xl bg-[var(--accent,#CBFF00)] p-6 md:p-8 text-[var(--accent-ink,#000)]">
           <div className="space-y-3 text-sm">
-            {settings?.email && <p><a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a></p>}
+            {settings?.email && <p><a href={`mailto:${settings.email}`} className="hover:underline break-all">{settings.email}</a></p>}
             {settings?.phone && <p><a href={`tel:${settings.phone}`} className="hover:underline">{settings.phone}</a></p>}
-            {tr(settings, 'address') && <p className="text-black/70">{tr(settings, 'address')}</p>}
+            {tr(settings, 'address') && <p className="opacity-70">{tr(settings, 'address')}</p>}
           </div>
           {socials.length > 0 && (
             <div className="flex gap-3 mt-5">
               {socials.map((s, i) => (
-                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-[#CBFF00] hover:bg-black/80 transition">
+                <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-[var(--accent-ink,#000)] flex items-center justify-center text-[var(--accent,#CBFF00)] hover:opacity-80 transition">
                   <s.icon className="w-4 h-4" />
                 </a>
               ))}

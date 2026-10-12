@@ -3,8 +3,20 @@ import { generateObject } from 'npm:ai@7.0.16';
 import { createOpenAICompatible } from 'npm:@ai-sdk/openai-compatible@3.0.5';
 import { z } from 'npm:zod@4.4.3';
 
-// Auto-translates Polish field values to English.
-// Body: { fields: { "<enKey>": "<polishText>" } }
+const LANG_NAMES = {
+  pl: 'Polish', en: 'English', bg: 'Bulgarian', hr: 'Croatian', cs: 'Czech',
+  da: 'Danish', nl: 'Dutch', et: 'Estonian', fi: 'Finnish', fr: 'French',
+  de: 'German', el: 'Greek', hu: 'Hungarian', ga: 'Irish', it: 'Italian',
+  lv: 'Latvian', lt: 'Lithuanian', mt: 'Maltese', pt: 'Portuguese', ro: 'Romanian',
+  sk: 'Slovak', sl: 'Slovenian', es: 'Spanish', sv: 'Swedish',
+  ar: 'Arabic', bn: 'Bengali', zh: 'Chinese', hi: 'Hindi', id: 'Indonesian',
+  ja: 'Japanese', ko: 'Korean', ms: 'Malay', fa: 'Persian', pa: 'Punjabi',
+  ru: 'Russian', sw: 'Swahili', ta: 'Tamil', th: 'Thai', tr: 'Turkish',
+  ur: 'Urdu', vi: 'Vietnamese', ha: 'Hausa', yo: 'Yoruba', te: 'Telugu',
+};
+
+// Auto-translates field values from the site's primary language to English.
+// Body: { fields: { "<enKey>": "<sourceText>" }, source_language: "<code>" }
 // Returns: { translations: { "<enKey>": "<englishText>" } }
 // Only admins (editing in the panel) may call this.
 export default async function(req) {
@@ -16,6 +28,8 @@ export default async function(req) {
 
     const body = await req.json();
     const fields = body && body.fields;
+    const sourceLang = body?.source_language || 'pl';
+    const sourceName = LANG_NAMES[sourceLang] || 'the source language';
     if (!fields || typeof fields !== 'object' || Object.keys(fields).length === 0) {
       return Response.json({ translations: {} });
     }
@@ -37,7 +51,7 @@ export default async function(req) {
       model: models('automatic'),
       schema,
       prompt:
-        'Translate each Polish text value to English. Preserve any HTML tags exactly — only translate the text content, keep all markup untouched. Return a JSON object with the same keys, each mapped to the English translation. Output only the translations.\n\n' +
+        `Translate each text value from ${sourceName} to English. Preserve any HTML tags exactly — only translate the text content, keep all markup untouched. Return a JSON object with the same keys, each mapped to the English translation. Output only the translations.\n\n` +
         JSON.stringify(fields),
     });
 

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
+import { useSite } from '@/components/site/SiteProvider';
 import { fetchPublished } from '@/lib/siteData';
 import { Image } from '@/components/ui/image';
 import { ArrowUpRight } from 'lucide-react';
 import { useSEO } from '@/hooks/use-seo';
 import { SITE_URL } from '@/lib/seo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 
 export default function Offers() {
-  const { lang, tr, t } = useLang();
+  const { lang, tr, t, primaryLang } = useLang();
+  const { settings } = useSite();
   useSEO({
-    title: lang === 'pl' ? `${ARTIST_NAME} — Warsztaty i oferty` : `${ARTIST_NAME} — Workshops & Offers`,
+    title: lang === 'pl' ? `${displayName(settings, lang, primaryLang)} — Warsztaty i oferty` : `${displayName(settings, lang, primaryLang)} — Workshops & Offers`,
     description: lang === 'pl'
       ? 'Warsztaty tatuażu, mentoring i współprace tworzone przez Mikołaja Mrozka.'
       : 'Tattoo workshops, mentoring and collaborations by Mikołaj Mrozek.',

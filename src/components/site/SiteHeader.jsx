@@ -3,10 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function SiteHeader() {
-  const { lang, setLang, t, tr } = useLang();
+  const { t, tr } = useLang();
   const { settings, nav } = useSite();
   const tone = settings?.theme === 'dark' ? 'light' : 'dark';
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function SiteHeader() {
       <div className="px-5 md:px-10 h-16 flex items-center justify-between">
         <SiteBrand size={34} tone={tone} nameClassName="text-lg" />
 
-        <nav className="hidden md:flex items-center gap-7 text-sm">
+        <nav className="hidden lg:flex items-center gap-7 text-sm">
           {links.map((l, i) => {
             const external = /^https?:\/\//.test(l.to);
             const cls = `transition relative ${isActive(l.to) ? 'text-foreground font-medium' : 'text-neutral-500 hover:text-foreground'}`;
@@ -50,14 +51,8 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setLang(lang === 'en' ? 'pl' : 'en')}
-            className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-foreground px-2.5 py-1.5 rounded-full border border-neutral-200"
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span className="uppercase tracking-wider">{lang}</span>
-          </button>
-          <button onClick={() => setOpen((v) => !v)} className="md:hidden p-2 -mr-2">
+          <LanguageSwitcher />
+          <button onClick={() => setOpen((v) => !v)} className="lg:hidden p-2 -mr-2">
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
@@ -65,7 +60,7 @@ export default function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div className="lg:hidden border-t border-border bg-background">
           <nav className="flex flex-col px-5 py-3">
             {links.map((l, i) => {
               const external = /^https?:\/\//.test(l.to);

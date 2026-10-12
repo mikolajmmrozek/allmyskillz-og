@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
-import { ARTIST_NAME } from '@/lib/brand';
+import { displayName } from '@/lib/brand';
 import { contrastForeground } from '@/lib/siteTheme';
 import { Instagram, Linkedin, Youtube, Facebook } from 'lucide-react';
 import TikTokIcon from '@/components/site/TikTokIcon';
 
 export default function SiteFooter() {
-  const { lang, t } = useLang();
+  const { lang, t, primaryLang } = useLang();
   const { settings } = useSite();
   if (!settings) return null;
 
@@ -54,7 +54,7 @@ export default function SiteFooter() {
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-neutral-500 mb-4">{t('site.contact')}</p>
           <ul className="space-y-2.5 text-sm">
-            {settings.email && <li><a href={`mailto:${settings.email}`} className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{settings.email}</a></li>}
+            {settings.email && <li><a href={`mailto:${settings.email}`} className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition break-all">{settings.email}</a></li>}
             {settings.phone && <li><a href={`tel:${settings.phone}`} className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{settings.phone}</a></li>}
             {settings.address_en && <li className="text-neutral-400">{lang === 'pl' ? settings.address_pl : settings.address_en}</li>}
           </ul>
@@ -70,7 +70,7 @@ export default function SiteFooter() {
         </div>
       </div>
       <div className="px-5 md:px-10 py-5 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-500">
-        <span>© {year} {ARTIST_NAME}</span>
+        <span>© {year} {displayName(settings, lang, primaryLang)}</span>
         <div className="flex items-center gap-4">
           <span>{t('site.rights')}</span>
           <Link to="/admin" className="hover:text-[var(--accent,#CBFF00)] transition">Panel</Link>

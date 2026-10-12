@@ -75,7 +75,7 @@ export default function CollectionList({ entityName }) {
     <div className="p-4 md:p-8 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{lang === 'pl' ? (col.label_pl || col.key) : col.key}</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{t('collection.' + col.key)}</h1>
           <p className="text-sm text-neutral-500 mt-1">{filtered.length} {filtered.length === 1 ? t('records.one') : t('records.many')}</p>
         </div>
         <Button onClick={() => navigate(`/admin/collection/${entityName}/new`)} className="bg-[var(--accent,#CBFF00)] text-[var(--accent-ink,#000)] hover:bg-[var(--accent,#CBFF00)]/90 w-full sm:w-auto">
