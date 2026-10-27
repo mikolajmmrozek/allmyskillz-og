@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
@@ -11,6 +12,25 @@ import TikTokIcon from '@/components/site/TikTokIcon';
 export default function SiteFooter() {
   const { lang, t, primaryLang } = useLang();
   const { settings } = useSite();
+
+  // Hide footer links to sections that have no published content.
+  const [hasOffers, setHasOffers] = useState(false);
+  const [hasProducts, setHasProducts] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [offers, products] = await Promise.all([
+        base44.entities.Offer.count({ status: 'published' }),
+        base44.entities.Product.count({ status: 'published' }),
+      ]);
+      if (!cancelled) {
+        setHasOffers(offers > 0);
+        setHasProducts(products > 0);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   if (!settings) return null;
 
   const dark = settings?.theme === 'dark';
@@ -44,9 +64,9 @@ export default function SiteFooter() {
           <ul className="space-y-2.5 text-sm">
             <li><Link to="/experience" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.about')}</Link></li>
             <li><Link to="/projects" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.projects')}</Link></li>
-            <li><Link to="/offers" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.offers')}</Link></li>
+            {hasOffers && <li><Link to="/offers" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.offers')}</Link></li>}
             <li><Link to="/news" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.news')}</Link></li>
-            <li><Link to="/shop" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.shop')}</Link></li>
+            {hasProducts && <li><Link to="/shop" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.shop')}</Link></li>}
             <li><Link to="/contact" className="text-neutral-400 hover:text-[var(--accent,#CBFF00)] transition">{t('site.contact')}</Link></li>
           </ul>
         </div>
