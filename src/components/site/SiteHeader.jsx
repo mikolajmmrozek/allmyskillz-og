@@ -4,6 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { useSite } from './SiteProvider';
 import { SiteBrand } from './SiteLogo';
 import { Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function SiteHeader() {
@@ -59,21 +60,29 @@ export default function SiteHeader() {
       </div>
 
       {/* Mobile menu */}
-      {open && (
-        <div className="lg:hidden border-t border-border bg-background">
-          <nav className="flex flex-col px-5 py-3">
-            {links.map((l, i) => {
-              const external = /^https?:\/\//.test(l.to);
-              const cls = `py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-foreground' : 'text-neutral-600'}`;
-              return external ? (
-                <a key={i} href={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} onClick={() => setOpen(false)} className={cls}>{l.label}</a>
-              ) : (
-                <Link key={i} to={l.to} onClick={() => setOpen(false)} className={cls}>{l.label}</Link>
-              );
-            })}
-          </nav>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:hidden overflow-hidden border-t border-border bg-background"
+          >
+            <nav className="flex flex-col px-5 py-3">
+              {links.map((l, i) => {
+                const external = /^https?:\/\//.test(l.to);
+                const cls = `py-3 text-base border-b border-neutral-100 last:border-0 ${isActive(l.to) ? 'text-foreground' : 'text-neutral-600'}`;
+                return external ? (
+                  <a key={i} href={l.to} target={l.openInNewTab ? '_blank' : undefined} rel={l.openInNewTab ? 'noreferrer' : undefined} onClick={() => setOpen(false)} className={cls}>{l.label}</a>
+                ) : (
+                  <Link key={i} to={l.to} onClick={() => setOpen(false)} className={cls}>{l.label}</Link>
+                );
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
